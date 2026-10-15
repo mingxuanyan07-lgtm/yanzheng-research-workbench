@@ -1,0 +1,49 @@
+{
+  "project": "Yanzheng Research Workbench",
+  "version": "0.4.0",
+  "date": "2026-10-16",
+  "recorded_at": "2026-10-15T16:31:29.004246+00:00",
+  "status": "passed",
+  "scope": "Exact staged file bytes extracted to an isolated checkout-equivalent directory; existing local Python dependencies reused.",
+  "snapshot": {
+    "tested_files_sha256_manifest_digest": "253e7b01436d78ad352e6ff44767ae02e23402bed06b9d9cbd04c29af3633bbd",
+    "digest_method": "SHA-256 of sorted compact JSON mapping repository paths to staged content SHA-256; webapp, skills, scripts, tests, output only",
+    "files": 77
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "minimum_supported_python": "3.12"
+  },
+  "tests": {
+    "command": "python -B scripts/run_tests.py",
+    "total": 116,
+    "web": 64,
+    "skills": 52,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 3.895,
+    "external_model_requests": 0,
+    "external_literature_requests": 0,
+    "actual_small_numpy_worker_executions": true
+  },
+  "publication_checks": {
+    "local_credentials_databases_venv_and_scratch_excluded": true,
+    "required_runtime_archives_present": 5,
+    "staged_credential_shape_findings": 0,
+    "archive_absolute_runtime_paths_remaining": 0,
+    "historical_experiment_numbers_seeds_and_hashes_preserved": true
+  },
+  "not_verified_in_this_run": [
+    "Real Qwen v0.4 end-to-end research workflow",
+    "Live external literature endpoints",
+    "New v0.4 browser interactions and responsive layouts",
+    "Scientific support of natural-language claims by original papers",
+    "Independent scientific verification or general algorithm advantage",
+    "Fresh dependency installation on other operating systems",
+    "GitHub Actions outcome; see the actual workflow run"
+  ],
+  "historical_evidence": "Earlier live literature/Qwen and archived SVD results are historical records, not new execution in this publication check."
+}

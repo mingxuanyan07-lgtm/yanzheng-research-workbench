@@ -1,0 +1,49 @@
+# Local credentials and research state
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+webapp/data/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite*
+
+# Dependencies, caches and test scratch space
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+**/tests/.tmp/
+tmp/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Historical machine-specific launchers and offline presentation copies
+*.url
+研证完整演示.html
+
+# Preserve only the archives required by the current application.
+output/*
+!output/math-ai-workbench/
+output/math-ai-workbench/*
+!output/math-ai-workbench/experiment-data.json
+!output/math-ai-workbench/research-direction-map.json
+!output/math-ai-workbench/generate_experiments.py
+!output/literature-search-skill/
+output/literature-search-skill/*
+!output/literature-search-skill/cases/
+output/literature-search-skill/cases/*
+!output/literature-search-skill/cases/forward-trial/
+output/literature-search-skill/cases/forward-trial/*
+!output/literature-search-skill/cases/forward-trial/literature-search.json
+!output/literature-search-skill/cases/forward-trial/direction-handoff.json
+!output/project-review/
+output/project-review/*
+!output/project-review/cases.json

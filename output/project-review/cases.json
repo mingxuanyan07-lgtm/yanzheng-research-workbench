@@ -1,0 +1,550 @@
+{
+  "schema_version": "1.0",
+  "reviewed_on": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "purpose": "研证科研方向与证据工作台的外部案例架构复盘",
+  "method": "阅读官方赛事名单、作者仓库、实际实现文件和技术文档；未安装或运行案例，未调用模型，未将所有案例称为获奖作品。",
+  "cases": [
+    {
+      "id": "langsim",
+      "name": "LangSim",
+      "category": "award",
+      "award": "2024 LLM Hackathon for Applications in Materials and Chemistry：Radical AI Prizes 第一名；同时列入 Anthropic prizes（不分名次）。",
+      "award_source": "https://github.com/llmhackathon",
+      "pipeline": [
+        "自然语言科学问题",
+        "模型选择明确描述的专家工具及参数",
+        "结构构建和弛豫",
+        "能量体积采样与拟合",
+        "返回带物理单位的属性",
+        "查询实验参考值并解释"
+      ],
+      "evidence_flow": "LangChain AgentExecutor 绑定固定工具。AtomsDict 用 numbers、positions、cell、pbc 传递结构；科学数值由 ASE/atomistics 与 EMT/MACE 计算，不由聊天模型直接给出。实验参考查询与模拟工具分别定义。",
+      "human_control": "用户提出问题，开发者定义与测试工具、允许的计算器及物理单位。没有从实现中观察到逐工具调用的人工审批。",
+      "borrow": [
+        "模型负责规划，专业工具负责算数与可验证结果",
+        "工具合同明确输入类型、输出单位与失败状态",
+        "将文献证据和计算证据分开标示"
+      ],
+      "avoid_for_now": [
+        "将整个材料模拟依赖栈引入研证",
+        "把专家工具等同于绝对正确；读到的异常处理会返回固定字符串，仍需要独立校验",
+        "用统一 API 就承诺所有模型工具调用质量相同"
+      ],
+      "read_sources": [
+        {
+          "url": "https://www.mpie.de/5063016/LangSim",
+          "scope": "官方项目介绍：工具接口、铝体积模量例子、逆合金设计、获奖说明",
+          "kind": "institution_primary"
+        },
+        {
+          "url": "https://github.com/llmhackathon",
+          "scope": "2024 项目表及 2024 Prize Winners / Radical AI Prizes / Anthropic prizes",
+          "kind": "organizer_primary"
+        },
+        {
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/langsim/llm.py",
+          "scope": "get_executor：provider 分支、工具列表、bind_tools、AgentExecutor",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/langsim/tools/simulation_atomistics.py",
+          "scope": "AtomsDict、get_bulk_modulus、get_equilibrium_volume、get_calculator；读取源文件，未执行",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/langsim/tools/experimental_literature.py",
+          "scope": "实验参考值工具及输出单位的描述",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/book/Developer.md",
+          "scope": "Benchmark / Debugging / Known Limitations",
+          "kind": "technical_document"
+        },
+        {
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/book/Benchmark.md",
+          "scope": "不同模型的历史单例错误与专家模拟工具设计缘由；不作为现有模型比较结论",
+          "kind": "technical_document"
+        }
+      ],
+      "category_detail": "有官方获奖证据的专业科学工具案例",
+      "status_label": "2024 材料与化学 LLM 黑客松 · Radical AI 第 1 名",
+      "problem": "让研究者用自然语言调用可信的原子模拟工具。",
+      "takeaway": "模型负责规划，专业工具负责算数与可验证结果；工具合同明确输入类型、输出单位与失败状态；将文献证据和计算证据分开标示。",
+      "limits": [
+        "材料模拟依赖专门的软件栈，研证应先接入自身研究场景需要的数值或符号工具。",
+        "专家封装工具仍需独立校验；读到的异常处理会返回固定字符串，不能据此保证每次结果都正确。",
+        "统一 API 只提供接口兼容性，模型的工具调用质量仍需分别实测。"
+      ],
+      "sources": [
+        {
+          "title": "LangSim",
+          "url": "https://www.mpie.de/5063016/LangSim",
+          "read_scope": "官方项目介绍：工具接口、铝体积模量例子、逆合金设计、获奖说明"
+        },
+        {
+          "title": "llmhackathon",
+          "url": "https://github.com/llmhackathon",
+          "read_scope": "2024 项目表及 2024 Prize Winners / Radical AI Prizes / Anthropic prizes"
+        },
+        {
+          "title": "llm.py",
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/langsim/llm.py",
+          "read_scope": "get_executor：provider 分支、工具列表、bind_tools、AgentExecutor"
+        },
+        {
+          "title": "simulation_atomistics.py",
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/langsim/tools/simulation_atomistics.py",
+          "read_scope": "AtomsDict、get_bulk_modulus、get_equilibrium_volume、get_calculator；读取源文件，未执行"
+        },
+        {
+          "title": "experimental_literature.py",
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/langsim/tools/experimental_literature.py",
+          "read_scope": "实验参考值工具及输出单位的描述"
+        },
+        {
+          "title": "Developer.md",
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/book/Developer.md",
+          "read_scope": "Benchmark / Debugging / Known Limitations"
+        },
+        {
+          "title": "Benchmark.md",
+          "url": "https://github.com/jan-janssen/LangSim/blob/main/book/Benchmark.md",
+          "read_scope": "不同模型的历史单例错误与专家模拟工具设计缘由；不作为现有模型比较结论"
+        }
+      ]
+    },
+    {
+      "id": "lk99_hypothesis_assessment",
+      "name": "LLMs for Hypothesis Assessment / LK-99 Hypothesis Inference",
+      "category": "award",
+      "author": "Marcus Schwarting",
+      "award": "2024 材料与化学 LLM 黑客松 Anthropic 奖（不分名次）。",
+      "award_source": "https://github.com/llmhackathon",
+      "pipeline": [
+        "从 Excel 读取论文摘要和题录",
+        "Ollama llama3 对摘要分类 yes/no/neutral",
+        "按论文日期排序",
+        "按影响因子启发式设权并更新高斯变量",
+        "Plotly 时间曲线及题名 DOI 悬浮信息"
+      ],
+      "evidence_flow": "题录、摘要立场与日期直接关联；Notebook 同时绘制手填的 Manifold 市场数据作为参照。没有观察到自动爬取全文或稳健统计校准。",
+      "human_control": "作者准备论文表和假设，设定分类提示、影响因子权重与初始状态。输出应由研究者回看摘要核验。",
+      "borrow": [
+        "把支持、反对与不确定证据同时呈现",
+        "每个立场保留题名、DOI、日期和阅读范围",
+        "证据随时间变化的日志，保留否定结论"
+      ],
+      "avoid_for_now": [
+        "把分类标签或时间曲线称为科学真假证明",
+        "照搬影响因子权重或把 likelihood 当严格概率",
+        "Notebook 使用方差变量作 norm.cdf 的 scale，且两个独立 if 会覆盖部分权重档；还有未识别模型输出的处理缺口"
+      ],
+      "read_sources": [
+        {
+          "url": "https://github.com/llmhackathon",
+          "scope": "项目表 Marcus Schwarting 对应仓库链接；Anthropic prizes 中的 LLMs for Hypothesis Assessment",
+          "kind": "organizer_primary"
+        },
+        {
+          "url": "https://github.com/meschw04/lk99_inference",
+          "scope": "README 项目意图、作者及参赛背景",
+          "kind": "author_primary"
+        },
+        {
+          "url": "https://github.com/meschw04/lk99_inference/blob/main/LK99_Notebook.ipynb",
+          "scope": "全部非空代码单元；摘要分类、日期排序、权重更新和绘图；读取 JSON 源码，未执行",
+          "kind": "implementation"
+        }
+      ],
+      "identity_note": "这是独立于 LangSim 的项目，不能当作 LangSim Notebook。",
+      "category_detail": "有官方获奖证据的科学共识原型",
+      "status_label": "2024 材料与化学 LLM 黑客松 · Anthropic 奖（不分名次）",
+      "problem": "聚合论文摘要，跟踪关于一个假设的文献立场变化。",
+      "takeaway": "把支持、反对与不确定证据同时呈现；每个立场保留题名、DOI、日期和阅读范围；证据随时间变化的日志，保留否定结论。",
+      "limits": [
+        "摘要分类标签和时间曲线只能呈现文献立场，不能证明科学假设的真假。",
+        "影响因子权重属于原型的启发式设定，其 likelihood 尚不能视为经过校准的严格概率。",
+        "Notebook 使用方差变量作 norm.cdf 的 scale，且两个独立 if 会覆盖部分权重档；未识别模型输出的处理也存在缺口，因此不宜直接沿用其统计实现。"
+      ],
+      "sources": [
+        {
+          "title": "llmhackathon",
+          "url": "https://github.com/llmhackathon",
+          "read_scope": "项目表 Marcus Schwarting 对应仓库链接；Anthropic prizes 中的 LLMs for Hypothesis Assessment"
+        },
+        {
+          "title": "lk99_inference",
+          "url": "https://github.com/meschw04/lk99_inference",
+          "read_scope": "README 项目意图、作者及参赛背景"
+        },
+        {
+          "title": "LK99_Notebook.ipynb",
+          "url": "https://github.com/meschw04/lk99_inference/blob/main/LK99_Notebook.ipynb",
+          "read_scope": "全部非空代码单元；摘要分类、日期排序、权重更新和绘图；读取 JSON 源码，未执行"
+        }
+      ]
+    },
+    {
+      "id": "funsearch",
+      "name": "FunSearch",
+      "category": "research",
+      "pipeline": [
+        "人写问题规格、评价函数和种子程序",
+        "程序数据库选择历史候选构造提示",
+        "语言模型生成函数体",
+        "评价器将函数嵌回固定模板",
+        "沙箱执行测试输入并返回数字分数",
+        "通过执行检查的候选进入数据库，继续搜索"
+      ],
+      "evidence_flow": "程序是可查看的构造；得分来自外部执行。实现保存逐测试输入的分数，排除调用祖先版本的候选。论文方法与仓库可运行范围不同：开源仓库没有语言模型和沙箱实现。",
+      "human_control": "人定义固定评价器、任务输入和初始程序，并判断所优化的分数是否对应真正研究问题。",
+      "borrow": [
+        "先写评价标准，再比较候选",
+        "每个方向包含基线、指标、最低可行验证和停止条件",
+        "可追溯保存参数、程序版本、测试数据和反例"
+      ],
+      "avoid_for_now": [
+        "开放式自动生成并执行任意 Python",
+        "复制 sampler 的无限循环",
+        "把有限样例得分提高当定理证明",
+        "声称下载官方仓库即可完整部署系统"
+      ],
+      "read_sources": [
+        {
+          "url": "https://deepmind.google/blog/funsearch-making-new-discoveries-in-mathematical-sciences-using-large-language-models/",
+          "scope": "Driving discovery through evolution with language models：种子、评价器、程序池与迭代",
+          "kind": "author_primary"
+        },
+        {
+          "url": "https://github.com/google-deepmind/funsearch",
+          "scope": "implementation 的发布范围与缺失组件说明",
+          "kind": "author_primary"
+        },
+        {
+          "url": "https://github.com/google-deepmind/funsearch/blob/main/implementation/funsearch.py",
+          "scope": "main 与 @funsearch.run / @funsearch.evolve 的规格解析",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/google-deepmind/funsearch/blob/main/implementation/evaluator.py",
+          "scope": "Sandbox 接口、Evaluator.analyse、按输入记录分数",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/google-deepmind/funsearch/blob/main/implementation/sampler.py",
+          "scope": "LLM 抽象、Sampler.sample 的数据库提示与无限循环",
+          "kind": "implementation"
+        }
+      ],
+      "category_detail": "数学程序搜索研究案例；未声称黑客松获奖",
+      "status_label": "DeepMind 公开研究 · Nature 2023",
+      "problem": "在有固定评价器的问题中搜索可运行的程序构造。",
+      "takeaway": "先写评价标准，再比较候选；每个方向包含基线、指标、最低可行验证和停止条件；可追溯保存参数、程序版本、测试数据和反例。",
+      "limits": [
+        "模型生成的 Python 属于不可信代码，执行前需要受限沙箱；研证当前不开放任意代码执行。",
+        "sampler 的无限循环缺少适合研证的任务结束边界，实际接入需要明确预算和停止条件。",
+        "有限测试样例的得分提高不等于定理证明，结论范围必须与评价器和测试输入一致。",
+        "官方仓库未提供完整的语言模型与沙箱实现，下载仓库不能直接得到完整系统。"
+      ],
+      "sources": [
+        {
+          "title": "官方资料",
+          "url": "https://deepmind.google/blog/funsearch-making-new-discoveries-in-mathematical-sciences-using-large-language-models/",
+          "read_scope": "Driving discovery through evolution with language models：种子、评价器、程序池与迭代"
+        },
+        {
+          "title": "funsearch",
+          "url": "https://github.com/google-deepmind/funsearch",
+          "read_scope": "implementation 的发布范围与缺失组件说明"
+        },
+        {
+          "title": "funsearch.py",
+          "url": "https://github.com/google-deepmind/funsearch/blob/main/implementation/funsearch.py",
+          "read_scope": "main 与 @funsearch.run / @funsearch.evolve 的规格解析"
+        },
+        {
+          "title": "evaluator.py",
+          "url": "https://github.com/google-deepmind/funsearch/blob/main/implementation/evaluator.py",
+          "read_scope": "Sandbox 接口、Evaluator.analyse、按输入记录分数"
+        },
+        {
+          "title": "sampler.py",
+          "url": "https://github.com/google-deepmind/funsearch/blob/main/implementation/sampler.py",
+          "read_scope": "LLM 抽象、Sampler.sample 的数据库提示与无限循环"
+        }
+      ]
+    },
+    {
+      "id": "storm_costorm",
+      "name": "Stanford STORM / Co-STORM",
+      "category": "research",
+      "pipeline": [
+        "从相关主题探索多种视角",
+        "视角引导追问",
+        "把问题拆成检索词并依据来源作答",
+        "汇集对话和去重来源",
+        "基于证据生成大纲",
+        "逐章节写作与润色"
+      ],
+      "evidence_flow": "DialogueTurn 记录 search_queries 与 search_results；StormInformationTable 按 URL 汇集并去重 snippets；文章参考映射保存 URL 到统一引用编号。Runner 分别保存对话、原始搜索结果、大纲、报告与调用配置。",
+      "human_control": "原版 STORM 主要在人给主题与运行参数后自动执行。Co-STORM.step 支持 user_utterance 注入，使人可在讨论中转向；不是每一输出都已人工审查。",
+      "borrow": [
+        "追问必须解释为何改变选题决策",
+        "检索结果、阅读摘录和最终建议分开保存",
+        "保持对话与方向卡片的来源映射",
+        "阶段性中间成果可导出和重开"
+      ],
+      "avoid_for_now": [
+        "把长篇报告长度当科研价值",
+        "直接照搬 Wikipedia 视角发现到全部学科",
+        "同时加入多视角聊天、向量数据库及大型 agent 框架",
+        "认为带引用就自动消除来源偏见及错误关联"
+      ],
+      "read_sources": [
+        {
+          "url": "https://arxiv.org/html/2402.14207v1",
+          "scope": "第 3 节 3.1–3.4 方法，限制与 Appendix B 伪代码；没有逐篇核查其全部引用",
+          "kind": "paper_methods"
+        },
+        {
+          "url": "https://github.com/stanford-oval/storm/blob/main/knowledge_storm/storm_wiki/engine.py",
+          "scope": "STORMWikiRunner 初始化、阶段方法、run 的中间文件恢复、post_run 日志",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/stanford-oval/storm/blob/main/knowledge_storm/storm_wiki/modules/storm_dataclass.py",
+          "scope": "DialogueTurn、StormInformationTable、引用映射与保存",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/stanford-oval/storm/blob/main/knowledge_storm/collaborative_storm/engine.py",
+          "scope": "generate_report 与 step 的 user_utterance 处理",
+          "kind": "implementation"
+        }
+      ],
+      "category_detail": "开源知识整理与研究架构案例；未声称黑客松获奖",
+      "status_label": "Stanford 开源研究 · 知识整理与协作",
+      "problem": "在写报告前探索问题、收集来源并组织大纲。",
+      "takeaway": "追问必须解释为何改变选题决策；检索结果、阅读摘录和最终建议分开保存；保持对话与方向卡片的来源映射；阶段性中间成果可导出和重开。",
+      "limits": [
+        "报告长度不能作为科研价值或证据质量的判断依据。",
+        "基于 Wikipedia 的视角发现面向其特定写作任务，迁移到不同学科需要重新评估。",
+        "多视角聊天、向量数据库和大型 agent 框架会扩展系统复杂度，研证当前优先保留必要的职责与数据边界。",
+        "附带引用不能自动消除来源偏见或事实之间的错误关联，仍需核对具体论断。"
+      ],
+      "sources": [
+        {
+          "title": "2402.14207v1",
+          "url": "https://arxiv.org/html/2402.14207v1",
+          "read_scope": "第 3 节 3.1–3.4 方法，限制与 Appendix B 伪代码；没有逐篇核查其全部引用"
+        },
+        {
+          "title": "engine.py",
+          "url": "https://github.com/stanford-oval/storm/blob/main/knowledge_storm/storm_wiki/engine.py",
+          "read_scope": "STORMWikiRunner 初始化、阶段方法、run 的中间文件恢复、post_run 日志"
+        },
+        {
+          "title": "storm_dataclass.py",
+          "url": "https://github.com/stanford-oval/storm/blob/main/knowledge_storm/storm_wiki/modules/storm_dataclass.py",
+          "read_scope": "DialogueTurn、StormInformationTable、引用映射与保存"
+        },
+        {
+          "title": "engine.py",
+          "url": "https://github.com/stanford-oval/storm/blob/main/knowledge_storm/collaborative_storm/engine.py",
+          "read_scope": "generate_report 与 step 的 user_utterance 处理"
+        }
+      ]
+    },
+    {
+      "id": "gpt_researcher",
+      "name": "GPT Researcher",
+      "category": "product",
+      "pipeline": [
+        "根据原问题检索并规划子问题",
+        "并行收集网页或本地文档",
+        "检索/压缩相关上下文",
+        "保留来源集合与费用日志",
+        "写带来源的报告",
+        "可选多角色审阅与修订"
+      ],
+      "evidence_flow": "ResearchConductor 区分 provided URLs、web 与 local；GPTResearcher 保留 research_sources、visited_urls、context、research_costs、step_costs。Data Ingestion 文档要求内容块 metadata 保留 source/title，可使用向量存储。",
+      "human_control": "人配置主题、来源模式、查询域名、最多章节；LangGraph 示例 include_human_feedback 可开启人类反馈。基础研究流程不等于人审过结论。",
+      "borrow": [
+        "Retriever 与模型服务分开适配",
+        "给用户选择网络资料、已提供资料或二者结合",
+        "逐步状态和每步费用/耗时可观测",
+        "审阅者依据预设标准指出缺口而非只润色"
+      ],
+      "avoid_for_now": [
+        "为了 agent 数量而一次引入七角色",
+        "立即引入 Postgres + pgvector",
+        "把访问过的 URL 计为已读证据",
+        "把历史示例模型和成本估计当当前千问成本承诺"
+      ],
+      "read_sources": [
+        {
+          "url": "https://docs.gptr.dev/docs/gpt-researcher/getting-started/introduction",
+          "scope": "Architecture：planner / execution 分工",
+          "kind": "technical_document"
+        },
+        {
+          "url": "https://docs.gptr.dev/docs/gpt-researcher/context/data-ingestion",
+          "scope": "Step 1–3、source/title metadata 与分批入库示例",
+          "kind": "technical_document"
+        },
+        {
+          "url": "https://docs.gptr.dev/docs/gpt-researcher/multi_agents/langgraph",
+          "scope": "The Multi Agent Team / How it works / Task.json include_human_feedback",
+          "kind": "technical_document"
+        },
+        {
+          "url": "https://github.com/assafelovic/gpt-researcher/blob/master/gpt_researcher/skills/researcher.py",
+          "scope": "ResearchConductor.plan_research 和 conduct_research 的来源分支",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/assafelovic/gpt-researcher/blob/master/gpt_researcher/skills/context_manager.py",
+          "scope": "ContextManager 查询相关段落与 VectorstoreCompressor",
+          "kind": "implementation"
+        },
+        {
+          "url": "https://github.com/assafelovic/gpt-researcher/blob/master/gpt_researcher/agent.py",
+          "scope": "get_research_sources / get_source_urls / get_step_costs / add_costs",
+          "kind": "implementation"
+        }
+      ],
+      "category_detail": "开源深度检索与报告架构案例；未声称黑客松获奖",
+      "status_label": "开源研究工具 · 规划、检索与带来源报告",
+      "problem": "把一个主题拆成子问题，汇集网络或本地资料。",
+      "takeaway": "Retriever 与模型服务分开适配；给用户选择网络资料、已提供资料或二者结合；逐步状态和每步费用/耗时可观测；审阅者依据预设标准指出缺口而非只润色。",
+      "limits": [
+        "七角色是特定工作流示例，角色数量本身不能保证结果质量；研证应按实际任务需要划分职责。",
+        "Postgres 与 pgvector 并非当前小型本地项目的必需依赖，存储扩展应由资料规模和检索需求决定。",
+        "访问过的 URL 不等于已阅读证据，来源还需记录实际阅读范围与核对位置。",
+        "历史示例使用的模型和成本估计不能作为当前千问调用成本的承诺，应以实际调用记录为准。"
+      ],
+      "sources": [
+        {
+          "title": "introduction",
+          "url": "https://docs.gptr.dev/docs/gpt-researcher/getting-started/introduction",
+          "read_scope": "Architecture：planner / execution 分工"
+        },
+        {
+          "title": "data-ingestion",
+          "url": "https://docs.gptr.dev/docs/gpt-researcher/context/data-ingestion",
+          "read_scope": "Step 1–3、source/title metadata 与分批入库示例"
+        },
+        {
+          "title": "langgraph",
+          "url": "https://docs.gptr.dev/docs/gpt-researcher/multi_agents/langgraph",
+          "read_scope": "The Multi Agent Team / How it works / Task.json include_human_feedback"
+        },
+        {
+          "title": "researcher.py",
+          "url": "https://github.com/assafelovic/gpt-researcher/blob/master/gpt_researcher/skills/researcher.py",
+          "read_scope": "ResearchConductor.plan_research 和 conduct_research 的来源分支"
+        },
+        {
+          "title": "context_manager.py",
+          "url": "https://github.com/assafelovic/gpt-researcher/blob/master/gpt_researcher/skills/context_manager.py",
+          "read_scope": "ContextManager 查询相关段落与 VectorstoreCompressor"
+        },
+        {
+          "title": "agent.py",
+          "url": "https://github.com/assafelovic/gpt-researcher/blob/master/gpt_researcher/agent.py",
+          "read_scope": "get_research_sources / get_source_urls / get_step_costs / add_costs"
+        }
+      ]
+    }
+  ],
+  "additional_verified_award_context": {
+    "url": "https://startup.aliyun.com/info/1083843.html",
+    "scope": "2024-04-16 阿里云 Create@AI 第四季官方复盘及奖项段落；这是另一届活动，不是本届天猫比赛规则。未从简介推出完整内部代码架构。",
+    "examples": [
+      {
+        "name": "ChaosAgent 混沌工程助手",
+        "award": "三等奖",
+        "published_description": "自然语言协作串联计划制定、故障注入、实时监控和实验报告。",
+        "lesson": "专业场景和可见过程，比通用聊天更容易展示价值。"
+      },
+      {
+        "name": "Landing Page 生成器",
+        "award": "最佳技术突破奖",
+        "published_description": "基于成套设计系统生成匹配组件，使用 AgentScope 和 Next.js。",
+        "lesson": "统一产物合同优先于任意生成组件。"
+      }
+    ]
+  },
+  "synthesis_for_yanzheng": {
+    "positioning": "帮助学生把初始想法转成有证据、有基线、可开始验证的科研计划；保留研究者选题与判断。",
+    "recommended_modules": [
+      "研究画像与澄清",
+      "文献检索适配器",
+      "带阅读范围的证据卡片",
+      "候选方向比较与人工选择",
+      "验证合同：问题/基线/指标/预算/停止条件",
+      "阶段日志及成果导出"
+    ],
+    "highest_value_near_term": [
+      "接入真实千问但保持固定结构校验",
+      "真实来源导入与核验，防止虚构引用",
+      "以一个随机 SVD 示例闭环证明从选题到计算证据",
+      "把已做、模拟与待接入状态标清"
+    ],
+    "avoid_scope_expansion": [
+      "完全自主科学家",
+      "任意代码执行",
+      "自动论文写作与投稿",
+      "大量装饰性 agent",
+      "没有依据的创新性或真假概率"
+    ]
+  },
+  "record_type": "case_architecture_review",
+  "boundary_reference": {
+    "id": "ai_scientist_v2",
+    "name": "Sakana AI Scientist-v2",
+    "category": "研究原型和边界参考；未声称黑客松获奖",
+    "pipeline": [
+      "生成想法",
+      "最小工作原型",
+      "基线调参",
+      "执行研究议程",
+      "消融与重复实验",
+      "图表 VLM 审阅",
+      "写作和 LLM/VLM 审阅"
+    ],
+    "evidence_flow": "树节点包含计划、代码、运行时间、指标、错误栈、图表路径和审阅反馈。管理者选择节点进入下一阶段，重复运行给出统计。启动器保存 idea.json、调用/费用记录及审阅文件。",
+    "human_control": "人限定研究主题、预算和数据环境，研发团队还对提交结果做科学与代码审查；运行代码的系统本身高度自主。",
+    "borrow": [
+      "先最小可行验证，再主实验与消融",
+      "记录失败、错误和停止理由",
+      "区分计划、执行完成及证据支持",
+      "实验记录应有运行参数、指标和产物路径"
+    ],
+    "avoid_for_now": [
+      "自动写并执行任意代码与自动投稿",
+      "Linux/NVIDIA/CUDA 复杂运行依赖和并行实验树",
+      "没有预算与停止标准的长时间模型循环",
+      "认为模型审稿等于科学有效性"
+    ],
+    "read_sources": [
+      {
+        "url": "https://arxiv.org/html/2504.08066v1",
+        "scope": "第 3.2 节阶段管理与树节点定义；第 5 节限制；Appendix A 预算；不声称所有附录论文全文均已审核",
+        "kind": "paper_methods"
+      },
+      {
+        "url": "https://github.com/SakanaAI/AI-Scientist-v2",
+        "scope": "Requirements、Caution、v1/v2 范围差异",
+        "kind": "author_primary"
+      },
+      {
+        "url": "https://github.com/SakanaAI/AI-Scientist-v2/blob/main/launch_scientist_bfts.py",
+        "scope": "想法输入、参数、输出目录、实验、绘图、写作与审阅串联",
+        "kind": "implementation"
+      }
+    ]
+  }
+}

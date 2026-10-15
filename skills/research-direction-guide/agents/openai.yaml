@@ -1,0 +1,4 @@
+interface:
+  display_name: "研究方向探索"
+  short_description: "澄清研究想法与资源约束，结合可追溯文献形成可检验的候选课题卡"
+  default_prompt: "使用 $research-direction-guide，先澄清我的研究想法，再给出有依据、可验证的候选课题。"

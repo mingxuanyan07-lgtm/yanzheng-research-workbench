@@ -1,0 +1,173 @@
+{
+  "record_type": "research_direction_map_demo",
+  "initial_idea": "我想研究随机算法在 AI 中的应用，尤其是随机低秩逼近的精度与计算预算。",
+  "constraints": {
+    "preference": "experimental",
+    "resources": "laptop"
+  },
+  "organization_method": "匹配内置随机低秩案例，按研究偏好排序",
+  "model_called": false,
+  "live_search_performed": false,
+  "reference_status": "预先核实的种子参考资料；不是此次实时检索结果",
+  "research_novelty": "待文献查新与研究者判断",
+  "topics": [
+    {
+      "id": "budget",
+      "title": "固定预算下，如何选择随机 SVD 参数？",
+      "kind": "实验优先",
+      "readiness": "已有基线可起步",
+      "question": "在给定耗时预算下，过采样量 p 与幂迭代次数 q 的哪些组合能更接近同矩阵的最优秩 k 误差？",
+      "known": "过采样和幂迭代已有成熟方法与误差分析；先复现，再研究特定预算下的配置策略。",
+      "entry": "从现有 p/q 网格起步，检验预算达标次数与误差的取舍；后续再考虑基于谱诊断的自适应选参。",
+      "first": [
+        "复用 3 类固定矩阵和精确截断 SVD 基线。",
+        "比较 p∈{4,8,16}、q∈{0,1,2}；新增独立矩阵种子。",
+        "设定相同时间预算，同时报告误差分布与逐次达标率。"
+      ],
+      "criterion": "若所谓优势只来自更多计算、少数种子或不一致计时范围，淘汰该优势解释并重做对照。",
+      "metrics": "归一化 Frobenius 误差、耗时分布、预算达标率。",
+      "open": "能否形成可迁移的选参依据，而不仅是这 3 个矩阵上的规则？",
+      "refs": [
+        [
+          "hmt",
+          "提供随机 rangefinder、过采样与幂迭代的算法基础。"
+        ]
+      ],
+      "dataset": "slow_decay",
+      "p": "8",
+      "q": "1",
+      "budget": "0.3",
+      "newImplementation": false,
+      "references": [
+        {
+          "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+          "authors": "Halko / Martinsson / Tropp",
+          "year": "2009 预印本 · 2011 SIAM Review",
+          "url": "https://arxiv.org/abs/0909.4061",
+          "status": "已核实的种子参考资料",
+          "reviewed_on": "2026-10-13",
+          "relation": "提供随机 rangefinder、过采样与幂迭代的算法基础。"
+        }
+      ]
+    },
+    {
+      "id": "spectrum",
+      "title": "哪些谱形态，会让低秩近似变难？",
+      "kind": "边界优先",
+      "readiness": "需要扩展测试矩阵",
+      "question": "快速衰减、缓慢衰减、聚簇谱与带噪低秩矩阵，怎样改变随机近似的误差、波动及幂迭代收益？",
+      "known": "谱衰减、误差估计和数值稳定性已有系统分析。困难谱形态是已有研究的重要条件。",
+      "entry": "建立有限测试条件下的失效画像，找出什么时候增加迭代仍不值得；为后续停止规则提供候选证据。",
+      "first": [
+        "以现有快速/缓慢衰减与带噪矩阵作为参照。",
+        "增加聚簇谱、多个噪声强度和独立数据种子。",
+        "固定秩与预算，对照近似误差和双侧 QR 重正交后的表现。"
+      ],
+      "criterion": "若现象只在一个固定数据种子出现，不能将它报告为稳定边界；增加独立矩阵后再判断。",
+      "metrics": "重构误差、随机波动、距精确基线差距、耗时。",
+      "open": "观察到的失效能否被已有理论解释？还需要证明哪些范围？",
+      "refs": [
+        [
+          "mt",
+          "提供低秩近似、误差估计、自适应与数值稳定性的整体框架。"
+        ],
+        [
+          "hmt",
+          "用于核对谱衰减与幂迭代的已有分析条件。"
+        ]
+      ],
+      "dataset": "fast_decay",
+      "p": "8",
+      "q": "1",
+      "budget": "0.3",
+      "newImplementation": true,
+      "references": [
+        {
+          "title": "Randomized Numerical Linear Algebra: Foundations & Algorithms",
+          "authors": "Martinsson / Tropp",
+          "year": "2020",
+          "url": "https://arxiv.org/abs/2002.01387",
+          "status": "已核实的种子参考资料",
+          "reviewed_on": "2026-10-13",
+          "relation": "提供低秩近似、误差估计、自适应与数值稳定性的整体框架。"
+        },
+        {
+          "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+          "authors": "Halko / Martinsson / Tropp",
+          "year": "2009 预印本 · 2011 SIAM Review",
+          "url": "https://arxiv.org/abs/0909.4061",
+          "status": "已核实的种子参考资料",
+          "reviewed_on": "2026-10-13",
+          "relation": "用于核对谱衰减与幂迭代的已有分析条件。"
+        }
+      ]
+    },
+    {
+      "id": "krylov",
+      "title": "同等资源下，Block Krylov 值得吗？",
+      "kind": "方法对照",
+      "readiness": "需要新增算法实现",
+      "question": "在相同矩阵访问或时间预算下，随机 Block Krylov 与随机 SVD 幂迭代的误差和计算代价如何取舍？",
+      "known": "Block Krylov 与 simultaneous power iteration 的比较已发表。方法本身是已有工作。",
+      "entry": "在特定应用规模、谱形态与资源约束下做公平复现；先确认实现，再判断有无值得发展的新策略。",
+      "first": [
+        "复现并单独核对 Block Krylov 的实现与重正交化。",
+        "预先选择同时间或同矩阵访问预算，记录内存与访问次数。",
+        "在多谱形态、独立矩阵和采样种子下比较，分别解释低秩误差与 PCA 指标。"
+      ],
+      "criterion": "若优势来自更多矩阵访问、额外内存或不同质量指标，撤回同等资源优势结论。",
+      "metrics": "同指标误差、耗时、内存、矩阵访问次数。",
+      "open": "你的数据分布与任务目标，是否提供了不同于已有比较的研究价值？",
+      "refs": [
+        [
+          "mm",
+          "提供 Block Krylov 与幂迭代的直接比较依据；需核对评价指标。"
+        ],
+        [
+          "mt",
+          "提供子空间 / Krylov 方法和实现背景。"
+        ]
+      ],
+      "dataset": "slow_decay",
+      "p": "8",
+      "q": "2",
+      "budget": "0.3",
+      "newImplementation": true,
+      "references": [
+        {
+          "title": "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+          "authors": "Cameron Musco / Christopher Musco",
+          "year": "2015",
+          "url": "https://arxiv.org/abs/1504.05477",
+          "status": "已核实的种子参考资料",
+          "reviewed_on": "2026-10-13",
+          "relation": "提供 Block Krylov 与幂迭代的直接比较依据；需核对评价指标。"
+        },
+        {
+          "title": "Randomized Numerical Linear Algebra: Foundations & Algorithms",
+          "authors": "Martinsson / Tropp",
+          "year": "2020",
+          "url": "https://arxiv.org/abs/2002.01387",
+          "status": "已核实的种子参考资料",
+          "reviewed_on": "2026-10-13",
+          "relation": "提供子空间 / Krylov 方法和实现背景。"
+        }
+      ]
+    }
+  ],
+  "search_plan": {
+    "seed_queries": [
+      "randomized low-rank approximation oversampling power iteration",
+      "randomized numerical linear algebra error estimation",
+      "randomized block Krylov low-rank approximation"
+    ],
+    "operations": [
+      "检索原始论文、综述与作者代码",
+      "核对题名、作者、版本和相关段落",
+      "记录支持、限制与相反证据",
+      "查找引用与被引工作，修订候选课题"
+    ]
+  },
+  "selected_topic_id": "budget",
+  "exported_at": "2026-10-13T07:16:52.307Z"
+}

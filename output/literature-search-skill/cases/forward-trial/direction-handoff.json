@@ -1,0 +1,118 @@
+{
+  "record_type": "literature_sources_handoff",
+  "created_at": "2026-10-14T11:30:39+00:00",
+  "source_record": "output/literature-search-skill/cases/forward-trial/literature-search.json",
+  "selected_source_ids": [
+    "S007",
+    "S008",
+    "S005",
+    "S003"
+  ],
+  "sources": [
+    {
+      "id": "S003",
+      "title": "Randomized Projection for Rank-Revealing Matrix Factorizations and Low-Rank Approximations",
+      "authors": [
+        "Jed A. Duersch",
+        "Ming Gu"
+      ],
+      "year_or_version": "arXiv:2008.04447v1 (2020)",
+      "url": "https://arxiv.org/abs/2008.04447v1",
+      "origin": "provided_material",
+      "verification": "abstract_checked",
+      "locator": "arXiv:2008.04447v1; canonical abs page Abstract and submission history (only v1), browser text lines 8–29",
+      "checked_at": "2026-10-14T11:30:39+00:00"
+    },
+    {
+      "id": "S005",
+      "title": "Randomized low-rank approximations beyond Gaussian random matrices",
+      "authors": [
+        "Arvind K. Saibaba",
+        "Agnieszka Międlar"
+      ],
+      "year_or_version": "arXiv:2308.05814v1 (2023)",
+      "url": "https://arxiv.org/abs/2308.05814v1",
+      "origin": "provided_material",
+      "verification": "fulltext_checked",
+      "locator": "arXiv:2308.05814v1 HTML; Abstract, §2.1–§2.2, Procedure 1; browser text lines 153–204",
+      "checked_at": "2026-10-14T11:30:39+00:00"
+    },
+    {
+      "id": "S007",
+      "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+      "authors": [
+        "Nathan Halko",
+        "Per-Gunnar Martinsson",
+        "Joel A. Tropp"
+      ],
+      "year_or_version": "arXiv:0909.4061v2 (2010)",
+      "url": "https://arxiv.org/abs/0909.4061v2",
+      "origin": "this_run",
+      "verification": "fulltext_checked",
+      "locator": "arXiv:0909.4061v2 HTML; Abstract, §1.2, §4.1 Randomized Range Finder, §4.5/Remark 4.3/Randomized Subspace Iteration, §5.1 Direct SVD; browser text lines 174–199, 660–665, 734–752, 809–819",
+      "checked_at": "2026-10-14T11:30:39+00:00"
+    },
+    {
+      "id": "S008",
+      "title": "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+      "authors": [
+        "Cameron Musco",
+        "Christopher Musco"
+      ],
+      "year_or_version": "arXiv:1504.05477v4 (2015)",
+      "url": "https://arxiv.org/abs/1504.05477v4",
+      "origin": "this_run",
+      "verification": "fulltext_checked",
+      "locator": "arXiv:1504.05477v4 HTML; Abstract, Algorithm 2, §5.1–§5.2, §8 text and Figure 3 caption; browser text lines 102–114, 253–284, 484–502",
+      "checked_at": "2026-10-14T11:30:39+00:00"
+    }
+  ],
+  "skipped": [],
+  "is_complete_direction_map": false,
+  "search_status_note": "新API查询执行2条均失败；直接种子网页检索批次成功；旧API题录作为provided_material导入，未伪记本轮查询。",
+  "evidence": [
+    {
+      "source_id": "S007",
+      "relation": "supports",
+      "claim": "For a first comparison, the read sections give a Gaussian range-finder baseline, stabilized randomized subspace iteration, and a common compressed-matrix SVD postprocessing step.",
+      "locator": "arXiv:0909.4061v2 §4.1, §4.5 Randomized Subspace Iteration, §5.1"
+    },
+    {
+      "source_id": "S007",
+      "relation": "limits",
+      "claim": "The read §4.5 warns that unorthogonalized power iteration can lose small singular modes in floating point; compare the QR-stabilized scheme, not just the idealized matrix-power formula.",
+      "locator": "arXiv:0909.4061v2 §4.5 Remark 4.3"
+    },
+    {
+      "source_id": "S008",
+      "relation": "supports",
+      "claim": "Algorithm 2 and §5.2 support block Krylov as a distinct iterative comparator. §8 reports a commodity-laptop experiment with 16 GB memory; this is the paper’s setting, not a result measured on the user’s laptop.",
+      "locator": "arXiv:1504.05477v4 Algorithm 2, §5.2, §8 last experiment paragraph"
+    },
+    {
+      "source_id": "S008",
+      "relation": "limits",
+      "claim": "The read implementation section uses a larger Krylov subspace and extra QR/postprocessing work, so fewer iterations alone do not establish less runtime or memory on the user’s machine.",
+      "locator": "arXiv:1504.05477v4 §5.2, Theorem 7 proof"
+    },
+    {
+      "source_id": "S005",
+      "relation": "supports",
+      "claim": "The 2023 preprint abstract and §2.1 identify non-Gaussian random-matrix families, including Rademacher and sparse Rademacher, making distribution choice a supported later comparison axis. No distribution-specific performance ranking is established by the material read.",
+      "locator": "arXiv:2308.05814v1 Abstract, §2.1"
+    },
+    {
+      "source_id": "S005",
+      "relation": "limits",
+      "claim": "The abstract says bounds have unspecified absolute constants, and §2.2 calls Procedure 1 idealized and vulnerable to roundoff. These sections do not give a ready numerical sample-count prescription or a stable implementation by themselves.",
+      "locator": "arXiv:2308.05814v1 Abstract, §2.2 Procedure 1 discussion"
+    },
+    {
+      "source_id": "S003",
+      "relation": "supports",
+      "claim": "The read abstract describes RQRCP using a smaller random sample for pivot decisions, with truncated RQRCP feeding TUXV. It supports an optional rank-revealing-QR comparison lead; implementation details and speed claims have not been checked in the body.",
+      "locator": "arXiv:2008.04447v1 Abstract on canonical abs page"
+    }
+  ],
+  "next_action": "后续选题先使用四篇已选来源及其精确核对位置；若准备实施方法对照，先补读块Krylov算法全部细节、非Gaussian分布对应定理/实验并确认内存预算，再由相应任务执行实验。"
+}

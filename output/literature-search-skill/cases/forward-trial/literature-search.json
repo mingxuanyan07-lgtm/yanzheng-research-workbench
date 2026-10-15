@@ -1,0 +1,764 @@
+{
+  "schema_version": "1.0",
+  "record_type": "research_literature_search",
+  "created_at": "2026-10-14T11:30:39+00:00",
+  "request": {
+    "idea": "普通笔记本上的随机低秩逼近首轮方法对照：基础随机SVD、子空间迭代、块Krylov及随机测试矩阵分布",
+    "queries": [
+      "Finding structure with randomness",
+      "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+      "Direct arXiv seed lookup: 0909.4061v2 and 1504.05477v4"
+    ],
+    "providers": [
+      "arxiv",
+      "web_direct_open"
+    ],
+    "year_from": null,
+    "year_to": null,
+    "max_results_per_query": 3
+  },
+  "provenance": {
+    "generator": "literature-search independent forward trial; search/import clients plus primary-source browser review",
+    "live_search_performed": true,
+    "external_model_api_called": false,
+    "new_experiments_executed": false,
+    "raw_input_sha256": "23a7afb58e892f8abeb39a2e3a1c95f3ee93a3f2b7c8181308198d077bc6c79a",
+    "raw_input_filename": "literature-client-check.live-approved.json",
+    "terminal_command_exit_code": 1
+  },
+  "search_log": [
+    {
+      "id": "Q001",
+      "provider": "arxiv",
+      "query": "Finding structure with randomness",
+      "status": "failed",
+      "searched_at": "2026-10-14T11:25:37+00:00",
+      "attempts": 1,
+      "result_count": 0,
+      "error": "URLError: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。",
+      "request_url": "https://export.arxiv.org/api/query?search_query=all%3A%22Finding%22+AND+all%3A%22structure%22+AND+all%3A%22with%22+AND+all%3A%22randomness%22&start=0&max_results=3&sortBy=relevance&sortOrder=descending",
+      "effective_query": "all:\"Finding\" AND all:\"structure\" AND all:\"with\" AND all:\"randomness\""
+    },
+    {
+      "id": "Q002",
+      "provider": "arxiv",
+      "query": "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+      "status": "failed",
+      "searched_at": "2026-10-14T11:25:40+00:00",
+      "attempts": 1,
+      "result_count": 0,
+      "error": "URLError: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。",
+      "request_url": "https://export.arxiv.org/api/query?search_query=all%3A%22Randomized%22+AND+all%3A%22Block%22+AND+all%3A%22Krylov%22+AND+all%3A%22Methods%22+AND+all%3A%22for%22+AND+all%3A%22Stronger%22+AND+all%3A%22and%22+AND+all%3A%22Faster%22+AND+all%3A%22Approximate%22+AND+all%3A%22Singular%22+AND+all%3A%22Value%22+AND+all%3A%22Decomposition%22&start=0&max_results=3&sortBy=relevance&sortOrder=descending",
+      "effective_query": "all:\"Randomized\" AND all:\"Block\" AND all:\"Krylov\" AND all:\"Methods\" AND all:\"for\" AND all:\"Stronger\" AND all:\"and\" AND all:\"Faster\" AND all:\"Approximate\" AND all:\"Singular\" AND all:\"Value\" AND all:\"Decomposition\""
+    },
+    {
+      "id": "Q003",
+      "provider": "web_direct_open",
+      "query": "Direct arXiv seed lookup: 0909.4061v2 and 1504.05477v4",
+      "status": "success",
+      "searched_at": "2026-10-14T11:28:05+00:00",
+      "attempts": 2,
+      "result_count": 2,
+      "error": null,
+      "request_urls": [
+        "https://arxiv.org/abs/0909.4061v2",
+        "https://arxiv.org/abs/1504.05477v4"
+      ],
+      "note": "Direct source lookup batch, not a keyword API query. Initial unversioned pages were also opened during review; no keyword web search was used."
+    }
+  ],
+  "sources": [
+    {
+      "id": "S001",
+      "title": "Randomized Methods for Dynamical Low-Rank Approximation",
+      "authors": [
+        "Benjamin Carrel"
+      ],
+      "year_or_version": 2024,
+      "url": "https://doi.org/10.2139/ssrn.5017212",
+      "origin": "provided_material",
+      "verification": "unverified",
+      "locator": null,
+      "checked_at": null,
+      "identifiers": {
+        "doi": "10.2139/ssrn.5017212",
+        "arxiv_id": null,
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": null,
+        "landing_page_url": "https://doi.org/10.2139/ssrn.5017212",
+        "pdf_url": null,
+        "license": null
+      },
+      "retrievals": [],
+      "versions": [],
+      "prior_review": [
+        {
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-14T11:22:28+00:00",
+          "locator": "API metadata"
+        }
+      ],
+      "original_metadata": {
+        "id": "S001",
+        "title": "Randomized Methods for Dynamical Low-Rank Approximation",
+        "authors": [
+          "Benjamin Carrel"
+        ],
+        "year_or_version": 2024,
+        "url": "https://doi.org/10.2139/ssrn.5017212",
+        "origin": "this_run",
+        "verification": "metadata_checked",
+        "locator": "API metadata",
+        "checked_at": "2026-10-14T11:22:28+00:00",
+        "identifiers": {
+          "doi": "10.2139/ssrn.5017212",
+          "arxiv_id": null,
+          "openalex_id": null
+        },
+        "abstract": null,
+        "access": {
+          "is_open_access": null,
+          "landing_page_url": "https://doi.org/10.2139/ssrn.5017212",
+          "pdf_url": null,
+          "license": null
+        },
+        "retrievals": [
+          {
+            "search_id": "Q001",
+            "provider": "crossref",
+            "url": "https://api.crossref.org/works?query.bibliographic=randomized+low+rank+approximation&rows=2",
+            "retrieved_at": "2026-10-14T11:22:28+00:00"
+          }
+        ],
+        "versions": []
+      },
+      "reviewed_versions": []
+    },
+    {
+      "id": "S002",
+      "title": "Chapter 4: Randomized methods for low-rank approximation",
+      "authors": [],
+      "year_or_version": 2019,
+      "url": "https://doi.org/10.1137/1.9781611976045.ch4",
+      "origin": "provided_material",
+      "verification": "unverified",
+      "locator": null,
+      "checked_at": null,
+      "identifiers": {
+        "doi": "10.1137/1.9781611976045.ch4",
+        "arxiv_id": null,
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": null,
+        "landing_page_url": "https://doi.org/10.1137/1.9781611976045.ch4",
+        "pdf_url": null,
+        "license": null
+      },
+      "retrievals": [],
+      "versions": [],
+      "prior_review": [
+        {
+          "verification": "unverified",
+          "checked_at": "2026-10-14T11:22:28+00:00",
+          "locator": null
+        }
+      ],
+      "original_metadata": {
+        "id": "S002",
+        "title": "Chapter 4: Randomized methods for low-rank approximation",
+        "authors": [],
+        "year_or_version": 2019,
+        "url": "https://doi.org/10.1137/1.9781611976045.ch4",
+        "origin": "this_run",
+        "verification": "unverified",
+        "locator": null,
+        "checked_at": "2026-10-14T11:22:28+00:00",
+        "identifiers": {
+          "doi": "10.1137/1.9781611976045.ch4",
+          "arxiv_id": null,
+          "openalex_id": null
+        },
+        "abstract": null,
+        "access": {
+          "is_open_access": null,
+          "landing_page_url": "https://doi.org/10.1137/1.9781611976045.ch4",
+          "pdf_url": null,
+          "license": null
+        },
+        "retrievals": [
+          {
+            "search_id": "Q001",
+            "provider": "crossref",
+            "url": "https://api.crossref.org/works?query.bibliographic=randomized+low+rank+approximation&rows=2",
+            "retrieved_at": "2026-10-14T11:22:28+00:00"
+          }
+        ],
+        "versions": []
+      },
+      "reviewed_versions": []
+    },
+    {
+      "id": "S003",
+      "title": "Randomized Projection for Rank-Revealing Matrix Factorizations and Low-Rank Approximations",
+      "authors": [
+        "Jed A. Duersch",
+        "Ming Gu"
+      ],
+      "year_or_version": "arXiv:2008.04447v1 (2020)",
+      "url": "https://arxiv.org/abs/2008.04447v1",
+      "origin": "provided_material",
+      "verification": "abstract_checked",
+      "locator": "arXiv:2008.04447v1; canonical abs page Abstract and submission history (only v1), browser text lines 8–29",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "2008.04447",
+        "openalex_id": null
+      },
+      "abstract": "Rank-revealing matrix decompositions provide an essential tool in spectral analysis of matrices, including the Singular Value Decomposition (SVD) and related low-rank approximation techniques. QR with Column Pivoting (QRCP) is usually suitable for these purposes, but it can be much slower than the unpivoted QR algorithm. For large matrices, the difference in performance is due to increased communication between the processor and slow memory, which QRCP needs in order to choose pivots during decomposition. Our main algorithm, Randomized QR with Column Pivoting (RQRCP), uses randomized projection to make pivot decisions from a much smaller sample matrix, which we can construct to reside in a faster level of memory than the original matrix. This technique may be understood as trading vastly reduced communication for a controlled increase in uncertainty during the decision process. For rank-revealing purposes, the selection mechanism in RQRCP produces results that are the same quality as the standard algorithm, but with performance near that of unpivoted QR (often an order of magnitude faster for large matrices). We also propose two formulas that facilitate further performance improvements. The first efficiently updates sample matrices to avoid computing new randomized projections. The second avoids large trailing updates during the decomposition in truncated low-rank approximations. Our truncated version of RQRCP also provides a key initial step in our truncated SVD approximation, TUXV. These advances open up a new performance domain for large matrix factorizations that will support efficient problem-solving techniques for challenging applications in science, engineering, and data analysis.",
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://arxiv.org/abs/2008.04447v1",
+        "pdf_url": "https://arxiv.org/pdf/2008.04447v1",
+        "license": null
+      },
+      "retrievals": [],
+      "versions": [
+        "2008.04447v1"
+      ],
+      "prior_review": [
+        {
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-14T11:22:31+00:00",
+          "locator": "API metadata"
+        }
+      ],
+      "original_metadata": {
+        "id": "S003",
+        "title": "Randomized Projection for Rank-Revealing Matrix Factorizations and Low-Rank Approximations",
+        "authors": [
+          "Jed A. Duersch",
+          "Ming Gu"
+        ],
+        "year_or_version": 2020,
+        "url": "https://arxiv.org/abs/2008.04447v1",
+        "origin": "this_run",
+        "verification": "metadata_checked",
+        "locator": "API metadata",
+        "checked_at": "2026-10-14T11:22:31+00:00",
+        "identifiers": {
+          "doi": null,
+          "arxiv_id": "2008.04447",
+          "openalex_id": null
+        },
+        "abstract": "Rank-revealing matrix decompositions provide an essential tool in spectral analysis of matrices, including the Singular Value Decomposition (SVD) and related low-rank approximation techniques. QR with Column Pivoting (QRCP) is usually suitable for these purposes, but it can be much slower than the unpivoted QR algorithm. For large matrices, the difference in performance is due to increased communication between the processor and slow memory, which QRCP needs in order to choose pivots during decomposition. Our main algorithm, Randomized QR with Column Pivoting (RQRCP), uses randomized projection to make pivot decisions from a much smaller sample matrix, which we can construct to reside in a faster level of memory than the original matrix. This technique may be understood as trading vastly reduced communication for a controlled increase in uncertainty during the decision process. For rank-revealing purposes, the selection mechanism in RQRCP produces results that are the same quality as the standard algorithm, but with performance near that of unpivoted QR (often an order of magnitude faster for large matrices). We also propose two formulas that facilitate further performance improvements. The first efficiently updates sample matrices to avoid computing new randomized projections. The second avoids large trailing updates during the decomposition in truncated low-rank approximations. Our truncated version of RQRCP also provides a key initial step in our truncated SVD approximation, TUXV. These advances open up a new performance domain for large matrix factorizations that will support efficient problem-solving techniques for challenging applications in science, engineering, and data analysis.",
+        "access": {
+          "is_open_access": true,
+          "landing_page_url": "https://arxiv.org/abs/2008.04447v1",
+          "pdf_url": "https://arxiv.org/pdf/2008.04447v1",
+          "license": null
+        },
+        "retrievals": [
+          {
+            "search_id": "Q002",
+            "provider": "arxiv",
+            "url": "https://export.arxiv.org/api/query?search_query=all%3A%22randomized%22+AND+all%3A%22low%22+AND+all%3A%22rank%22+AND+all%3A%22approximation%22&start=0&max_results=2&sortBy=relevance&sortOrder=descending",
+            "retrieved_at": "2026-10-14T11:22:31+00:00"
+          }
+        ],
+        "versions": [
+          "2008.04447v1"
+        ]
+      },
+      "reviewed_versions": [
+        "2008.04447v1"
+      ],
+      "content_url": "https://arxiv.org/abs/2008.04447",
+      "remaining_reading": "RQRCP/TUXV pseudocode, pivot selection conditions, implementation and experiment settings have not been read."
+    },
+    {
+      "id": "S004",
+      "title": "Randomized Dimension Reduction on Massive Data",
+      "authors": [
+        "Stoyan Georgiev",
+        "Sayan Mukherjee"
+      ],
+      "year_or_version": 2012,
+      "url": "https://arxiv.org/abs/1211.1642v2",
+      "origin": "provided_material",
+      "verification": "unverified",
+      "locator": null,
+      "checked_at": null,
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "1211.1642",
+        "openalex_id": null
+      },
+      "abstract": "Scalability of statistical estimators is of increasing importance in modern applications and dimension reduction is often used to extract relevant information from data. A variety of popular dimension reduction approaches can be framed as symmetric generalized eigendecomposition problems. In this paper we outline how taking into account the low rank structure assumption implicit in these dimension reduction approaches provides both computational and statistical advantages. We adapt recent randomized low-rank approximation algorithms to provide efficient solutions to three dimension reduction methods: Principal Component Analysis (PCA), Sliced Inverse Regression (SIR), and Localized Sliced Inverse Regression (LSIR). A key observation in this paper is that randomization serves a dual role, improving both computational and statistical performance. This point is highlighted in our experiments on real and simulated data.",
+      "access": {
+        "is_open_access": null,
+        "landing_page_url": "https://arxiv.org/abs/1211.1642v2",
+        "pdf_url": null,
+        "license": null
+      },
+      "retrievals": [],
+      "versions": [
+        "1211.1642v2"
+      ],
+      "prior_review": [
+        {
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-14T11:22:31+00:00",
+          "locator": "API metadata"
+        }
+      ],
+      "original_metadata": {
+        "id": "S004",
+        "title": "Randomized Dimension Reduction on Massive Data",
+        "authors": [
+          "Stoyan Georgiev",
+          "Sayan Mukherjee"
+        ],
+        "year_or_version": 2012,
+        "url": "https://arxiv.org/abs/1211.1642v2",
+        "origin": "this_run",
+        "verification": "metadata_checked",
+        "locator": "API metadata",
+        "checked_at": "2026-10-14T11:22:31+00:00",
+        "identifiers": {
+          "doi": null,
+          "arxiv_id": "1211.1642",
+          "openalex_id": null
+        },
+        "abstract": "Scalability of statistical estimators is of increasing importance in modern applications and dimension reduction is often used to extract relevant information from data. A variety of popular dimension reduction approaches can be framed as symmetric generalized eigendecomposition problems. In this paper we outline how taking into account the low rank structure assumption implicit in these dimension reduction approaches provides both computational and statistical advantages. We adapt recent randomized low-rank approximation algorithms to provide efficient solutions to three dimension reduction methods: Principal Component Analysis (PCA), Sliced Inverse Regression (SIR), and Localized Sliced Inverse Regression (LSIR). A key observation in this paper is that randomization serves a dual role, improving both computational and statistical performance. This point is highlighted in our experiments on real and simulated data.",
+        "access": {
+          "is_open_access": true,
+          "landing_page_url": "https://arxiv.org/abs/1211.1642v2",
+          "pdf_url": "https://arxiv.org/pdf/1211.1642v2",
+          "license": null
+        },
+        "retrievals": [
+          {
+            "search_id": "Q002",
+            "provider": "arxiv",
+            "url": "https://export.arxiv.org/api/query?search_query=all%3A%22randomized%22+AND+all%3A%22low%22+AND+all%3A%22rank%22+AND+all%3A%22approximation%22&start=0&max_results=2&sortBy=relevance&sortOrder=descending",
+            "retrieved_at": "2026-10-14T11:22:31+00:00"
+          }
+        ],
+        "versions": [
+          "1211.1642v2"
+        ]
+      },
+      "reviewed_versions": []
+    },
+    {
+      "id": "S005",
+      "title": "Randomized low-rank approximations beyond Gaussian random matrices",
+      "authors": [
+        "Arvind K. Saibaba",
+        "Agnieszka Międlar"
+      ],
+      "year_or_version": "arXiv:2308.05814v1 (2023)",
+      "url": "https://arxiv.org/abs/2308.05814v1",
+      "origin": "provided_material",
+      "verification": "fulltext_checked",
+      "locator": "arXiv:2308.05814v1 HTML; Abstract, §2.1–§2.2, Procedure 1; browser text lines 153–204",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "2308.05814",
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://arxiv.org/abs/2308.05814v1",
+        "pdf_url": "https://arxiv.org/pdf/2308.05814v1",
+        "license": null
+      },
+      "retrievals": [],
+      "versions": [
+        "2308.05814v1"
+      ],
+      "prior_review": [
+        {
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-14T11:22:33+00:00",
+          "locator": "API metadata"
+        }
+      ],
+      "original_metadata": {
+        "id": "S005",
+        "title": "Randomized Low-Rank Approximations beyond Gaussian Random Matrices",
+        "authors": [
+          "Arvind Krishna Saibaba",
+          "Agnieszka Międlar"
+        ],
+        "year_or_version": 2025,
+        "url": "https://doi.org/10.1137/23m1593255",
+        "origin": "this_run",
+        "verification": "metadata_checked",
+        "locator": "API metadata",
+        "checked_at": "2026-10-14T11:22:33+00:00",
+        "identifiers": {
+          "doi": "10.1137/23m1593255",
+          "arxiv_id": "2308.05814",
+          "openalex_id": "https://openalex.org/W4406472653"
+        },
+        "abstract": "Abstract. This paper expands the analysis of randomized low-rank approximation beyond the Gaussian distribution to four classes of random matrices: (1) independent sub-Gaussian entries, (2) independent sub-Gaussian columns, (3) independent bounded columns, and (4) independent columns with bounded second moment. Using a novel interpretation of the low-rank approximation error involving sample covariance matrices, we provide insight into the requirements of a good random matrix for randomized low-rank approximations. Although our bounds involve unspecified absolute constants (a consequence of underlying nonasymptotic theory of random matrices), they allow for qualitative comparisons across distributions. The analysis offers some details on the minimal number of samples (the number of columns [Formula: see text] of the random matrix [Formula: see text]) and the error in the resulting low-rank approximation. We illustrate our analysis in the context of the randomized subspace iteration method as a representative algorithm for low-rank approximation; however, all the results are broadly applicable to other low-rank approximation techniques. We conclude our discussion with numerical examples using both synthetic and real-world test matrices.",
+        "access": {
+          "is_open_access": true,
+          "landing_page_url": "https://doi.org/10.1137/23m1593255",
+          "pdf_url": null,
+          "license": null
+        },
+        "retrievals": [
+          {
+            "search_id": "Q003",
+            "provider": "openalex",
+            "url": "https://api.openalex.org/works?search=randomized+low+rank+approximation&per_page=2",
+            "retrieved_at": "2026-10-14T11:22:33+00:00"
+          }
+        ],
+        "versions": [
+          "2308.05814"
+        ]
+      },
+      "reviewed_versions": [
+        "2308.05814v1"
+      ],
+      "content_url": "https://arxiv.org/html/2308.05814v1",
+      "field_conflicts": [
+        {
+          "field": "year_or_version",
+          "values": [
+            2025,
+            "arXiv:2308.05814v1 (2023)"
+          ],
+          "resolution": "2025 is imported publication metadata; claims in this record refer only to the read 2023 preprint."
+        },
+        {
+          "field": "doi",
+          "values": [
+            "10.1137/23m1593255",
+            null
+          ],
+          "resolution": "Journal DOI kept in original_metadata, not independently checked or used as the read-content identifier."
+        }
+      ],
+      "remaining_reading": "Distribution-specific theorems, constants, sampling conditions and §5 experiments remain unread; the journal version has not been compared."
+    },
+    {
+      "id": "S006",
+      "title": "A signal processing application of randomized low-rank approximations",
+      "authors": [
+        "Peter A. Parker",
+        "Patrick J. Wolfe",
+        "Vahid Tarokh"
+      ],
+      "year_or_version": 2005,
+      "url": "https://doi.org/10.1109/ssp.2005.1628618",
+      "origin": "provided_material",
+      "verification": "unverified",
+      "locator": null,
+      "checked_at": null,
+      "identifiers": {
+        "doi": "10.1109/ssp.2005.1628618",
+        "arxiv_id": null,
+        "openalex_id": "https://openalex.org/W2125444204"
+      },
+      "abstract": "Low-rank approximations lo linear operators find wide use in signal processing. In the discrete case, assuming the desired rank is known a priori, such approximations are generally calculated using the singular value decomposition. In this vein, randomized algorithms have recently been developed in the context of theoretical computer science, with the goal of achieving approximations arbitrarily close to this optimal low-rank solution with very high probability. Such algorithms function by finding (deterministic) low-rank approximations to random submatrices chosen probabilistically-thereby providing significant reductions in computational complexity, and leading to their applicability even in the case of very large matrices. Here it is demonstrated that algorithms of this type also show promise in signal processing applications, in particular for the case of adaptive beamforming in both the narrowband and wideband scenarios. Quantitative simulation results are provided to indicate that near-optimal nulling performance, as measured in terms of signal-to-interference-plus-noise ratio, may be achieved via straightforward modifications of the randomized algorithms described above. Results indicate that a large computational savings is possible, relative to standard methods, with little corresponding loss in performance",
+      "access": {
+        "is_open_access": null,
+        "landing_page_url": "https://doi.org/10.1109/ssp.2005.1628618",
+        "pdf_url": null,
+        "license": null
+      },
+      "retrievals": [],
+      "versions": [],
+      "prior_review": [
+        {
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-14T11:22:33+00:00",
+          "locator": "API metadata"
+        }
+      ],
+      "original_metadata": {
+        "id": "S006",
+        "title": "A signal processing application of randomized low-rank approximations",
+        "authors": [
+          "Peter A. Parker",
+          "Patrick J. Wolfe",
+          "Vahid Tarokh"
+        ],
+        "year_or_version": 2005,
+        "url": "https://doi.org/10.1109/ssp.2005.1628618",
+        "origin": "this_run",
+        "verification": "metadata_checked",
+        "locator": "API metadata",
+        "checked_at": "2026-10-14T11:22:33+00:00",
+        "identifiers": {
+          "doi": "10.1109/ssp.2005.1628618",
+          "arxiv_id": null,
+          "openalex_id": "https://openalex.org/W2125444204"
+        },
+        "abstract": "Low-rank approximations lo linear operators find wide use in signal processing. In the discrete case, assuming the desired rank is known a priori, such approximations are generally calculated using the singular value decomposition. In this vein, randomized algorithms have recently been developed in the context of theoretical computer science, with the goal of achieving approximations arbitrarily close to this optimal low-rank solution with very high probability. Such algorithms function by finding (deterministic) low-rank approximations to random submatrices chosen probabilistically-thereby providing significant reductions in computational complexity, and leading to their applicability even in the case of very large matrices. Here it is demonstrated that algorithms of this type also show promise in signal processing applications, in particular for the case of adaptive beamforming in both the narrowband and wideband scenarios. Quantitative simulation results are provided to indicate that near-optimal nulling performance, as measured in terms of signal-to-interference-plus-noise ratio, may be achieved via straightforward modifications of the randomized algorithms described above. Results indicate that a large computational savings is possible, relative to standard methods, with little corresponding loss in performance",
+        "access": {
+          "is_open_access": false,
+          "landing_page_url": "https://doi.org/10.1109/ssp.2005.1628618",
+          "pdf_url": null,
+          "license": null
+        },
+        "retrievals": [
+          {
+            "search_id": "Q003",
+            "provider": "openalex",
+            "url": "https://api.openalex.org/works?search=randomized+low+rank+approximation&per_page=2",
+            "retrieved_at": "2026-10-14T11:22:33+00:00"
+          }
+        ],
+        "versions": []
+      },
+      "reviewed_versions": []
+    },
+    {
+      "id": "S007",
+      "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+      "authors": [
+        "Nathan Halko",
+        "Per-Gunnar Martinsson",
+        "Joel A. Tropp"
+      ],
+      "year_or_version": "arXiv:0909.4061v2 (2010)",
+      "url": "https://arxiv.org/abs/0909.4061v2",
+      "origin": "this_run",
+      "verification": "fulltext_checked",
+      "locator": "arXiv:0909.4061v2 HTML; Abstract, §1.2, §4.1 Randomized Range Finder, §4.5/Remark 4.3/Randomized Subspace Iteration, §5.1 Direct SVD; browser text lines 174–199, 660–665, 734–752, 809–819",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "0909.4061",
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://arxiv.org/abs/0909.4061v2",
+        "pdf_url": "https://arxiv.org/pdf/0909.4061v2",
+        "license": null
+      },
+      "retrievals": [
+        {
+          "search_id": "Q003",
+          "provider": "web_direct_open",
+          "url": "https://arxiv.org/abs/0909.4061v2",
+          "retrieved_at": "2026-10-14T11:28:05+00:00"
+        }
+      ],
+      "versions": [
+        "0909.4061v2"
+      ],
+      "reviewed_versions": [
+        "0909.4061v2"
+      ],
+      "content_url": "https://arxiv.org/html/0909.4061v2",
+      "remaining_reading": "§9–§11 error proofs and the experimental tables remain unread; no claim of universal laptop speedup is made.",
+      "associated_publication_metadata": {
+        "journal_reference": "SIAM Review 53(2):217–288, June 2011",
+        "verification": "metadata_checked",
+        "locator": "arXiv abs page Journal reference",
+        "journal_doi_checked": false
+      }
+    },
+    {
+      "id": "S008",
+      "title": "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+      "authors": [
+        "Cameron Musco",
+        "Christopher Musco"
+      ],
+      "year_or_version": "arXiv:1504.05477v4 (2015)",
+      "url": "https://arxiv.org/abs/1504.05477v4",
+      "origin": "this_run",
+      "verification": "fulltext_checked",
+      "locator": "arXiv:1504.05477v4 HTML; Abstract, Algorithm 2, §5.1–§5.2, §8 text and Figure 3 caption; browser text lines 102–114, 253–284, 484–502",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "1504.05477",
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://arxiv.org/abs/1504.05477v4",
+        "pdf_url": "https://arxiv.org/pdf/1504.05477v4",
+        "license": null
+      },
+      "retrievals": [
+        {
+          "search_id": "Q003",
+          "provider": "web_direct_open",
+          "url": "https://arxiv.org/abs/1504.05477v4",
+          "retrieved_at": "2026-10-14T11:28:05+00:00"
+        }
+      ],
+      "versions": [
+        "1504.05477v4"
+      ],
+      "reviewed_versions": [
+        "1504.05477v4"
+      ],
+      "content_url": "https://arxiv.org/html/1504.05477v4",
+      "remaining_reading": "The full error proofs, source code, and Figure 3 curves were not independently reproduced or visually inspected.",
+      "associated_publication_metadata": {
+        "venue": "Neural Information Processing Systems 2015",
+        "verification": "metadata_checked",
+        "locator": "arXiv abs page Comments"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "source_id": "S007",
+      "relation": "supports",
+      "claim": "For a first comparison, the read sections give a Gaussian range-finder baseline, stabilized randomized subspace iteration, and a common compressed-matrix SVD postprocessing step.",
+      "locator": "arXiv:0909.4061v2 §4.1, §4.5 Randomized Subspace Iteration, §5.1"
+    },
+    {
+      "source_id": "S007",
+      "relation": "limits",
+      "claim": "The read §4.5 warns that unorthogonalized power iteration can lose small singular modes in floating point; compare the QR-stabilized scheme, not just the idealized matrix-power formula.",
+      "locator": "arXiv:0909.4061v2 §4.5 Remark 4.3"
+    },
+    {
+      "source_id": "S008",
+      "relation": "supports",
+      "claim": "Algorithm 2 and §5.2 support block Krylov as a distinct iterative comparator. §8 reports a commodity-laptop experiment with 16 GB memory; this is the paper’s setting, not a result measured on the user’s laptop.",
+      "locator": "arXiv:1504.05477v4 Algorithm 2, §5.2, §8 last experiment paragraph"
+    },
+    {
+      "source_id": "S008",
+      "relation": "limits",
+      "claim": "The read implementation section uses a larger Krylov subspace and extra QR/postprocessing work, so fewer iterations alone do not establish less runtime or memory on the user’s machine.",
+      "locator": "arXiv:1504.05477v4 §5.2, Theorem 7 proof"
+    },
+    {
+      "source_id": "S005",
+      "relation": "supports",
+      "claim": "The 2023 preprint abstract and §2.1 identify non-Gaussian random-matrix families, including Rademacher and sparse Rademacher, making distribution choice a supported later comparison axis. No distribution-specific performance ranking is established by the material read.",
+      "locator": "arXiv:2308.05814v1 Abstract, §2.1"
+    },
+    {
+      "source_id": "S005",
+      "relation": "limits",
+      "claim": "The abstract says bounds have unspecified absolute constants, and §2.2 calls Procedure 1 idealized and vulnerable to roundoff. These sections do not give a ready numerical sample-count prescription or a stable implementation by themselves.",
+      "locator": "arXiv:2308.05814v1 Abstract, §2.2 Procedure 1 discussion"
+    },
+    {
+      "source_id": "S003",
+      "relation": "supports",
+      "claim": "The read abstract describes RQRCP using a smaller random sample for pivot decisions, with truncated RQRCP feeding TUXV. It supports an optional rank-revealing-QR comparison lead; implementation details and speed claims have not been checked in the body.",
+      "locator": "arXiv:2008.04447v1 Abstract on canonical abs page"
+    }
+  ],
+  "limitations": [
+    "Two new keyword arXiv API queries, each limit 3 and retries 0, were attempted; both failed with WinError 10013. The third retrieval batch directly opened two known arXiv seed pages; it was not a keyword query.",
+    "The six-source existing API input is provided_material. Its earlier successful search logs are kept only in provided-api-input.json/original_metadata; they do not count as successful new API queries.",
+    "The default python launcher printed an Anaconda real-location error and exited 1 even though a failure JSON was saved. Bundled Python was used for import and validation.",
+    "One versioned RQRCP abstract-page open returned Cache miss. Canonical abstract page succeeded and its submission history has only v1.",
+    "Three selected sources were read only at listed relevant HTML sections, not cover-to-cover; one was read only at abstract level. Four other imported leads remain unverified.",
+    "Halko paper content was read as 2010 arXiv v2; the 2011 journal reference was checked only in the arXiv metadata. Saibaba paper content was read as 2023 arXiv v1; imported 2025 journal metadata/DOI were not used to claim a journal-body review.",
+    "No keyword web search, subscription fulltext download, campus login, API key, external model API or new research experiment was used.",
+    "No exhaustive search, citation-chain review or up-to-date coverage claim is made. Search failure and nonselection do not establish a research gap or novelty.",
+    "Browser HTML omits some printed algorithm numbering in the Halko paper; section and algorithm names are used instead of guessing numbers. Musco Figure 3 was read by caption and surrounding text, not image-based numeric extraction.",
+    "No runtime, memory or accuracy measured on the user’s machine is available. Paper-reported laptop settings support feasibility consideration, not a guaranteed speedup."
+  ],
+  "next_action": "后续选题先使用四篇已选来源及其精确核对位置；若准备实施方法对照，先补读块Krylov算法全部细节、非Gaussian分布对应定理/实验并确认内存预算，再由相应任务执行实验。",
+  "import_details": {
+    "filename": "literature-client-check.live-approved.json",
+    "sha256": "23a7afb58e892f8abeb39a2e3a1c95f3ee93a3f2b7c8181308198d077bc6c79a",
+    "format": "json",
+    "input_count": 6,
+    "output_count": 6
+  },
+  "selected_source_ids": [
+    "S007",
+    "S008",
+    "S005",
+    "S003"
+  ],
+  "selection_notes": [
+    {
+      "source_id": "S001",
+      "decision": "retain_unreviewed",
+      "reason": "Not opened this run; title-level dynamical approximation lead is not used as first-comparison evidence."
+    },
+    {
+      "source_id": "S002",
+      "decision": "retain_unreviewed",
+      "reason": "Imported chapter entry has no author; do not invent bibliographic completeness."
+    },
+    {
+      "source_id": "S004",
+      "decision": "retain_unreviewed",
+      "reason": "Imported dimension-reduction lead was not opened this run; defer application-specific reading."
+    },
+    {
+      "source_id": "S006",
+      "decision": "retain_unreviewed",
+      "reason": "Imported signal-processing lead was not opened this run; defer application-specific reading."
+    }
+  ],
+  "content_review_log": [
+    {
+      "source_id": "S007",
+      "method": "web open/click/find primary arXiv abstract and HTML",
+      "url": "https://arxiv.org/html/0909.4061v2",
+      "version": "0909.4061v2",
+      "status": "success",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "locator": "arXiv:0909.4061v2 HTML; Abstract, §1.2, §4.1 Randomized Range Finder, §4.5/Remark 4.3/Randomized Subspace Iteration, §5.1 Direct SVD; browser text lines 174–199, 660–665, 734–752, 809–819"
+    },
+    {
+      "source_id": "S008",
+      "method": "web open/click/find primary arXiv abstract and HTML",
+      "url": "https://arxiv.org/html/1504.05477v4",
+      "version": "1504.05477v4",
+      "status": "success",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "locator": "arXiv:1504.05477v4 HTML; Abstract, Algorithm 2, §5.1–§5.2, §8 text and Figure 3 caption; browser text lines 102–114, 253–284, 484–502"
+    },
+    {
+      "source_id": "S005",
+      "method": "web open/click/find primary arXiv abstract and HTML",
+      "url": "https://arxiv.org/html/2308.05814v1",
+      "version": "2308.05814v1",
+      "status": "success",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "locator": "arXiv:2308.05814v1 HTML; Abstract, §2.1–§2.2, Procedure 1; browser text lines 153–204"
+    },
+    {
+      "source_id": "S003",
+      "method": "web direct open versioned abstract",
+      "url": "https://arxiv.org/abs/2008.04447v1",
+      "version": "2008.04447v1",
+      "status": "failed",
+      "error": "web tool: Cache miss; no paper content returned"
+    },
+    {
+      "source_id": "S003",
+      "method": "web direct open canonical abstract",
+      "url": "https://arxiv.org/abs/2008.04447",
+      "version": "2008.04447v1",
+      "status": "success",
+      "checked_at": "2026-10-14T11:30:39+00:00",
+      "locator": "arXiv:2008.04447v1; canonical abs page Abstract and submission history (only v1), browser text lines 8–29"
+    }
+  ]
+}

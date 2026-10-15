@@ -1,0 +1,49 @@
+{
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+      "authors": [
+        "Nathan Halko",
+        "Per-Gunnar Martinsson",
+        "Joel A. Tropp"
+      ],
+      "year_or_version": "arXiv:0909.4061v2，2010-12-14；期刊记录2011",
+      "url": "https://arxiv.org/abs/0909.4061v2",
+      "origin": "this_run",
+      "verification": "abstract_checked",
+      "locator": "arXiv摘要页 Abstract（本次打开的最新版本v2）；元数据、版本与期刊记录。未读正文、算法或误差定理。",
+      "checked_at": "2026-10-14T01:12:17+00:00"
+    },
+    {
+      "id": "s2",
+      "title": "A randomized blocked algorithm for efficiently computing rank-revealing factorizations of matrices",
+      "authors": [
+        "Per-Gunnar Martinsson",
+        "Sergey Voronin"
+      ],
+      "year_or_version": "arXiv:1503.07157v2，2015-06-17",
+      "url": "https://arxiv.org/abs/1503.07157v2",
+      "origin": "this_run",
+      "verification": "abstract_checked",
+      "locator": "arXiv摘要页 Abstract（本次打开的最新版本v2）；元数据与版本。未核对正文停止公式或算法。",
+      "checked_at": "2026-10-14T01:12:17+00:00"
+    },
+    {
+      "id": "s3",
+      "title": "Practical sketching algorithms for low-rank matrix approximation",
+      "authors": [
+        "Joel A. Tropp",
+        "Alp Yurtsever",
+        "Madeleine Udell",
+        "Volkan Cevher"
+      ],
+      "year_or_version": "arXiv:1609.00048v2，2018-01-02；期刊记录2017",
+      "url": "https://arxiv.org/abs/1609.00048v2",
+      "origin": "this_run",
+      "verification": "abstract_checked",
+      "locator": "arXiv摘要页 Abstract（本次打开的最新版本v2）；元数据、版本与期刊记录。未核对正文结构保持算法、参数规则或误差界。",
+      "checked_at": "2026-10-14T01:12:17+00:00"
+    }
+  ]
+}
