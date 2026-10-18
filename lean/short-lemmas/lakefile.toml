@@ -1,0 +1,6 @@
+name = "yanzheng_short_lemmas"
+version = "0.1.0"
+defaultTargets = ["Audit"]
+
+[[lean_lib]]
+name = "Audit"

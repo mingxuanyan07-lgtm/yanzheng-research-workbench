@@ -1,9 +1,11 @@
 "use strict";
 
 (() => {
-  const state = { projects: [], project: null, view: "explore", status: null, statusLoading: false, opening: 0, mutating: false, generating: false, literatureBusy: false, experimentBusy: false, experimentLoading: false, experimentWorkspaces: {}, experimentDrafts: {}, readingDrafts: {}, answerDrafts: {}, materialDrafts: {}, literatureDrafts: {}, reasonDrafts: {}, library: null, libraryLoading: false };
+  const state = { projects: [], project: null, view: "explore", status: null, statusLoading: false, opening: 0, mutating: false, generating: false, literatureBusy: false, experimentBusy: false, experimentLoading: false, experimentWorkspaces: {}, experimentDrafts: {}, readingDrafts: {}, answerDrafts: {}, materialDrafts: {}, literatureDrafts: {}, reasonDrafts: {}, library: null, libraryLoading: false, validationMode: "numeric", theoryWorkspaces: {}, theoryWorkspaceRevisions: {}, theoryDrafts: {}, theoryLoading: {}, theoryErrors: {}, theoryBusy: false };
   const activeKey = "yanzheng.activeProject";
   const draftKey = "yanzheng.intakeDraft";
+  const theoryReviewDrafts = {};
+  const leanUI = window.YanzhengLean?.create({ api, date, onChange: patchLeanWorkspace });
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
   const escape = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
@@ -47,6 +49,40 @@
   let toastTimer;
   function toast(message, isError = false) { clearTimeout(toastTimer); $("#toast").textContent = message; $("#toast").classList.toggle("is-error", isError); $("#toast").hidden = false; toastTimer = setTimeout(() => { $("#toast").hidden = true; }, 4200); }
   function message(element, content, isError = true) { element.textContent = content; element.classList.toggle("is-error", isError); element.hidden = !content; }
+  function leanBusy() { return leanUI?.isBusy() || false; }
+  function patchLeanWorkspace(projectId) {
+    if (state.project?.id !== projectId || state.view !== "experiments" || state.validationMode !== "theory") return;
+    const previous = $("#lean-workspace");
+    if (!previous || !leanUI) return;
+    const focused = previous.contains(document.activeElement) ? document.activeElement : null;
+    const focusId = focused?.id;
+    const focusAction = focused?.dataset?.action;
+    const expanded = Array.from(previous.querySelectorAll("details[data-lean-detail][open]"), item => item.dataset.leanDetail);
+    previous.outerHTML = leanUI.render(state.project);
+    const next = $("#lean-workspace");
+    if (next) {
+      next.querySelectorAll("details[data-lean-detail]").forEach(item => { item.open = expanded.includes(item.dataset.leanDetail); });
+      const replacement = focusId ? $("#" + focusId, next) : focusAction ? Array.from(next.querySelectorAll("[data-action]")).find(item => item.dataset.action === focusAction) : null;
+      if (replacement && !replacement.disabled) replacement.focus({ preventScroll: true });
+    }
+    syncMutationControls();
+  }
+  async function performLean(action, button) {
+    const project = state.project;
+    if (!project || !leanUI || button.dataset.projectId !== project.id) return;
+    if (state.mutating || state.literatureBusy || state.experimentBusy || leanBusy()) return;
+    // Lean updates only its own panel; preserve the independent mathematical draft.
+    captureTheoryDraft();
+    try {
+      const operation = action === "lean-run" ? leanUI.run(project) : leanUI.load(project, { force: true });
+      syncMutationControls();
+      const result = await operation;
+      if (state.project?.id === project.id && result?.message) toast(result.message, result.ok === false);
+    } catch {
+      // The controller presents request errors per project; never auto-retry.
+      if (state.project?.id === project.id) toast("本次核验请求未完成，请先刷新运行历史查看执行状态。", true);
+    } finally { syncMutationControls(); }
+  }
   async function api(path, options = {}) {
     let response;
     try { response = await fetch(path, { ...options, headers: { ...(options.body ? { "Content-Type": "application/json" } : {}), ...options.headers } }); }
@@ -55,7 +91,12 @@
     try { body = await response.json(); } catch { throw new Error("服务没有返回可读取的结果，请稍后重试。"); }
     if (!response.ok) {
       const detail = typeof body.detail === "string" ? body.detail : typeof body.error === "string" ? body.error : null;
-      throw new Error(detail || `这一步没有完成（${response.status}），你的已有记录仍然保留。`);
+      const error = new Error(detail || `这一步没有完成（${response.status}），你的已有记录仍然保留。`);
+      // Preserve structured failure results (for example an executed Lean result
+      // that the server could not persist) without treating them as success.
+      error.status = response.status;
+      error.body = body;
+      throw error;
     }
     return body;
   }
@@ -64,6 +105,21 @@
     button.disabled = true;
     button.innerHTML = `<span class="spinner" aria-hidden="true"></span>${escape(label)}`;
     return () => { if (button.isConnected) { button.disabled = false; button.innerHTML = previous; } };
+  }
+  function activateValidationProject(project) {
+    if (!project) { state.validationProjectId = null; return; }
+    if (state.validationProjectId === project.id) return;
+    let preferred = null;
+    try { preferred = localStorage.getItem(`yanzheng.validationMode.${project.id}`); } catch { /* Use the project's research preference if browser storage is unavailable. */ }
+    state.validationMode = ["numeric", "theory"].includes(preferred) ? preferred : project.intake_form?.goal === "theory" || project.theory?.card ? "theory" : "numeric";
+    state.validationProjectId = project.id;
+  }
+  function chooseValidationMode(mode) {
+    state.validationMode = mode;
+    state.validationProjectId = state.project?.id || null;
+    if (state.project) {
+      try { localStorage.setItem(`yanzheng.validationMode.${state.project.id}`, mode); } catch { /* Keep the active tab for this browser session. */ }
+    }
   }
   function setView(view, updateHash = true) {
     if (!["explore", "projects", "records", "literature", "experiments", "library", "about"].includes(view)) view = "explore";
@@ -108,7 +164,7 @@
     return "千问已配置 · 待验证";
   }
   function syncMutationControls() {
-    const locked = state.mutating || state.literatureBusy || state.experimentBusy;
+    const locked = state.mutating || state.literatureBusy || state.experimentBusy || leanBusy();
     $$('[data-action="select"], [data-action="reopen"], #answers-form button[type="submit"], .reading-note-form button[type="submit"], [data-sample]').forEach(button => { button.disabled = locked; });
     $$('[data-action="generate"], [data-action="advance"], [data-action="revise-from-literature"], #material-form button[type="submit"]').forEach(button => {
       button.disabled = locked || !state.status?.model?.configured;
@@ -121,8 +177,24 @@
     $$('[data-action="revise-from-experiments"]').forEach(button => { button.disabled = locked || !state.status?.model?.configured; });
     const experimentButton = $('#experiment-form button[type="submit"]');
     if (experimentButton) experimentButton.disabled = locked;
+    $$('.checking-form input, .checking-form textarea, .checking-form select, .checking-form button, [data-action="artifact-describe"], [data-action="artifact-read"], #theory-card-form input, #theory-card-form textarea, #theory-card-form button, #theory-review-reason, [data-failure-review], [data-action="failure-review"], [data-action="failure-rebase"], [data-action="theory-preview"], [data-action="theory-accept"], [data-action="theory-reject"], [data-action="theory-example"], [data-action="theory-discard-draft"]').forEach(field => { field.disabled = locked; });
+    const theoryPropose = $('[data-action="theory-propose"]');
+    if (theoryPropose) theoryPropose.disabled = locked || !state.status?.model?.configured || !theoryContextPreviews[state.project?.id] || theoryContextPreviews[state.project?.id]?.blocked || !!theoryDraft(state.project?.id);
+    const theoryAccept = $('[data-action="theory-accept"]');
+    if (theoryAccept) theoryAccept.disabled = locked || !!(state.project && theoryDraft(state.project.id));
     const ideaButton = $("#create-button");
     if (ideaButton) ideaButton.disabled = locked;
+    $$('#lean-workspace [data-action], #lean-case-picker').forEach(field => {
+      // Restore only this app's lock; keep the panel's environment restrictions.
+      if (locked) {
+        if (!field.dataset.appLocked) field.dataset.appWasDisabled = String(field.disabled);
+        field.dataset.appLocked = "true"; field.disabled = true;
+      } else if (field.dataset.appLocked) {
+        field.disabled = field.dataset.appWasDisabled === "true";
+        delete field.dataset.appLocked; delete field.dataset.appWasDisabled;
+      }
+    });
+    $$('#experiment-project, #record-project, #literature-project').forEach(field => { field.disabled = locked; });
     $$('#idea-form input, #idea-form textarea, #idea-form select, #answers-form textarea, #material-form textarea, .reading-note-form input, .reading-note-form textarea, .reading-note-form select, #experiment-form input').forEach(field => { field.disabled = locked; });
   }
   async function refreshModelStatus(button) {
@@ -152,6 +224,8 @@
   }
   function renderProject() {
     const project = state.project;
+    activateValidationProject(project);
+    if (project && state.theoryWorkspaces[project.id] && state.theoryWorkspaceRevisions[project.id] !== project.updated_at) delete state.theoryWorkspaces[project.id];
     $("#intake-panel").hidden = !!project;
     $("#project-content").hidden = !project;
     if (!project) { $("#project-content").innerHTML = ""; updateSteps("clarifying"); refreshStats(); return; }
@@ -219,7 +293,7 @@
   }
   function renderGenerationPanel(map) {
     const model = state.status?.model || {};
-    const disabled = !model.configured || state.mutating || state.literatureBusy || state.experimentBusy;
+    const disabled = !model.configured || state.mutating || state.literatureBusy || state.experimentBusy || leanBusy();
     const workflow = state.project?.workflow || {};
     const failure = workflow.state === "failed" ? `<div class="message is-error workflow-failure" role="alert"><strong>这一步尚未完成，当前输入与已有候选已保留。</strong><p>${escape(typeof workflow.last_error === "string" ? workflow.last_error : workflow.last_error?.message || workflow.last_error?.summary || "模型调用或输出校验未完成，请重试。")}</p></div>` : "";
     const material = state.materialDrafts[state.project?.id] ?? (workflow.state === "failed" ? list(workflow.provided_materials).at(-1)?.content : "") ?? "";
@@ -248,14 +322,14 @@
     const draft = state.literatureDrafts[project.id] || { query: queries[0] || "", provider: "crossref", limit: 5 };
     const searches = list(project.literature_searches), notes = list(project.reading_notes);
     const revisable = project.stage !== "topic_selected" && state.status?.model?.configured;
-    target.innerHTML = `<div class="literature-toolbar">${picker}<button type="button" class="button button-secondary" data-action="return-research">${icon("arrow-left")}${project.stage === "topic_selected" ? "查看计划草案" : project.stage === "directions_ready" ? "返回方向比较" : "返回当前研究"}</button></div><section class="panel literature-form-panel"><span class="section-kicker">PUBLIC METADATA SEARCH</span><h2>让研究想法找到文献入口。</h2><p class="literature-disclosure">检索词发送到所选公开题录服务。点击“按研究想法查文献”会使用建议查询（没有建议时使用想法文本），实际执行一次查询；请先确认查询框适合公开。返回题录不代表已阅读。</p><form id="literature-form"><label class="field-label" for="literature-query">公开检索词 <span>最多 300 字</span></label><input id="literature-query" name="query" type="text" required maxlength="300" value="${escape(draft.query)}" placeholder="例如：randomized singular value decomposition" autocomplete="off">${queries.length ? `<div class="literature-samples query-suggestions"><span>研究查询建议 · 点击填入</span>${queries.map(query => `<button type="button" class="sample-chip" data-literature-sample="${escape(query.slice(0, 300))}">${escape(query)}</button>`).join("")}</div>` : ""}<div class="literature-samples"><span>公开示例</span><button type="button" class="sample-chip" data-literature-sample="randomized singular value decomposition">随机低秩逼近</button><button type="button" class="sample-chip" data-literature-sample="retrieval augmented generation citation accuracy">AI 引用准确性</button></div><div class="literature-form-bottom"><label for="literature-provider">题录服务<select id="literature-provider" name="provider"><option value="crossref" ${draft.provider === "crossref" ? "selected" : ""}>Crossref</option><option value="arxiv" ${draft.provider === "arxiv" ? "selected" : ""}>arXiv</option></select></label><label for="literature-limit">最多返回<select id="literature-limit" name="limit">${[1, 2, 3, 4, 5].map(number => `<option value="${number}" ${Number(draft.limit) === number ? "selected" : ""}>${number} 条</option>`).join("")}</select></label><button type="submit" class="button button-primary" ${state.literatureBusy ? "disabled" : ""}>${state.literatureBusy ? '<span class="spinner" aria-hidden="true"></span>正在检索' : `${icon("book")}检索题录`}</button></div><div class="idea-search-action"><button type="button" class="button button-secondary" data-action="search-idea" ${state.literatureBusy ? "disabled" : ""}>按研究想法查文献</button><span>每次点击只查询一个服务，不调用模型</span></div><div id="literature-message" class="message" role="alert" hidden></div></form></section>${searches.length ? `<div class="workflow-link literature-revise"><div><strong>把阅读发现带回候选方向。</strong><p>当前保存 ${notes.length} 条用户确认的阅读记录。修订时会将简报、补充资料、公开题录与已确认的阅读摘录发送至百炼，消耗 API 额度。${project.stage === "topic_selected" ? "当前方向已由你选择；请先返回研究页重新比较，再修订。" : "模型会提出候选或澄清问题，不会替你选题。"}</p></div><button type="button" class="button button-secondary" data-action="revise-from-literature" ${revisable ? "" : "disabled"}>依据资料修订方向</button></div>` : ""}<div class="direction-head"><h3>${searches.length} 轮独立检索记录</h3><span>${notes.length} 条阅读记录</span></div><p class="literature-record-note">题录状态保持原样。摘要或正文是否读过，由你确认并填写阅读位置；保存笔记不自动证明候选论断成立。</p>${searches.length ? [...searches].reverse().map(record => renderSearchRun(record, project.id)).join("") : '<div class="empty-state small-empty"><h2>还没有发起查询。</h2><p>实际返回、无结果和失败状态都会保存。</p></div>'}`;
+    target.innerHTML = `<div class="literature-toolbar">${picker}<button type="button" class="button button-secondary" data-action="return-research">${icon("arrow-left")}${project.stage === "topic_selected" ? "查看计划草案" : project.stage === "directions_ready" ? "返回方向比较" : "返回当前研究"}</button></div><section class="panel literature-form-panel"><span class="section-kicker">PUBLIC METADATA SEARCH</span><h2>让研究想法找到文献入口。</h2><p class="literature-disclosure">检索词发送到所选公开题录服务。点击“按研究想法查文献”会使用建议查询（没有建议时使用想法文本），实际执行一次查询；请先确认查询框适合公开。返回题录不代表已阅读。</p><form id="literature-form"><label class="field-label" for="literature-query">公开检索词 <span>最多 300 字</span></label><input id="literature-query" name="query" type="text" required maxlength="300" value="${escape(draft.query)}" placeholder="例如：randomized singular value decomposition" autocomplete="off">${queries.length ? `<div class="literature-samples query-suggestions"><span>研究查询建议 · 点击填入</span>${queries.map(query => `<button type="button" class="sample-chip" data-literature-sample="${escape(query.slice(0, 300))}">${escape(query)}</button>`).join("")}</div>` : ""}<div class="literature-samples"><span>公开示例</span><button type="button" class="sample-chip" data-literature-sample="randomized singular value decomposition">随机低秩逼近</button><button type="button" class="sample-chip" data-literature-sample="retrieval augmented generation citation accuracy">AI 引用准确性</button></div><div class="literature-form-bottom"><label for="literature-provider">题录服务<select id="literature-provider" name="provider"><option value="crossref" ${draft.provider === "crossref" ? "selected" : ""}>Crossref</option><option value="arxiv" ${draft.provider === "arxiv" ? "selected" : ""}>arXiv</option></select></label><label for="literature-limit">最多返回<select id="literature-limit" name="limit">${[1, 2, 3, 4, 5].map(number => `<option value="${number}" ${Number(draft.limit) === number ? "selected" : ""}>${number} 条</option>`).join("")}</select></label><button type="submit" class="button button-primary" ${state.literatureBusy ? "disabled" : ""}>${state.literatureBusy ? '<span class="spinner" aria-hidden="true"></span>正在检索' : `${icon("book")}检索题录`}</button></div><div class="idea-search-action"><button type="button" class="button button-secondary" data-action="search-idea" ${state.literatureBusy ? "disabled" : ""}>按研究想法查文献</button><span>每次点击只查询一个服务，不调用模型</span></div><div id="literature-message" class="message" role="alert" hidden></div></form></section>${searches.length ? `<div class="workflow-link literature-revise"><div><strong>把阅读发现带回候选方向。</strong><p>当前保存 ${notes.filter(note => note.origin !== "curated_example").length} 条用户确认笔记${notes.some(note => note.origin === "curated_example") ? `，另有 ${notes.filter(note => note.origin === "curated_example").length} 条公开案例预置笔记（不作为你的阅读声明）` : ""}。修订时会将简报、补充资料、公开题录与已确认的阅读摘录发送至百炼，消耗 API 额度。${project.stage === "topic_selected" ? "当前方向已由你选择；请先返回研究页重新比较，再修订。" : "模型会提出候选或澄清问题，不会替你选题。"}</p></div><button type="button" class="button button-secondary" data-action="revise-from-literature" ${revisable ? "" : "disabled"}>依据资料修订方向</button></div>` : ""}<div class="direction-head"><h3>${searches.length} 轮独立检索记录</h3><span>${notes.length} 条阅读记录</span></div><p class="literature-record-note">题录状态保持原样。摘要或正文是否读过，由你确认并填写阅读位置；保存笔记不自动证明候选论断成立。</p>${searches.length ? [...searches].reverse().map(record => renderSearchRun(record, project.id)).join("") : '<div class="empty-state small-empty"><h2>还没有发起查询。</h2><p>实际返回、无结果和失败状态都会保存。</p></div>'}`;
     syncMutationControls();
   }
   function renderReadingNotes(source, record, projectId) {
     const key = `${projectId}:${record.id}:${source.id}`;
     const notes = list(state.project?.reading_notes).filter(note => note.run_id === record.id && note.source_id === source.id);
     const draft = state.readingDrafts[key] || {};
-    return `<div class="reading-records">${notes.map(note => `<article class="reading-note"><div><span class="source-verification">${sourceVerification(note.level)}</span><span>用户确认 · ${escape(date(note.checked_at, true))}</span></div><p class="reading-locator">阅读位置：${escape(note.locator)}</p><p class="reading-content">${escape(note.content)}</p></article>`).join("")}<details class="reading-note-editor"><summary>记录我读过的内容 ${icon("chevron")}</summary><form class="reading-note-form" data-run-id="${escape(record.id)}" data-source-id="${escape(source.id)}" data-draft-key="${escape(key)}"><label>实际阅读范围<select name="level"><option value="abstract_checked" ${draft.level === "abstract_checked" ? "selected" : ""}>已阅读并核对摘要</option><option value="fulltext_checked" ${draft.level === "fulltext_checked" ? "selected" : ""}>已阅读相关正文</option></select></label><label>阅读位置<input name="locator" required maxlength="300" value="${escape(draft.locator || "")}" placeholder="例如：摘要；v2 第 3.1 节 / 第 6 页"></label><label>原文摘录或阅读笔记<textarea name="content" required maxlength="6000" placeholder="记录实际读到的内容，以及它能支持或限制什么。">${escape(draft.content || "")}</textarea></label><label class="reading-confirmation"><input name="confirmed" type="checkbox" required ${draft.confirmed ? "checked" : ""}><span>我确认已阅读上述范围，位置与笔记由我填写。</span></label><p>只保存你的阅读声明与笔记；程序不会自动下载全文或把题录升级为已读。</p><button type="submit" class="button button-secondary">保存阅读记录</button></form></details></div>`;
+    return `<div class="reading-records">${notes.map(note => `<article class="reading-note"><div><span class="source-verification">${sourceVerification(note.level)}</span><span>${note.origin === "curated_example" ? "公开案例整理 · 非你的阅读确认" : "用户确认"} · ${escape(date(note.checked_at, true))}</span></div><p class="reading-locator">阅读位置：${escape(note.locator)}</p><p class="reading-content">${escape(note.content)}</p></article>`).join("")}<details class="reading-note-editor"><summary>记录我读过的内容 ${icon("chevron")}</summary><form class="reading-note-form" data-run-id="${escape(record.id)}" data-source-id="${escape(source.id)}" data-draft-key="${escape(key)}"><label>实际阅读范围<select name="level"><option value="abstract_checked" ${draft.level === "abstract_checked" ? "selected" : ""}>已阅读并核对摘要</option><option value="fulltext_checked" ${draft.level === "fulltext_checked" ? "selected" : ""}>已阅读相关正文</option></select></label><label>阅读位置<input name="locator" required maxlength="300" value="${escape(draft.locator || "")}" placeholder="例如：摘要；v2 第 3.1 节 / 第 6 页"></label><label>原文摘录或阅读笔记<textarea name="content" required maxlength="6000" placeholder="记录实际读到的内容，以及它能支持或限制什么。">${escape(draft.content || "")}</textarea></label><label class="reading-confirmation"><input name="confirmed" type="checkbox" required ${draft.confirmed ? "checked" : ""}><span>我确认已阅读上述范围，位置与笔记由我填写。</span></label><p>只保存你的阅读声明与笔记；程序不会自动下载全文或把题录升级为已读。</p><button type="submit" class="button button-secondary">保存阅读记录</button></form></details></div>`;
   }
   function captureLiteratureDraft() {
     const query = $("#literature-query");
@@ -270,7 +344,7 @@
     return `<article class="panel search-run"><div class="search-run-head"><div><span class="section-kicker">SAVED SEARCH RECORD</span><h3>${escape(text(record.request?.queries) || "文献检索记录")}</h3></div>${record.id ? `<a class="button button-secondary button-small" href="/api/projects/${encodeURIComponent(projectId)}/literature/${encodeURIComponent(record.id)}/export" download>${icon("download")}导出 JSON</a>` : ""}</div><p class="search-run-provenance">${unknown ? "客户端异常，无法确认请求执行状态。" : record.provenance?.live_search_performed ? "已实际尝试实时查询；返回不代表已阅读。" : "本记录未发出实时查询请求。"}保存 ${sources.length} 条题录。</p>${logs.map(log => `<div class="search-log"><div><span class="search-status ${escape(["success", "empty", "failed", "planned"].includes(log.status) ? log.status : "failed")}">${statusLabels[log.status] || "状态待核查"}</span><strong>${escape(log.provider)}</strong><span>${escape(log.query)}</span></div><p>时间：${escape(log.searched_at ? date(log.searched_at, true) : "未记录")} · ${unknown ? "请求执行次数未确认" : `实际请求 ${Number(log.attempts) || 0} 次`} · ${unknown ? "返回状态未确认" : `返回 ${Number(log.result_count) || 0} 条`}</p>${log.error ? `<p class="search-error">${escape(log.error)}</p>` : ""}${log.status === "empty" ? '<p>本次没有返回可用题录，不能据此推断相关研究不存在。</p>' : ""}</div>`).join("")}<div class="search-source-list">${sources.map(source => `<div class="search-reading-source">${renderSource(source)}${renderReadingNotes(source, record, projectId)}</div>`).join("")}</div>${list(record.limitations).length ? `<details class="record-limitations"><summary>检索范围与限制 ${icon("chevron")}</summary>${stringList(record.limitations)}</details>` : ""}${nextAction ? `<p class="search-next-action">下一步：${escape(nextAction)}</p>` : ""}</article>`;
   }
   async function searchLiterature(form) {
-    if (!state.project || state.literatureBusy || state.mutating) return;
+    if (!state.project || state.literatureBusy || state.mutating || leanBusy()) return;
     const project = state.project, token = state.opening;
     const body = { query: $("#literature-query").value.trim(), provider: $("#literature-provider").value, limit: Number($("#literature-limit").value) };
     if (!body.query || body.query.length > 300) { message($("#literature-message"), "请填写 1—300 字的公开检索词。"); return; }
@@ -304,6 +378,7 @@
     }
   }
   async function loadExperiments(force = false) {
+    if (state.validationMode === "theory") { await loadTheory(force); return; }
     if (!state.projects.length || !state.project) { renderExperiments(); return; }
     const projectId = state.project.id, token = state.opening;
     if (state.experimentWorkspaces[projectId] && !force) { renderExperiments(); return; }
@@ -315,10 +390,18 @@
       state.experimentWorkspaces[projectId] = result;
       if (token === state.opening && state.project?.id === projectId && state.view === "experiments") renderExperiments();
     } catch (error) {
-      if (token === state.opening && state.project?.id === projectId) $("#experiments-content").innerHTML = `<div class="message is-error">${escape(error.message)}</div><button type="button" class="button button-secondary" data-action="reload-experiments">重新读取实验工作台</button>`;
+      if (token === state.opening && state.project?.id === projectId) $("#experiments-content").innerHTML = workbenchTabs() + `<div class="message is-error">${escape(error.message)}</div><button type="button" class="button button-secondary" data-action="reload-experiments">重新读取实验工作台</button>`;
     } finally { state.experimentLoading = false; if (state.view === "experiments" && state.project && state.project.id !== projectId) loadExperiments(); }
   }
+  function workbenchTabs() {
+    return `<div class="validation-tabs" role="group" aria-label="研究验证方式"><button type="button" data-action="validation-numeric" aria-pressed="${state.validationMode === "numeric"}">${icon("cpu")}数值实验<span>参数与结果</span></button><button type="button" data-action="validation-theory" aria-pressed="${state.validationMode === "theory"}">${icon("book")}理论论证<span>命题、证据与证明路线</span></button></div>`;
+  }
   function renderExperiments() {
+    activateValidationProject(state.project);
+    if (state.validationMode === "theory") renderTheory();
+    else { renderNumericalExperiments(); $("#experiments-content").insertAdjacentHTML("afterbegin", workbenchTabs()); }
+  }
+  function renderNumericalExperiments() {
     const target = $("#experiments-content"), project = state.project;
     if (!state.projects.length) { target.innerHTML = empty("cpu", "先从研究想法开始。", "由你选择课题后，再查看适合的首轮实验。"); return; }
     const picker = `<label class="project-picker" for="experiment-project">当前研究项目<select id="experiment-project"><option value="">请选择研究项目</option>${state.projects.map(item => `<option value="${escape(item.id)}" ${item.id === project?.id ? "selected" : ""}>${escape(item.title)}</option>`).join("")}</select></label>`;
@@ -335,6 +418,405 @@
     target.innerHTML = toolbar + (workspace.supported ? supportedForm : unsupported) + `<div class="direction-head"><h3>${runs.length} 轮实际运行记录</h3><span>与历史示例档案分别保存</span></div>${runs.length ? [...runs].reverse().map(run => renderExperimentRun(run, project.id)).join("") : '<div class="empty-state small-empty"><h2>这个项目还没有运行实验。</h2><p>参数、真实结果、检查与失败状态会在运行后保存。</p></div>'}${runs.length ? `<div class="workflow-link experiment-revise"><div><strong>让实际结果影响下一轮问题。</strong><p>点击后将重新打开方向比较，把实验结果摘要、简报与研究资料发送至百炼，发起一次模型请求并消耗额度。先前选题与运行快照保留，修订后仍由你重新选择。</p></div><button type="button" class="button button-secondary" data-action="revise-from-experiments" ${state.status?.model?.configured ? "" : "disabled"}>依据结果修订方向</button></div>` : ""}`;
     syncMutationControls();
   }
+  const theoryFields = { title: "命题标题", domain: "领域与定义域", statement: "当前命题", definitions: "定义与符号", assumptions: "假设与量词", target: "研究与审阅目标" };
+  function blankTheoryCard() { return { title: "", domain: "", statement: "", definitions: [], assumptions: [], target: "" }; }
+  function theoryDraft(projectId) {
+    if (Object.hasOwn(state.theoryDrafts, projectId)) return state.theoryDrafts[projectId];
+    try {
+      const saved = JSON.parse(localStorage.getItem(`yanzheng.theoryDraft.${projectId}`) || "null");
+      state.theoryDrafts[projectId] = saved && typeof saved.card === "object" && Number.isInteger(saved.baseVersion) ? saved : null;
+    } catch { state.theoryDrafts[projectId] = null; }
+    return state.theoryDrafts[projectId];
+  }
+  function clearTheoryDraft(projectId) {
+    state.theoryDrafts[projectId] = null;
+    try { localStorage.removeItem(`yanzheng.theoryDraft.${projectId}`); } catch { /* Server records remain available. */ }
+  }
+  function captureTheoryDraft() {
+    const form = $("#theory-card-form"), project = state.project;
+    if (!form || !project) return null;
+    if (state.mutating || state.theoryBusy || state.literatureBusy || state.experimentBusy || leanBusy()) return theoryDraft(project.id);
+    const raw = Object.fromEntries(new FormData(form));
+    const card = Object.fromEntries(Object.keys(theoryFields).map(key => [key, ["definitions", "assumptions"].includes(key) ? String(raw[key] || "").split(/\r?\n/).map(item => item.trim()).filter(Boolean) : String(raw[key] || "").trim()]));
+    const workspace = state.theoryWorkspaces[project.id] || project.theory || {};
+    const previous = theoryDraft(project.id);
+    const draft = { card, baseVersion: previous?.baseVersion ?? workspace.card_version ?? 0 };
+    if (!previous && JSON.stringify(card) === JSON.stringify(Object.fromEntries(Object.keys(theoryFields).map(key => [key, (workspace.card || blankTheoryCard())[key]])))) return draft;
+    state.theoryDrafts[project.id] = draft;
+    try { localStorage.setItem(`yanzheng.theoryDraft.${project.id}`, JSON.stringify(draft)); } catch { /* Keep the in-memory draft if storage is unavailable. */ }
+    const status = $("#theory-draft-status"); if (status) status.textContent = "本机草稿已保留 · 尚未保存到项目";
+    const accept = $('[data-action="theory-accept"]'); if (accept) accept.disabled = true;
+    return draft;
+  }
+  async function loadTheory(force = false) {
+    renderExperiments();
+    const project = state.project;
+    if (project && leanUI) void leanUI.load(project, { force }).catch(() => {});
+    if (!project || (state.theoryWorkspaces[project.id] && !force) || state.theoryLoading[project.id]) return;
+    const projectId = project.id, token = state.opening;
+    state.theoryLoading[projectId] = true;
+    try {
+      const result = await api(`/api/projects/${encodeURIComponent(projectId)}/theory`);
+      state.theoryWorkspaces[projectId] = result;
+      state.theoryWorkspaceRevisions[projectId] = project.updated_at;
+    } catch (error) { state.theoryErrors[projectId] = error.message; }
+    finally {
+      state.theoryLoading[projectId] = false;
+      if (token === state.opening && state.project?.id === projectId && state.view === "experiments" && state.validationMode === "theory") renderExperiments();
+    }
+  }
+  function renderTheoryEvidence(note, binding = null) {
+    const url = safeUrl(note.url), origin = note.origin === "curated_example" ? "公开案例预置摘录 · 非你的阅读声明" : "用户确认的阅读笔记";
+    const relation = { supports: "支持线索", limits: "适用限制", contradicts: "反驳线索", background: "背景参考" }[binding?.relation] || "关联线索";
+    return `<details class="theory-evidence"><summary><span>${escape(note.title || "阅读笔记")}<small>${escape(note.year_or_version || "版本未记录")} · ${escape(note.locator || "位置未记录")}</small></span>${icon("chevron")}</summary><div><span class="theory-origin">${origin}</span>${binding ? `<p><strong>${relation}：</strong>${escape(binding.claim)}</p>` : ""}<p class="theory-quote">${escape(note.content)}</p>${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">查看原始出处 ↗</a>` : '<p>当前笔记未记录可用的原文链接。</p>'}<small>笔记 ID：${escape(note.note_id || note.id)}${note.content_sha256 ? ` · 内容指纹：${escape(note.content_sha256)}` : ""}</small></div></details>`;
+  }
+  function renderProofRoutes(routes, pending = false, archived = false) {
+    if (!list(routes).length) return `<div class="theory-empty"><strong>${pending ? "本次未提供证明路线。" : "尚未确认可继续推进的证明路线。"}</strong><p>保存命题、核对阅读资料后，可请千问提出路线；接受修订后会保留在这里。</p></div>`;
+    return list(routes).map((route, index) => `<article class="theory-route"><div class="theory-route-head"><span class="section-kicker">ROUTE ${String(index + 1).padStart(2, "0")}</span><span class="stage-pill">${archived ? "历史建议" : pending ? "待审阅建议" : "已采用的规划"} · 未形式核验</span></div><h3>${escape(route.title)}</h3><h4>证明步骤</h4>${stringList(route.steps, true)}<h4>待核查的证明义务</h4><p class="theory-notice">义务是审查清单；尚未核查不表示已发现数学错误。</p>${list(route.obligations).length ? `<ol class="theory-obligations">${list(route.obligations).map(lemma => `<li><span class="theory-lemma-id">${escape(lemma.id)}</span><p>${escape(lemma.statement)}</p><small>依赖：${list(lemma.depends_on).length ? list(lemma.depends_on).map(escape).join("、") : "无前置引理记录"} · 待核查 · 未形式核验</small></li>`).join("")}</ol>` : '<p>未列出独立引理。</p>'}<div class="theory-gaps"><h4>已发现的缺口与待补证据</h4>${list(route.gaps).length ? stringList(route.gaps) : '<p>未识别额外数学缺口，仍待审阅。空列表不表示完成证明或形式核验。</p>'}</div>${list(route.evidence).length ? `<h4>路线关联的阅读依据</h4>${list(route.evidence).map(binding => renderTheoryEvidence(binding.snapshot || { note_id: binding.note_id }, binding)).join("")}` : '<p class="theory-notice">此路线尚未绑定阅读笔记，需补充核对。</p>'}</article>`).join("");
+  }
+  function renderTheoryVersions(workspace) {
+    const versions = list(workspace.card_versions);
+    if (!versions.length) return "";
+    return `<details class="panel theory-history"><summary>历史命题版本 <span>${versions.length} 个历史版本 · 当前 v${Number(workspace.card_version) || 0}</span>${icon("chevron")}</summary>${[...versions].reverse().map(version => `<article><strong>命题 v${Number(version.version) || 0}</strong><span>${escape(date(version.replaced_at || version.saved_at, true))}</span><details class="theory-revised-card"><summary>${escape(version.card?.title || "查看此版本完整命题")}${icon("chevron")}</summary><dl>${Object.entries(theoryFields).map(([key, label]) => `<div><dt>${label}</dt><dd>${escape(Array.isArray(version.card?.[key]) ? version.card[key].join("\n") : version.card?.[key] || "（空）")}</dd></div>`).join("")}</dl></details></article>`).join("")}</details>`;
+  }
+  function theoryProposalSource(item) {
+    return item.source === "curated_example" ? "人工整理的公开案例" : item.source === "model" ? "千问模型提议" : "来源未记录";
+  }
+  function theoryProposalVersion(item, project) {
+    if (item.source === "curated_example") return "不适用（人工整理）";
+    const call = list(project?.model_calls).find(entry => entry.id === item.model_call_id);
+    // Never relabel an old proposal with the workspace's latest prompt version.
+    return item.prompt_version || call?.prompt_version || "未记录";
+  }
+  function renderTheoryProposalMetadata(item, project) {
+    return `<dl class="theory-proposal-meta"><div><dt>内容来源</dt><dd>${escape(theoryProposalSource(item))}</dd></div><div><dt>本条提议的提示版本</dt><dd>${escape(theoryProposalVersion(item, project))}</dd></div></dl>`;
+  }
+  function renderTheoryFeedback(workspace) {
+    const feedback = list(workspace.proposals).filter(item => item.status === "rejected" && item.researcher_reason).slice(-2);
+    if (!feedback.length) return '<p class="theory-notice">暂无明确填写的拒绝反馈；接受或拒绝均不会自动发起下一轮请求。</p>';
+    return `<details class="theory-feedback"><summary>提议审阅历史 <span>${feedback.length} 条明确意见</span>${icon("chevron")}</summary><p>这些是已保存的历史意见；下一轮实际带入范围以材料预览为准。意见仍待独立核对，不是程序认定的数学事实。</p>${[...feedback].reverse().map(item => `<article><strong>${escape(item.revised_card?.title || "历史建议")} · 基于命题 v${Number(item.base_card_version) || 0}</strong><p>${escape(item.researcher_reason)}</p><small>提议 ID：${escape(item.id)}</small></article>`).join("")}</details>`;
+  }
+  function renderTheoryProposalHistory(workspace, project) {
+    const proposals = list(workspace.proposals);
+    if (!proposals.length) return "";
+    return `<details class="panel theory-history"><summary>建议历史 <span>${proposals.length} 次提议 · 原输出与审阅分别留存</span>${icon("chevron")}</summary>${[...proposals].reverse().map(item => `<article><div class="theory-history-title"><span class="stage-pill">${{ accepted: "已接受规划", rejected: "已拒绝", pending: "待确认", superseded: "已被后续版本替代", stale: "上下文已变化" }[item.status] || "已留档"}</span><time>${escape(date(item.created_at, true))}</time></div>${renderTheoryProposalMetadata(item, project)}<p>${escape(item.revision_reason)}</p>${item.review_reason ? `<div class="theory-review-record"><strong>本条提议的审阅记录</strong><p>${escape(item.review_reason)}</p><small>记录审阅决定；不等于程序完成数学核验。</small></div>` : ""}<details class="theory-archived-proposal"><summary>查看当时的命题与原建议路线 ${icon("chevron")}</summary><p class="theory-notice">这是历史输出，保留已拒绝或未解决的内容；展开不表示采纳。</p><dl class="theory-archived-card">${Object.entries(theoryFields).map(([key, label]) => `<div><dt>${escape(label)}</dt><dd>${escape(Array.isArray(item.revised_card?.[key]) ? item.revised_card[key].join("\n") : item.revised_card?.[key] || "（空）")}</dd></div>`).join("")}</dl>${renderProofRoutes(item.proof_routes, true, true)}</details></article>`).join("")}</details>`;
+  }
+  const theoryContextPreviews = {};
+  const checkDrafts = {};
+  const checkMessages = {};
+  function checkingWorkspace() { return (state.theoryWorkspaces[state.project?.id] || state.project?.theory || {}).checking || {}; }
+  function checkDraft(projectId, id, checking) {
+    const key = `${projectId}:${id}`;
+    if (!Object.hasOwn(checkDrafts, key)) {
+      try { checkDrafts[key] = JSON.parse(localStorage.getItem(`yanzheng.checkDraft.${key}`) || "null"); } catch {}
+    }
+    if (!checkDrafts[key]) {
+      const item = list(checking.records).find(r => r.id === id);
+      checkDrafts[key] = {request_id: crypto.randomUUID(), expected_revision: id === "new" ? checking.revision : id === "case-source" ? checking.case_revision || 0 : item?.review_revision,
+        ...(id === "new" ? {context_token: checking.context_token, target_key: checking.targets?.[0]?.target_key || "", proposition:"OTHER",card_proposition:"OTHER",record_origin:"researcher_draft"} : id === "case-source" ? {} : {kind:"assistant_check"})};
+    }
+    return checkDrafts[key];
+  }
+  function persistCheckDraft(projectId, id, draft) {
+    checkDrafts[`${projectId}:${id}`] = draft;
+    try { localStorage.setItem(`yanzheng.checkDraft.${projectId}:${id}`, JSON.stringify(draft)); } catch {}
+  }
+  function captureCheckDraft(form) {
+    if (!state.project || form.dataset.projectId !== state.project.id) return;
+    const id = form.dataset.checkId, draft = checkDraft(state.project.id, id, checkingWorkspace());
+    const fields = Object.fromEntries(new FormData(form));
+    Object.assign(draft, fields);
+    if (id !== "new" && id !== "case-source") draft.confirm_record_only = fields.confirm_record_only === "on" || fields.confirm_record_only === true;
+    persistCheckDraft(state.project.id, id, draft);
+  }
+  function checkingTarget(target) {
+    if (!target) return '<p class="message is-error">目标已不可用，请选择本项目已保存的案例、卡或义务。</p>';
+    if (target.target_scope === "case") return `<p>案例级材料 · ${escape(target.case?.title)}${target.historical ? " · 旧源版本关联" : ""}</p>${checkingCaseSource(target.case)}<p>本条未绑定应用卡、路线或义务。</p>`;
+    if (target.target_scope === "card") return `<p>${target.historical ? "旧卡关联 · " : ""}卡级材料 v${Number(target.card_version)}：${escape(target.card?.statement)}</p><p>未绑定具体路线或义务。</p><small>应用卡 SHA256：${escape(target.card_sha256)} · ${escape(target.card_id)}</small>`;
+    return `<p>${target.historical ? "旧卡关联 · " : ""}卡 v${Number(target.card_version)}：${escape(target.card?.statement)}</p><p>路线：${escape(target.route?.title)}；义务 ${escape(target.obligation_id)}：${escape(target.obligation?.statement)}</p><small>卡 SHA256：${escape(target.card_sha256)} · ${escape(target.card_id)}</small>`;
+  }
+  function checkingCaseSource(item) {
+    if (!item) return "";
+    return `<p>案例 ID：${escape(item.case_id)} · 登记版本 ${Number(item.version)} · 源版本：${escape(item.source_version)}</p><p>声明的源文件字节 SHA256：${escape(item.declared_source_sha256 || "unknown")}</p><details><summary>案例来源身份与声明</summary><p>${escape(item.source_reference)}</p><small>来源元数据 SHA256（不是文件字节）：${escape(item.case_source_metadata_sha256)}<br>本项目案例身份：${escape(item.case_key)}；历史声明 unknown / not_connected</small></details>`;
+  }
+  function checkingTargetLabel(t) {
+    if (t.target_scope === "case") return `案例 · ${t.case.title} · ${t.case.source_version}${t.historical ? "（旧源版本）" : ""}`;
+    if (t.target_scope === "card") return `问题卡 v${t.card_version} · ${t.card.title}${t.historical ? "（旧卡）" : ""}`;
+    return `义务 v${t.card_version} · ${t.route.title} · ${t.obligation_id}${t.historical ? "（旧卡）" : ""}`;
+  }
+  function renderReferenceEditor(draft) {
+    return Array.from({length:Math.min(Number(draft.ref_count)||0,12)},(_,i)=>`<fieldset><legend>来源 ${i+1}</legend>${[["artifact_id","artifact_id",200],["label","材料名称",300],["source_version","来源版本",300],["locator","出处定位",2000],["support_scope","支持范围",4000],["origin","来源身份（如历史模型/助手推导/网页快照）",200],["original_bytes_sha256","声明的原件字节 SHA256（可空）",64],["acquired_at","取得时间（含时区，可空）",80]].map(([key,label,max])=>`<label>${label}<textarea name="ref_${i}_${key}" rows="2" maxlength="${max}" ${["original_bytes_sha256","acquired_at"].includes(key)?"":"required"}>${escape(draft[`ref_${i}_${key}`]||"")}</textarea></label>`).join("")}</fieldset>`).join("");
+  }
+  function changeCheckReferences(form, delta) {
+    captureCheckDraft(form);
+    const d=checkDraft(state.project.id,"new",checkingWorkspace()), count=Number(d.ref_count)||0;
+    if (delta>0 && count>=12) { toast("最多12项来源引用。",true); return; }
+    if (delta<0 && count===0) return;
+    if (delta<0) for(const key of Object.keys(d)) if(key.startsWith(`ref_${count-1}_`)) delete d[key];
+    d.ref_count=count+delta;persistCheckDraft(state.project.id,"new",d);
+    form.querySelector(".checking-ref-fields").innerHTML=renderReferenceEditor(d);
+  }
+  function renderArtifactReferences(material) {
+    return list(material.artifact_refs).length ? `<details><summary>逐项材料引用（外部声明） · ${material.artifact_refs.length} 项</summary>${material.artifact_refs.map(ref=>`<article><h4>${escape(ref.label)}</h4><p>来源身份：${escape(ref.origin)}；版本：${escape(ref.source_version)}</p><p>定位：${escape(ref.locator)}</p><p>支持范围：${escape(ref.support_scope)}</p><small>artifact_id：${escape(ref.artifact_id)}<br>声明字节 SHA256：${escape(ref.declared_original_bytes_sha256 || "unknown")}<br>取得时间：${escape(ref.declared_acquired_at || "unknown")}；历史声明 unknown / not_connected（不随新核查改写）</small></article>`).join("")}</details>` : "";
+  }
+  const artifactViews = {};
+  function artifactKey(projectId, recordId, artifactId) { return `${projectId}:${recordId}:${artifactId}`; }
+  function unsavedArtifactFacts(projectId, recordId) {
+    try { return JSON.parse(localStorage.getItem(`yanzheng.artifactUnsaved.${projectId}:${recordId}`) || "[]"); } catch { return []; }
+  }
+  function renderArtifactFact(fact, saved = true) {
+    const r = fact.result || {}, p = r.preview;
+    return `<article class="artifact-fact"><strong>${saved ? "已保存的历史读取事实" : "未保存到项目 · 本机保留结果"}：${escape(r.status)}</strong><p>artifact_id：${escape(fact.artifact_id)}<br>本次记录：${escape(fact.recorded_at)}；实际读取：${escape(r.read_at || "未读取")}</p><p>实际字节 SHA256：${escape(r.actual?.byte_sha256 || "unknown")}；大小：${escape(r.actual?.bytes ?? "unknown")}<br>登记副本取得时间：${escape(r.acquired_at || "unknown")} · ${escape(r.acquired_at_status || "unknown")}</p>${list(fact.stale_reasons_at_read).length ? `<p class="message is-error">读取时旧关联：${escape(fact.stale_reasons_at_read.join("、"))}</p>` : ""}${list(r.declaration_comparisons).map(c=>`<p>声明 ${Number(c.declaration_index)+1} 与本次字节对照：${escape(c.byte_sha256_comparison)}；原声明取得时间：${escape(c.declared_acquired_at || "unknown")}</p>`).join("")}${p?.text != null ? `<details><summary>查看本次 UTF-8 纯文本预览${p.truncated ? "（已截断至 12000 字符）" : ""}</summary><pre class="theory-raw artifact-preview">${escape(p.text)}</pre></details>` : `<p>纯文本预览：${escape(p?.status || "unavailable")}</p>`}<details><summary>本次完整核查事实</summary><pre class="theory-raw">${escape(JSON.stringify(fact,null,2))}</pre></details></article>`;
+  }
+  function renderArtifactAccess(item, project, service) {
+    const ids = [...new Set([item.material.artifact, ...list(item.material.artifact_refs)].filter(Boolean).map(r=>r.artifact_id))];
+    const unsaved = unsavedArtifactFacts(project.id,item.id);
+    return `<section class="artifact-access"><h3>关联原件 · 显式核对</h3><p>当前注册器：${service?.available ? "可手动核对固定登记副本" : "不可用"}。页面加载不读取原件。字节一致不证明来源真实、支持范围、历史模型已读或数学正确；历史事实不代表当前文件状态。</p>${ids.map(id=>{
+      const view = artifactViews[artifactKey(project.id,item.id,id)];
+      return `<div class="artifact-controls"><p>${escape(id)}</p><button type="button" class="button button-secondary" data-action="artifact-describe" data-project-id="${escape(project.id)}" data-check-id="${escape(item.id)}" data-artifact-id="${escape(id)}">查看登记元数据</button><button type="button" class="button button-secondary" data-action="artifact-read" data-project-id="${escape(project.id)}" data-check-id="${escape(item.id)}" data-artifact-id="${escape(id)}">重新读取并保存核查事实</button>${view ? `<p role="status">${escape(view.message)}</p>${view.unsaved ? renderArtifactFact(view.unsaved,false) : ""}${view.metadata ? `<details open><summary>登记元数据 · 未读取字节</summary><pre class="theory-raw">${escape(JSON.stringify(view.metadata,null,2))}</pre></details>` : ""}` : ""}</div>`;
+    }).join("") || "<p>本条尚无明确 artifact_id；来源文字或案例源哈希不授予原件读取关联。</p>"}${unsaved.map(f=>renderArtifactFact(f,false)).join("")}<details ${list(item.artifact_reads).length ? "open" : ""}><summary>已保存的原件核查历史 · ${list(item.artifact_reads).length} 次</summary>${list(item.artifact_reads).slice().reverse().map(f=>renderArtifactFact(f)).join("")}</details></section>`;
+  }
+  async function inspectArtifact(button) {
+    if (!state.project || button.dataset.projectId !== state.project.id || state.mutating || leanBusy()) return;
+    const projectId=state.project.id, recordId=button.dataset.checkId, artifactId=button.dataset.artifactId;
+    const action=button.dataset.action === "artifact-read" ? "read" : "describe";
+    const key=artifactKey(projectId,recordId,artifactId);
+    $$(".checking-form").forEach(captureCheckDraft); captureTheoryDraft();
+    state.mutating=true;syncMutationControls();
+    try {
+      const result=await api(`/api/projects/${encodeURIComponent(projectId)}/theory/checks/${encodeURIComponent(recordId)}/artifacts/${action}`,{method:"POST",body:JSON.stringify({artifact_id:artifactId})});
+      artifactViews[key]={message:action === "read" ? `本次 ${result.fact.result.status} 事实已保存。` : `登记状态：${result.status}；本次未读取字节。`,metadata:action === "describe" ? result : null};
+      if(action === "read") state.theoryWorkspaces[projectId]=await api(`/api/projects/${encodeURIComponent(projectId)}/theory`);
+    } catch(error) {
+      artifactViews[key]={message:error.message};
+      if(error.body?.fact && error.body.saved === false) {
+        const facts=unsavedArtifactFacts(projectId,recordId);facts.push(error.body.fact);
+        try { localStorage.setItem(`yanzheng.artifactUnsaved.${projectId}:${recordId}`,JSON.stringify(facts)); }
+        catch { artifactViews[key].unsaved=error.body.fact;artifactViews[key].message+=" 本机存储也不可用，请从下方复制结果。"; }
+      }
+      if(error.body?.saved === true) {
+        try { state.theoryWorkspaces[projectId]=await api(`/api/projects/${encodeURIComponent(projectId)}/theory`); } catch {}
+      }
+    } finally {
+      state.mutating=false;
+      if(state.project?.id === projectId) renderTheory();
+      syncMutationControls();
+    }
+  }
+  function renderCheckingDerivation(material) {
+    let parsed;
+    try { parsed = JSON.parse(material.derivation); } catch {}
+    if (parsed?.format !== "c-preserved-claim-fields-v1") return `<pre class="theory-raw">${escape(material.derivation)}</pre>`;
+    return `<h3>原推导与核查边界</h3><p>${escape(parsed.derivation_verbatim)}</p><p>反例核查：${escape(parsed.counterexample_check)}</p><p>依赖论断：${escape(list(parsed.depends_on_claim_ids).join("、") || "无")}</p><p>待审阅项：${escape(list(parsed.unresolved_questions).join("；"))}</p><p>原核查时间：${escape(parsed.historical_reviewed_at)}；本次保存不增加真实数学审阅次数。</p><details><summary>逐项来源、定位与支持范围（外部声明）</summary>${list(parsed.evidence_refs).filter(e => e && typeof e === "object").map(e => `<article><p>${escape(e.original_path)}</p><p>位置：${escape(e.locator?.text)}；${escape(e.support_boundary)}</p><p>artifact_id：${escape(e.artifact_id)}<br>声明的原件字节 SHA256：${escape(e.byte_sha256 || "unknown")}<br>定位文本 artifact_id：${escape(e.locator?.locator_artifact_id || "unknown")}</p><p>历史模型输入归属：${escape(e.historical_model_input_membership || "unknown")}</p></article>`).join("")}</details>`;
+  }
+  function renderChecking(workspace, project) {
+    if (!workspace.checking) return '<section class="panel theory-checking"><h2>论断与义务核查材料</h2><p>正在读取本项目的卡、路线与义务关联。</p></section>';
+    const checking = workspace.checking, records = list(checking.records), targets = list(checking.targets);
+    const draft = checkDraft(project.id, "new", checking);
+    const caseDraft = checkDraft(project.id, "case-source", checking);
+    const input = (d, name, label, max, required = true) => `<label>${label}<textarea name="${name}" rows="2" maxlength="${max}" ${required ? "required" : ""}>${escape(d[name] || "")}</textarea></label>`;
+    const select = (d, name, label, values) => `<label>${label}<select name="${name}">${values.map(([value, text]) => `<option value="${escape(value)}" ${d[name] === value ? "selected" : ""}>${escape(text)}</option>`).join("")}</select></label>`;
+    const propositions = [["P0","P0 · 原命题/反例"],["P1","P1 · 加强条件充分性"],["P2","P2 · 必要性边界"],["OTHER","其他明确对象"],["H14","H14 · 历史模型论断"],["HISTORICAL","历史事实"],["REVIEW_STATUS","审阅状态"]];
+    return `<section class="panel theory-checking"><h2>论断与义务核查材料</h2><p>本地保存 ${records.length} 条材料，${new Set(records.map(r=>r.material.claim_id)).size} 个不同论断。核查意见不认证数学正确性；原义务保持开放、未形式核验。${escape(checking.model_scope || "这些材料不进入模型消息。")}</p><p role="status">${escape(checkMessages[project.id] || "")}</p>
+      <details ${caseDraft.title ? "open" : ""}><summary>登记本项目案例来源版本</summary><p>已有 ${list(checking.cases).length} 个来源登记版本。明确登记后可选择案例级目标；不会创建问题卡或证明义务。来源哈希仅为声明；原件读取只针对保存材料中明确关联的固定登记 artifact_id。</p><form class="checking-form" data-check-id="case-source" data-project-id="${escape(project.id)}">${input(caseDraft,"case_id","稳定案例 ID（小写字母、数字、连字符）",80)}${input(caseDraft,"title","案例标题",200)}${input(caseDraft,"source_version","案例来源版本",300)}${input(caseDraft,"source_sha256","声明的源文件字节 SHA256（未知可留空）",64,false)}${input(caseDraft,"source_reference","案例来源说明与位置",2000)}<button type="submit" class="button button-primary">保存案例来源版本</button><button type="button" class="button button-secondary" data-action="check-rebase" data-check-id="case-source">核对后保留草稿并同步版本</button></form></details>
+      ${targets.length ? `<details ${draft.claim_text ? "open" : ""}><summary>添加核查材料（选择案例/卡/义务）</summary><form class="checking-form" data-check-id="new" data-project-id="${escape(project.id)}">
+      ${select(draft,"target_key","归属层级与实际目标：所属卡、路线与义务 / 案例",targets.map(t => [t.target_key,checkingTargetLabel(t)]))}
+      <div class="checking-target">${checkingTarget(targets.find(t => t.target_key === draft.target_key))}</div>
+      <div class="theory-fields">${select(draft,"case_key","关联的本项目案例来源版本（明确选择，可空）",[["","未关联案例"],...list(checking.cases).map(c=>[c.case_key,`${c.title} · ${c.source_version}${c.historical ? "（旧源版本）" : ""}`])])}${select(draft,"card_proposition","所属卡标签（案例级选择不归属卡）",[["","不归属卡 · 案例级"],...propositions])}${select(draft,"proposition","实际论证对象",propositions)}${input(draft,"claim_id","稳定论断 ID，如 C01",80)}${input(draft,"claim_text","论断原文",8000)}${input(draft,"assumptions","使用的假设与定义域",4000)}${input(draft,"support_scope","支持范围与不能推出的结论",4000)}${input(draft,"derivation","具体推导或反例核查材料",16000)}${select(draft,"record_origin","记录来源",[["researcher_draft","研究者草稿"],["assistant_check","助手核查（非人工审阅）"],["external_material","外部材料转录"]])}${input(draft,"source_reference","材料来源/版本（未知请明确填写 unknown）",2000)}${select(draft,"note_id","本项目笔记（可不关联）",[["","无笔记 · 来源未核实"],...list(checking.notes).map(n => [n.note_id,`${n.title} · ${n.locator}`])])}${input(draft,"locator","出处定位与阅读范围",2000)}</div>
+      <details><summary>外部原件元数据（仅声明，不触发读取）</summary><p>只记录外部声明，不认证字节哈希。不把后补快照当历史模型已读；未知可留空。</p>${input(draft,"artifact_id","artifact_id",200,false)}${input(draft,"original_bytes_sha256","声明的原网页/文件字节 SHA256（非笔记哈希）",64,false)}${input(draft,"acquired_at","声明的取得时间（ISO 含时区）",80,false)}</details>
+      <details class="checking-ref-editor"><summary>添加逐项材料引用</summary><p>逐项填写来源身份、版本、定位与支持范围；只保存声明，不注册或读取文件。</p><div class="checking-ref-fields">${renderReferenceEditor(draft)}</div><button type="button" class="button button-secondary" data-action="check-add-reference">增加一项来源</button><button type="button" class="button button-secondary" data-action="check-remove-reference">移除最后一项草稿来源</button></details><p>不同对象可关联：例如 P1 卡内保存 P0 反例，但不能据此证明 P1。保存后原材料不可覆盖，更正请另存一条。</p><button class="button button-primary" type="submit">保存核查材料</button><button class="button button-secondary" type="button" data-action="check-rebase" data-check-id="new">核对后保留草稿并同步版本</button></form></details>` : '<p>先登记本项目案例来源，或保存真实问题卡，即可选择其相应层级；义务级需要已有规划。</p>'}
+      ${records.slice().reverse().map(item => {
+        const m = item.material, d = checkDraft(project.id,item.id,checking), base = `/api/projects/${encodeURIComponent(project.id)}/theory/checks/${encodeURIComponent(item.id)}/export`;
+        return `<details class="checking-record" data-check-record="${escape(item.id)}" ${Object.keys(artifactViews).some(k=>k.startsWith(`${project.id}:${item.id}:`)) || unsavedArtifactFacts(project.id,item.id).length ? "open" : ""}><summary>${escape(m.claim_id)} · ${escape(m.proposition)} · ${escape(item.target.obligation_id || ((item.target.target_scope === "case") ? "案例级" : "卡级"))} · ${item.human_review_status === "recorded_unverified" ? "人工意见已记录，未认证" : "人工审阅 pending"}</summary><p>${escape(m.claim_text)}</p>${checkingTarget(item.target)}${item.case_snapshot && item.target.target_scope !== "case" ? `<details><summary>关联案例来源版本</summary>${checkingCaseSource(item.case_snapshot)}</details>` : ""}${item.association_warning ? `<p class="message is-error">${escape(item.association_warning)}</p>` : ""}${list(item.stale_reasons).length ? '<p class="message is-error">旧关联：卡、证据、研究背景或案例源版本已变化。保留原材料与历史审阅，不自动迁移。</p>' : ""}<p>假设：${escape(m.assumptions)}</p><p>支持范围：${escape(m.support_scope)}</p>${renderCheckingDerivation(m)}${renderArtifactReferences(m)}<p>记录来源：${escape(m.record_origin)}；原件历史声明保持原样，当前核查见下方。</p>${renderArtifactAccess(item,project,checking.evidence_access)}<details><summary>来源版本与原始定位声明</summary><p>材料来源/版本：</p><pre class="theory-raw">${escape(m.source_reference)}</pre><p>原始定位：</p><pre class="theory-raw">${escape(m.locator)}</pre></details><details><summary>完整依据、哈希和历史快照</summary><pre class="theory-raw">${escape(JSON.stringify(item,null,2))}</pre></details>
+        <h3>审阅记录 · 不认证身份或正确性</h3>${list(item.reviews).map(r => `<article><p>${escape(r.kind)} · ${escape(r.reviewer)} · ${escape(r.recorded_at)}</p><p>范围：${escape(r.scope)}</p><p>${escape(r.opinion)}</p></article>`).join("") || "<p>pending · 尚无审阅事件。</p>"}
+        <form class="checking-form" data-check-id="${escape(item.id)}" data-project-id="${escape(project.id)}">${select(d,"kind","意见类型",[["assistant_check","助手核查"],["human_review","记录外部人工意见（身份未认证）"]])}${input(d,"reviewer","意见提供者（声明，非认证）",200)}${input(d,"scope","实际审阅范围",4000)}${input(d,"opinion","具体意见与待解决问题",8000)}<label><input type="checkbox" name="confirm_record_only" ${d.confirm_record_only ? "checked" : ""} required>确认仅记录意见，不关闭义务或认证证明。</label><button type="submit" class="button button-primary">保存审阅记录</button><button type="button" class="button button-secondary" data-action="check-rebase" data-check-id="${escape(item.id)}">核对后保留草稿并同步版本</button></form><p>保存时间：${escape(item.created_at)}；独立数学审阅 pending。</p><p>${item.target.obligation_id ? "义务 open" : "无绑定义务 · not_applicable"} · not_formally_verified</p><div class="theory-actions"><a class="button button-secondary" download href="${base}?format=json">本条 JSON</a><a class="button button-secondary" download href="${base}?format=md">本条 Markdown</a></div></details>`;
+      }).join("")}</section>`;
+  }
+  async function rebaseCheck(id) {
+    if (!state.project || state.mutating || leanBusy()) return;
+    const projectId = state.project.id;
+    const fresh = await api(`/api/projects/${encodeURIComponent(projectId)}/theory`);
+    if (state.project?.id !== projectId) return;
+    state.theoryWorkspaces[projectId] = fresh;
+    const d = checkDraft(projectId,id,fresh.checking);
+    d.expected_revision = id === "new" ? fresh.checking.revision : id === "case-source" ? fresh.checking.case_revision : fresh.checking.records.find(r => r.id === id)?.review_revision;
+    if (id === "new") d.context_token = fresh.checking.context_token;
+    d.request_id = crypto.randomUUID(); persistCheckDraft(projectId,id,d);
+    checkMessages[projectId] = "草稿保留，已同步版本；请再次核对目标、笔记与审阅后保存。";
+    captureTheoryDraft(); renderTheory();
+  }
+  async function saveCheck(form) {
+    if (!state.project || form.dataset.projectId !== state.project.id || state.mutating || leanBusy()) return;
+    captureCheckDraft(form); captureTheoryDraft();
+    const projectId = state.project.id, id = form.dataset.checkId, d = checkDraft(projectId,id,checkingWorkspace());
+    let body;
+    if (id === "case-source") {
+      body = Object.fromEntries(["request_id","expected_revision","case_id","title","source_version","source_reference"].map(k=>[k,d[k]]));
+      body.source_sha256 = d.source_sha256 || null;
+    } else if (id === "new") {
+      body = Object.fromEntries(["request_id","expected_revision","context_token","target_key","claim_id","proposition","card_proposition","claim_text","assumptions","support_scope","derivation","record_origin","source_reference","locator"].map(k => [k,d[k]]));
+      body.note_id = d.note_id || null;
+      const target = list(checkingWorkspace().targets).find(t=>t.target_key === d.target_key);
+      body.target_scope = target?.target_scope || "obligation";
+      body.case_key = d.case_key || null;
+      body.card_proposition = d.card_proposition || null;
+      if (Number(d.ref_count)>0) body.artifact_refs = Array.from({length:Number(d.ref_count)},(_,i)=>Object.fromEntries(["artifact_id","label","source_version","locator","support_scope","origin","original_bytes_sha256","acquired_at"].map(k=>[k,d[`ref_${i}_${k}`] || (["original_bytes_sha256","acquired_at"].includes(k)?null:"")])));
+      if (!d.artifact_id && (d.original_bytes_sha256 || d.acquired_at)) { toast("填写原件声明时需要 artifact_id；未知请留空。",true); return; }
+      body.artifact = d.artifact_id ? {artifact_id:d.artifact_id, original_bytes_sha256:d.original_bytes_sha256 || null, acquired_at:d.acquired_at || null} : null;
+    } else body = Object.fromEntries(["request_id","expected_revision","kind","scope","opinion","reviewer","confirm_record_only"].map(k => [k,d[k]]));
+    state.mutating = true; syncMutationControls();
+    try {
+      const endpoint = id === "case-source" ? "cases" : `checks${id === "new" ? "" : `/${encodeURIComponent(id)}/reviews`}`;
+      const result = await api(`/api/projects/${encodeURIComponent(projectId)}/theory/${endpoint}`, {method:"POST",body:JSON.stringify(body)});
+      delete checkDrafts[`${projectId}:${id}`]; try { localStorage.removeItem(`yanzheng.checkDraft.${projectId}:${id}`); } catch {}
+      if (state.project?.id === projectId) state.project = result;
+      checkMessages[projectId] = "已保存；未请求模型，义务仍开放、未形式核验。";
+    } catch (error) { checkMessages[projectId] = `${error.message} 本机草稿保留；核对后可显式同步版本。`; toast(checkMessages[projectId],true); }
+    finally {
+      state.mutating = false; delete state.theoryWorkspaces[projectId];
+      if (state.project?.id === projectId) { await loadTheory(true); renderTheory(); }
+      syncMutationControls();
+    }
+  }
+  const failureDrafts = {};
+  function failureDraft(projectId, item) {
+    const key = `${projectId}:${item.id}`;
+    if (!Object.hasOwn(failureDrafts, key)) {
+      try { failureDrafts[key] = JSON.parse(localStorage.getItem(`yanzheng.failureDraft.${key}`) || "null"); } catch { /* optional local storage */ }
+    }
+    return failureDrafts[key] || { reason: "", expected_revision: item.review_revision, request_id: crypto.randomUUID() };
+  }
+  function renderTheoryFailures(workspace, project) {
+    const failures = list(workspace.failure_records);
+    if (!failures.length) return "";
+    const categories = { structural_failure: "结构校验失败", service_failure: "模型服务失败", context_conflict: "上下文冲突" };
+    return `<section class="panel theory-failures"><h2>失败材料与具体审阅</h2><p>共 ${failures.length} 条。原错误与人工数学意见分别保存；失败材料不能接受为已证明。</p>${[...failures].reverse().map(item => {
+      const draft = failureDraft(project.id, item), capture = item.capture || {};
+      return `<details class="theory-failure" data-failure-id="${escape(item.id)}"><summary>${escape(categories[item.category] || item.category)} · ${escape(item.source)} · 命题 v${Number(item.base_card_version)}</summary><p class="message is-error">${escape(item.diagnostic)}</p><p>原调用：${escape(item.source_call_id)} · 提示：${escape(item.prompt_version)} · ${item.source === "historical_replay" ? "历史调用 Token（本轮无新计费）" : "实际总 Token"}：${escape(item.call?.usage?.total_tokens ?? "未知")}</p><p>保存范围：${escape(capture.kind)}；${capture.truncated ? "已截断，不能完整重放" : capture.complete ? "已完整取得" : "未取得正文"}${capture.redacted ? "；凭据回显已脱敏" : ""}。上限 ${Number(capture.limit_characters) || 50000} 字符。</p><details><summary>原文与来源详情</summary><pre class="theory-raw">${escape(capture.text || "（没有可保存的正文）")}</pre><pre class="theory-raw">${escape(JSON.stringify({ call: item.call, historical_origin: item.historical_origin, card_sha256: item.card_sha256, input_sha256: item.input_sha256, capture: { ...capture, text: undefined } }, null, 2))}</pre><details><summary>当时的完整输入上下文</summary><pre class="theory-raw">${escape(JSON.stringify(item.input_messages, null, 2))}</pre></details></details><h3>人工审阅意见 · 未独立核验</h3>${list(item.reviews).map(r => `<p class="theory-review-record">${escape(r.reason)}<small>${escape(date(r.reviewed_at, true))}</small></p>`).join("") || "<p>尚无人工意见；结构失败不能推出命题为假。</p>"}<label>具体反馈<textarea rows="4" maxlength="2000" data-failure-review="${escape(item.id)}" data-project-id="${escape(project.id)}" placeholder="指出原文中的具体步骤、错误原因及需要核查的依据">${escape(draft.reason)}</textarea></label>${draft.expected_revision !== item.review_revision ? '<p class="message is-error">审阅已更新，本机草稿仍保留。请核对历史意见，点击同步版本后提交。</p><button type="button" class="button button-secondary" data-action="failure-rebase" data-failure-id="'+escape(item.id)+'">保留草稿并同步审阅版本</button>' : ""}<div class="theory-actions"><button type="button" class="button button-secondary" data-action="failure-review" data-failure-id="${escape(item.id)}">保存具体反馈</button><a class="button button-secondary" download href="/api/projects/${encodeURIComponent(project.id)}/theory/failures/${encodeURIComponent(item.id)}/export">导出本条原始材料</a><a class="button button-secondary" download href="/api/projects/${encodeURIComponent(project.id)}/theory/failures/${encodeURIComponent(item.id)}/export?format=md">导出本条 Markdown</a></div></details>`;
+    }).join("")}</section>`;
+  }
+  function renderNextContext(projectId) {
+    const preview = theoryContextPreviews[projectId];
+    if (!preview) return '<p class="theory-notice">先保存命题卡，再检查下一轮材料；检查不会请求模型。</p>';
+    const labels = { stale_context: "原卡、研究背景或证据上下文已变化", missing_context_basis: "缺少生成时上下文依据，原件保留", invalid_context_basis: "原输入依据完整性校验失败", no_original_content: "缺少原提交内容", no_review: "尚无具体反馈", no_model_content: "没有模型正文", partial_or_redacted_content: "原文不完整或已脱敏", older_than_latest_two: "不在最近两条适用反馈内", cross_project: "跨项目" };
+    return `<details class="theory-next-context" open><summary>下一轮材料预览 · 尚未发送</summary><p>核查材料与其审阅仅本地保存，不进入本次模型消息。</p><p>${preview.blocked ? escape(preview.detail) : `${preview.context_characters} / ${preview.limit_characters} 字符；最近两条适用反馈`}</p>${list(preview.feedback_dispositions || preview.failures).map(item => `<p>${escape(({proposal_rejection:"提议审阅",legacy_rejected_output:"旧结构拒绝",failure_record:"失败材料"})[item.record_kind] || "失败材料")} · ${escape(item.source_call_id || item.record_id || item.failure_id)}：${item.included ? (preview.blocked ? "适用，但总预算阻止发送" : "将带入原文及具体意见") : "不带入 · " + escape(labels[item.exclusion] || item.exclusion)}</p>`).join("")}<details><summary>检查实际将发送的完整消息</summary><pre class="theory-raw">${escape(JSON.stringify(preview.messages, null, 2))}</pre></details></details>`;
+  }
+  async function inspectNextContext(button) {
+    if (!state.project || state.mutating || leanBusy()) return;
+    captureTheoryDraft();
+    const projectId = state.project.id;
+    if (theoryDraft(projectId)) { toast("请先保存命题草稿，再检查下一轮材料。", true); return; }
+    const done = busy(button, "检查材料");
+    try {
+      const preview = await api(`/api/projects/${encodeURIComponent(projectId)}/theory/next-context`);
+      theoryContextPreviews[projectId] = preview;
+      if (state.project?.id === projectId) renderTheory();
+    } catch (error) { toast(error.message, true); }
+    finally { done(); syncMutationControls(); }
+  }
+  async function saveFailureReview(button, rebase = false) {
+    if (!state.project || state.mutating || leanBusy()) return;
+    const projectId = state.project.id, failureId = button.dataset.failureId;
+    const workspace = state.theoryWorkspaces[projectId] || state.project.theory || {};
+    const item = list(workspace.failure_records).find(r => r.id === failureId);
+    if (!item) return;
+    const key = `${projectId}:${failureId}`, draft = failureDraft(projectId, item);
+    if (rebase) {
+      draft.expected_revision = item.review_revision; draft.request_id = crypto.randomUUID();
+      failureDrafts[key] = draft;
+      try { localStorage.setItem(`yanzheng.failureDraft.${key}`, JSON.stringify(draft)); } catch {}
+      captureTheoryDraft(); renderTheory(); return;
+    }
+    if (!draft.reason.trim()) { toast("请填写具体审阅意见。", true); return; }
+    captureTheoryDraft();
+    state.mutating = true; syncMutationControls();
+    try {
+      const result = await api(`/api/projects/${encodeURIComponent(projectId)}/theory/failures/${encodeURIComponent(failureId)}/reviews`, { method: "POST", body: JSON.stringify(draft) });
+      delete failureDrafts[key]; delete theoryContextPreviews[projectId];
+      try { localStorage.removeItem(`yanzheng.failureDraft.${key}`); } catch {}
+      if (state.project?.id === projectId) state.project = result;
+      toast("具体反馈已保存；未请求模型，数学结论仍待核查。");
+    } catch (error) { toast(error.message, true); }
+    finally {
+      state.mutating = false;
+      delete state.theoryWorkspaces[projectId];
+      if (state.project?.id === projectId) { await loadTheory(true); renderTheory(); }
+      syncMutationControls();
+    }
+  }
+  function renderTheory() {
+    const target = $("#experiments-content"), project = state.project;
+    const tabs = workbenchTabs();
+    const exampleButton = `<button type="button" class="button button-secondary" data-action="theory-example">${icon("plus")}创建独立公开案例</button>`;
+    const exampleNote = '<p class="theory-notice">公开案例：逐点收敛与一致收敛。用于检查流程可靠性，包含预置资料和待确认修订；不调用模型、不检索、不代表新定理。</p>';
+    if (!project) {
+      target.innerHTML = tabs + `<section class="panel theory-intro"><span class="section-kicker">FROM CONJECTURE TO ARGUMENT</span><h2>把一个数学想法，拆成能审阅的论证。</h2><p>从研究项目开始，保存定义、假设和目标；让每次修订都能回到具体依据。</p><div class="theory-actions"><button type="button" class="button button-primary" data-action="new">新建研究 ${icon("arrow-right")}</button>${exampleButton}</div>${exampleNote}</section>`;
+      syncMutationControls(); return;
+    }
+    const workspace = state.theoryWorkspaces[project.id] || project.theory || {}, draft = theoryDraft(project.id), card = draft?.card || workspace.card || blankTheoryCard();
+    const version = Number(workspace.card_version) || 0, pending = workspace.pending_proposal, notes = list(workspace.evidence_notes), proposals = list(workspace.proposals);
+    const stale = draft && draft.baseVersion !== version;
+    const picker = `<div class="literature-toolbar"><label class="project-picker" for="experiment-project">当前研究项目<select id="experiment-project"><option value="">请选择研究项目</option>${state.projects.map(item => `<option value="${escape(item.id)}" ${item.id === project.id ? "selected" : ""}>${escape(item.title)}</option>`).join("")}</select></label><button class="button button-secondary" type="button" data-action="return-research">${icon("arrow-left")}返回当前研究</button></div>`;
+    const input = (name, rows = 3) => `<label for="theory-${name}" class="${["statement", "target"].includes(name) ? "theory-wide" : ""}"><span>${theoryFields[name]}${["definitions", "assumptions"].includes(name) ? '<small>每行一项</small>' : ""}</span>${["title", "domain"].includes(name) ? `<input id="theory-${name}" name="${name}" maxlength="${name === "title" ? 160 : 300}" required value="${escape(card[name] || "")}" placeholder="${name === "title" ? "例如：连续函数列的极限何时连续？" : "例如：实分析；区间 [0, 1] 上的实值函数"}">` : `<textarea id="theory-${name}" name="${name}" rows="${rows}" maxlength="${{ statement: 4000, target: 2000, definitions: 12000, assumptions: 12000 }[name]}" ${["statement", "target"].includes(name) ? "required" : ""} placeholder="${{ statement: "准确写出待研究命题，包含量词与定义域。", definitions: "例如：逐点收敛是对每个固定 x 分别取极限。", assumptions: "例如：每个 f_n 在定义域上连续。", target: "写出希望证明、解释、修订或寻找反例的具体目标。" }[name]}">${escape(Array.isArray(card[name]) ? card[name].join("\n") : card[name] || "")}</textarea>`}</label>`;
+    const exportBase = `/api/projects/${encodeURIComponent(project.id)}/theory/export`;
+    const diffValue = value => Array.isArray(value) ? value.join("\n") : value || "（空）";
+    const reviewEditor = pending ? `<label class="theory-review-editor" for="theory-review-reason">审阅备注（可选）<textarea id="theory-review-reason" maxlength="2000" rows="3" data-project-id="${escape(project.id)}" data-proposal-id="${escape(pending.id)}" placeholder="例如：第 2 个引理遗漏了定义域条件；请记录你拒绝本次建议的具体理由。">${escape(theoryReviewDrafts[`${project.id}:${pending.id}`] || "")}</textarea><small>拒绝时会随本次建议归档，最多 2000 字。</small></label>` : "";
+    const proposal = pending ? `<section class="panel theory-proposal"><div class="theory-section-head"><div><span class="section-kicker">REVIEW BEFORE APPLYING</span><h2>待你确认的修订</h2></div><span class="stage-pill purple">${pending.source === "curated_example" ? "公开案例预置" : "千问建议"} · 尚未应用</span></div><p>${escape(pending.revision_reason)}</p>${renderTheoryProposalMetadata(pending, project)}<p class="theory-notice">基于命题 v${Number(pending.base_card_version) || 0}。${pending.source === "curated_example" ? "这是预置示例，并非本次调用千问生成。" : "模型建议需要审阅；接受后才更新项目命题。"}</p><div class="theory-diff">${list(pending.diff).map(change => `<section><h3>${escape(theoryFields[change.field] || change.field)}</h3><div><article><span>当前版本</span><p>${escape(diffValue(change.before))}</p></article><article><span>建议修订</span><p>${escape(diffValue(change.after))}</p></article></div></section>`).join("") || '<p>本次没有命题字段差异，可审阅证明路线与依据。</p>'}</div><details class="theory-revised-card"><summary>查看完整建议命题 ${icon("chevron")}</summary><dl>${Object.entries(theoryFields).map(([key, label]) => `<div><dt>${label}</dt><dd>${escape(diffValue(pending.revised_card?.[key]))}</dd></div>`).join("")}</dl></details><h3 class="theory-subtitle">建议的证明路线</h3>${renderProofRoutes(pending.proof_routes, true)}${list(pending.search_leads).length ? `<div class="theory-search-leads"><h3>后续检索线索 · 尚未执行查询</h3>${stringList(pending.search_leads)}</div>` : ""}${reviewEditor}<div class="theory-actions"><button type="button" class="button button-primary" data-action="theory-accept" data-proposal-id="${escape(pending.id)}" ${draft ? "disabled" : ""}>${icon("check")}接受修订与路线</button><button type="button" class="button button-secondary" data-action="theory-reject" data-proposal-id="${escape(pending.id)}">拒绝本次建议</button></div><p class="theory-notice">接受表示采用研究规划，不能标记定理已证明。${draft ? "本机还有未保存草稿；接受修订前请先保存或放弃草稿。" : ""}</p></section>` : "";
+    target.innerHTML = tabs + picker + `<section class="panel theory-card"><div class="theory-section-head"><div><span class="section-kicker">MATHEMATICAL PROBLEM CARD</span><h2>命题与假设卡</h2></div><span class="stage-pill">${version ? `项目已保存 v${version}` : "尚未保存命题"}</span></div><p class="theory-notice">先写清对象、定义域、量词和目标。命题草稿不会改变已选研究方向；模型修订始终等待你确认。</p>${stale ? `<div class="message is-error">项目命题已更新至 v${version}，本机草稿基于 v${Number(draft.baseVersion)}。请先复制需要保留的内容，再放弃旧草稿以载入最新命题；程序会拒绝旧版本覆盖。</div>` : ""}<form id="theory-card-form"><div class="theory-fields">${input("title")}${input("domain")}${input("statement", 4)}${input("definitions")}${input("assumptions")}${input("target")}</div><div class="theory-actions"><button type="submit" class="button button-primary">${icon("check")}保存命题卡</button>${draft ? '<button type="button" class="button button-secondary" data-action="theory-discard-draft">放弃本机草稿</button>' : ""}<span id="theory-draft-status">${draft ? "本机草稿已恢复 · 尚未保存到项目" : "修改会按项目保留在本机；点击保存后进入项目版本记录"}</span></div></form></section><section class="panel theory-research"><span class="section-kicker">EVIDENCE BEFORE REVISION</span><h2>依据阅读资料，提出下一步。</h2><p>先保存命题卡并检查下一轮材料。再点击请求，才将预览的命题、项目背景、适用反馈与阅读笔记发送至百炼，消耗 API 额度。不会自动检索新文献或接受建议。</p><details class="theory-reading-list"><summary>可用于本次建议的阅读笔记 <span>${notes.length} 条</span>${icon("chevron")}</summary><p>${escape(workspace.evidence_scope || "仅使用可定位的有效确认笔记；关联判断仍需审阅。")}${Number(workspace.omitted_note_count) > 0 ? ` 另有 ${Number(workspace.omitted_note_count)} 条较早笔记未纳入本次请求。` : ""}</p>${notes.length ? notes.map(note => renderTheoryEvidence(note)).join("") : '<p>尚无可引用的确认笔记。可先去文献工作台阅读、核对并记录位置；缺少依据时，建议应保留证据缺口。</p>'}</details>${renderTheoryFeedback(workspace)}${renderNextContext(project.id)}<div class="theory-actions"><button type="button" class="button button-secondary" data-action="theory-preview">检查下一轮材料</button><button type="button" class="button button-primary" data-action="theory-propose">${icon("sparkles")}请千问提出修订</button><button type="button" class="button button-secondary" data-action="literature">${icon("book")}查阅与记录文献</button></div><p class="theory-notice">${state.status?.model?.configured ? `当前模型：${escape(state.status.model.model || "千问")}。` : "千问未配置，可编辑保存并体验独立公开案例。"}证明路线是待核查规划；下方可单独运行固定 Lean 案例；它不核验这些自然语言证明路线。</p><div id="theory-message" class="message" role="alert" ${state.theoryErrors[project.id] || workspace.last_error ? "" : "hidden"}>${escape(state.theoryErrors[project.id] || workspace.last_error?.message || (typeof workspace.last_error === "string" ? workspace.last_error : ""))}</div></section>${renderTheoryFailures(workspace, project)}${renderChecking(workspace, project)}${proposal}<section class="panel theory-confirmed"><div class="theory-section-head"><div><span class="section-kicker">CONTINUE THE ARGUMENT</span><h2>已确认的证明规划</h2></div><span class="stage-pill">未形式核验</span></div>${renderProofRoutes(workspace.proof_routes)}<div class="theory-actions"><a class="button button-secondary" href="${exportBase}?format=md" download>${icon("download")}导出 Markdown</a><a class="button button-secondary" href="${exportBase}?format=json" download>导出完整 JSON</a></div><p class="theory-notice">导出项目已保存的命题、建议与状态；本机未保存草稿不在导出中。</p></section>${leanUI ? leanUI.render(project) : '<section class="panel lean-panel" id="lean-workspace"><h2>Lean 界面未加载</h2><p>请刷新页面；当前命题和理论记录不受影响。</p></section>'}${renderTheoryProposalHistory(workspace, project)}${renderTheoryVersions(workspace)}<section class="theory-example-block">${exampleButton}${exampleNote}</section>`;
+    syncMutationControls();
+    const accept = $('[data-action="theory-accept"]'); if (accept && draft) accept.disabled = true;
+  }
+  async function performTheory(action, button, proposalId = "") {
+    if (!state.project || state.mutating || state.literatureBusy || state.experimentBusy || leanBusy()) return;
+    const form = $("#theory-card-form");
+    const draft = action === "save" ? captureTheoryDraft() : theoryDraft(state.project.id);
+    if (action === "save" && !form?.reportValidity()) return;
+    if (action === "save" && ["definitions", "assumptions"].some(key => draft.card[key].length > 12 || draft.card[key].some(item => item.length > 1000))) { const error = "定义与假设各最多 12 项，每项最多 1000 字；请分行填写并精简内容。"; message($("#theory-message"), error); toast(error, true); return; }
+    if (action === "accept" && draft) { toast("请先保存或放弃本机草稿，再接受修订。", true); return; }
+    if (action === "propose" && (!state.status?.model?.configured || theoryDraft(state.project.id) || !theoryContextPreviews[state.project.id] || theoryContextPreviews[state.project.id].blocked)) return;
+    const projectId = state.project.id, token = state.opening, base = `/api/projects/${encodeURIComponent(projectId)}/theory`;
+    state.mutating = true; state.theoryBusy = true;
+    const done = busy(button, action === "propose" ? "千问正在提出建议" : "正在保存"); syncMutationControls();
+    delete state.theoryErrors[projectId];
+    try {
+      if (action === "save") {
+        const saved = await api(`${base}/card`, { method: "POST", body: JSON.stringify({ card: draft.card, expected_version: draft.baseVersion }) });
+        if (token !== state.opening || state.project?.id !== projectId) return;
+        state.project = saved.project || saved; clearTheoryDraft(projectId); delete theoryContextPreviews[projectId]; delete state.theoryWorkspaces[projectId]; leanUI?.invalidate(projectId);
+      }
+      if (action !== "save") {
+        const path = action === "propose" ? `${base}/propose` : `${base}/proposals/${encodeURIComponent(proposalId)}/${action}`;
+        const requestBody = action === "reject" ? { reason: String($("#theory-review-reason")?.value ?? theoryReviewDrafts[`${projectId}:${proposalId}`] ?? "").trim() } : action === "propose" ? { context_token: theoryContextPreviews[projectId].context_token } : {};
+        const result = await api(path, { method: "POST", body: JSON.stringify(requestBody) });
+        if (token !== state.opening || state.project?.id !== projectId) return;
+        state.project = result.project || result; delete state.theoryWorkspaces[projectId]; leanUI?.invalidate(projectId);
+        if (action === "reject") delete theoryReviewDrafts[`${projectId}:${proposalId}`];
+      }
+      toast({ save: "命题已保存，版本记录可恢复。", propose: "修订建议已保存，等待你审阅确认。", accept: "已采用修订与证明规划，仍需数学核查。", reject: "已拒绝本次建议，原命题保留。" }[action]);
+    } catch (error) {
+      state.theoryErrors[projectId] = error.message;
+      try { const latest = await api(`/api/projects/${encodeURIComponent(projectId)}`); if (token === state.opening && state.project?.id === projectId) { state.project = latest.project || latest; delete state.theoryWorkspaces[projectId]; } } catch { /* Preserve the last saved record and local draft. */ }
+      if (token === state.opening && state.project?.id === projectId) toast(error.message, true);
+    } finally {
+      delete theoryContextPreviews[projectId];
+      state.mutating = false; state.theoryBusy = false; done(); syncMutationControls();
+      if (token === state.opening && state.project?.id === projectId) { renderProject(); await refreshProjects(false); if (state.view === "experiments") { renderExperiments(); await loadTheory(true); } }
+    }
+  }
+  async function createTheoryExample(button) {
+    if (state.mutating || state.literatureBusy || state.experimentBusy || leanBusy()) return;
+    captureTheoryDraft();
+    const token = state.opening;
+    state.mutating = true; const done = busy(button, "正在创建独立案例"); syncMutationControls();
+    try {
+      const result = await api("/api/theory/examples", { method: "POST", body: JSON.stringify({ name: "uniform-continuity" }) });
+      if (token !== state.opening) return;
+      state.project = result.project || result; ++state.opening; remember(state.project.id); chooseValidationMode("theory");
+      renderProject(); await refreshProjects(false); setView("experiments");
+      toast("已创建独立公开案例；原研究项目与本机草稿均保留。");
+    } catch (error) { if (token === state.opening) { toast(error.message, true); message($("#theory-message") || $("#global-message"), error.message); } }
+    finally { state.mutating = false; done(); syncMutationControls(); }
+  }
   function renderExperimentRun(run, projectId) {
     const number = value => Number.isFinite(value) ? Number(value).toPrecision(4) : "未记录";
     const range = value => value ? `${number(value.median)} [${number(value.min)}, ${number(value.max)}]` : "未记录";
@@ -348,7 +830,7 @@
     if (form && state.project) state.experimentDrafts[state.project.id] = Object.fromEntries(new FormData(form));
   }
   async function runExperiment(form) {
-    if (!state.project || state.mutating || state.literatureBusy || state.experimentBusy) return;
+    if (!state.project || state.mutating || state.literatureBusy || state.experimentBusy || leanBusy()) return;
     captureExperimentDraft();
     const raw = Object.fromEntries(new FormData(form)), body = {};
     const parseValues = value => String(value).split(/[,，\s]+/).filter(Boolean).map(Number);
@@ -374,7 +856,7 @@
     }
   }
   async function reviseFromExperiments(button) {
-    if (!state.project || state.mutating || state.literatureBusy || state.experimentBusy || !state.status?.model?.configured) return;
+    if (!state.project || state.mutating || state.literatureBusy || state.experimentBusy || leanBusy() || !state.status?.model?.configured) return;
     const projectId = state.project.id, token = state.opening;
     state.mutating = true; state.generating = true; syncMutationControls();
     const done = busy(button, "千问正在依据结果修订");
@@ -415,8 +897,8 @@
     const status = state.status;
     if (!status) return;
     const capabilities = status.capabilities || {}, model = status.model || {};
-    const available = [status.storage === "sqlite" ? "真实本地保存：简报、回答、选择、题录、阅读笔记与实验可恢复导出" : null, capabilities.literature_search === "available" ? "公开题录检索：Crossref / arXiv，记录成功、无结果与失败" : null, capabilities.reading_notes ? "用户确认阅读：分开保存摘要或相关正文的笔记、位置和日期" : null, capabilities.experiments === "randomized_svd" ? "本地首轮实验：已选的随机低秩方向可运行固定 SVD 对照，记录误差、耗时与检查" : "浏览已有阅读、实验与案例档案"].filter(Boolean);
-    $("#capability-content").innerHTML = `<span class="section-kicker">CURRENT VERSION · ${escape(status.version)}</span><h2>能力与实际完成程度</h2><h3>已经可用</h3><ul>${available.map(item => `<li>${icon("check")}${escape(item)}</li>`).join("")}</ul><h3>Skill 驱动千问流程</h3><p class="about-model-state">${escape(modelStateLabel())}${model.configured ? ` · ${escape(model.model || "千问")}` : ""}</p><p class="about-disclosure">${model.configured ? "千问按 Skill 规则判断：信息不足时提出少量澄清问题，信息足够时生成候选，并依据补充资料、题录、用户阅读笔记或实验摘要修订。返回结果经后端校验，推荐不会自动成为已选课题。" : "先在本机运行 Configure-Qwen.ps1 配置密钥，再刷新状态。未配置时可体验本地演示；网页不接收或显示 API Key。"}</p><p class="about-disclosure">新建时可选择千问流程或本地演示。每次带千问的提交会把简报、回答及本项目相关资料发送至百炼并消耗额度；查询、保存笔记和本地实验各有独立日志。</p><button type="button" class="button button-secondary button-small" data-action="refresh-model-status">刷新配置状态</button><h3>当前边界</h3><ul class="planned">${["模型不自动读取论文全文，阅读范围由用户确认", "实验仅支持固定的随机低秩逼近验证；通用课题保留各自计划", "数值检查不等于独立科学复核，新算法与一般性结论仍需验证", "魔搭创空间在线发布仍待完成"].map(item => `<li>${icon("circle")}${item}</li>`).join("")}</ul><p class="about-disclosure">题录返回、内容阅读、科学论断支持和实验验证是不同状态。历史档案与本项目新执行结果分别保存。</p>`;
+    const available = [status.storage === "sqlite" ? "真实本地保存：简报、回答、选择、题录、阅读笔记与实验可恢复导出" : null, capabilities.literature_search === "available" ? "公开题录检索：Crossref / arXiv，记录成功、无结果与失败" : null, capabilities.reading_notes ? "用户确认阅读：分开保存摘要或相关正文的笔记、位置和日期" : null, capabilities.theory_workspace ? "理论论证：命题版本、阅读依据、待确认修订、引理依赖与证明缺口" : null, capabilities.experiments === "randomized_svd" ? "本地首轮实验：已选的随机低秩方向可运行固定 SVD 对照，记录误差、耗时与检查" : "浏览已有阅读、实验与案例档案"].filter(Boolean);
+    $("#capability-content").innerHTML = `<span class="section-kicker">CURRENT VERSION · ${escape(status.version)}</span><h2>能力与实际完成程度</h2><h3>已经可用</h3><ul>${available.map(item => `<li>${icon("check")}${escape(item)}</li>`).join("")}</ul><h3>Skill 驱动千问流程</h3><p class="about-model-state">${escape(modelStateLabel())}${model.configured ? ` · ${escape(model.model || "千问")}` : ""}</p><p class="about-disclosure">${model.configured ? "千问按 Skill 规则判断：信息不足时提出少量澄清问题，信息足够时生成候选，并依据补充资料、题录、用户阅读笔记或实验摘要修订。返回结果经后端校验，推荐不会自动成为已选课题。" : "先在本机运行 Configure-Qwen.ps1 配置密钥，再刷新状态。未配置时可体验本地演示；网页不接收或显示 API Key。"}</p><p class="about-disclosure">新建时可选择千问流程或本地演示。每次带千问的提交会把简报、回答及本项目相关资料发送至百炼并消耗额度；查询、保存笔记和本地实验各有独立日志。</p><button type="button" class="button button-secondary button-small" data-action="refresh-model-status">刷新配置状态</button><h3>当前边界</h3><ul class="planned">${["模型不自动读取论文全文，阅读范围由用户确认", "数值实验支持固定随机低秩逼近；理论工作台另提供固定 Lean 案例入口，可用性由其环境状态确认", "数值检查不等于独立科学复核，新算法与一般性结论仍需验证", "理论路线仍待形式核验；固定 Lean 案例单独运行，通过只针对记录中的形式陈述", "魔搭创空间在线发布仍待完成"].map(item => `<li>${icon("circle")}${item}</li>`).join("")}</ul><p class="about-disclosure">题录返回、内容阅读、科学论断支持和实验验证是不同状态。历史档案与本项目新执行结果分别保存。</p>`;
     $("#mode-label").textContent = modelStateLabel();
     $("#mode-title").textContent = "Skill 驱动的研究流程";
     $("#mode-description").textContent = "新建可用千问判断需要澄清还是形成候选；之后连接真实题录、阅读笔记与固定本地实验。选择研究方向始终由你完成。";
@@ -442,7 +924,7 @@
       return;
     }
     const selected = project.stage === "topic_selected";
-    const actions = { created: "开始研究", project_created: "开始研究", answered: "补充澄清回答", answers_submitted: "补充澄清回答", clarified: "澄清完成", directions_generated: "整理候选方向", topic_selected: "选择研究方向", selected: "选择研究方向", reopened: "重新比较方向", directions_reopened: "重新比较方向", literature_searched: "保存独立文献查询", model_generated: "千问生成候选方向", model_call_failed: "千问调用未成功", qwen_generated: "千问生成候选方向", qwen_generation_failed: "千问生成未完成", qwen_directions_generated: "千问生成候选方向", skill_workflow_applied: "保存校验后的研究进展", skill_workflow_failed: "Skill 流程本次未完成", workflow_advanced: "更新 Skill 研究流程", workflow_failed: "Skill 流程未完成", workflow_input_saved: "保存研究补充输入", skill_input_saved: "保存当前科研输入", reading_note_added: "保存用户确认的阅读笔记", experiment_completed: "完成本地实验", experiment_failed: "本地实验未完成", qwen_generation_not_applied: "千问结果未应用" };
+    const actions = { theory_card_saved: "保存数学命题卡", theory_proposal_created: "生成待确认的命题修订", theory_proposal_accepted: "接受命题修订与证明规划", theory_proposal_rejected: "拒绝本次命题建议", theory_proposal_failed: "命题修订本次未完成", theory_example_created: "创建独立公开论证案例", created: "开始研究", project_created: "开始研究", answered: "补充澄清回答", answers_submitted: "补充澄清回答", clarified: "澄清完成", directions_generated: "整理候选方向", topic_selected: "选择研究方向", selected: "选择研究方向", reopened: "重新比较方向", directions_reopened: "重新比较方向", literature_searched: "保存独立文献查询", model_generated: "千问生成候选方向", model_call_failed: "千问调用未成功", qwen_generated: "千问生成候选方向", qwen_generation_failed: "千问生成未完成", qwen_directions_generated: "千问生成候选方向", skill_workflow_applied: "保存校验后的研究进展", skill_workflow_failed: "Skill 流程本次未完成", workflow_advanced: "更新 Skill 研究流程", workflow_failed: "Skill 流程未完成", workflow_input_saved: "保存研究补充输入", skill_input_saved: "保存当前科研输入", reading_note_added: "保存用户确认的阅读笔记", experiment_completed: "完成本地实验", experiment_failed: "本地实验未完成", qwen_generation_not_applied: "千问结果未应用" };
     const historyItems = list(project.history);
     $("#records-content").innerHTML = `<div class="records-toolbar"><label for="record-project">当前研究<select id="record-project">${state.projects.map(item => `<option value="${escape(item.id)}" ${item.id === project.id ? "selected" : ""}>${escape(item.title)}</option>`).join("")}</select></label><div class="record-actions"><button type="button" class="button button-secondary button-small" data-action="download-json">${icon("download")}导出 JSON</button><button type="button" class="button button-secondary button-small" data-action="download-plan" ${selected ? "" : 'disabled aria-describedby="record-note"'}>导出计划</button></div></div><section class="panel history-panel"><h2>${escape(project.title)}</h2><ol class="history-list">${historyItems.map(item => `<li><time datetime="${escape(item.created_at)}">${escape(date(item.created_at, true))}</time><strong>${escape(actions[item.action] || "研究记录更新")}</strong><p>${escape(item.summary)}</p></li>`).join("")}</ol>${historyItems.length ? "" : '<p class="panel-subtitle">暂时没有事件记录。</p>'}</section>${renderModelCalls(project)}<p class="record-note" id="record-note">${selected ? "完整记录包含原始想法、澄清问答、候选方向与选择依据。" : "选择方向后，就可以导出首轮计划。"}</p>`;
   }
@@ -452,7 +934,7 @@
     return `<section class="panel model-call-panel"><span class="section-kicker">MODEL CALL HISTORY</span><h2>模型调用记录</h2>${calls.length ? [...calls].reverse().map(call => `<article class="model-call-record"><div><strong>${escape(call.model || "千问")}</strong><span class="search-status ${call.status === "success" ? "success" : "failed"}">${call.status === "success" ? "调用成功" : "调用未成功"}</span><time>${escape(date(call.finished_at || call.started_at, true) || "时间未记录")}</time></div>${call.summary ? `<p>${escape(call.summary)}</p>` : ""}${call.application_status === "discarded_conflict" ? '<p>调用期间项目发生变化，本次结果未应用到候选。</p>' : call.application_status === "rejected" ? '<p>返回内容未通过校验，已有候选保留。</p>' : ""}<p>输入 Token：${tokenCount(call.usage?.prompt_tokens)} · 输出 Token：${tokenCount(call.usage?.completion_tokens)} · 合计：${tokenCount(call.usage?.total_tokens)}</p></article>`).join("") : '<p class="about-disclosure">本项目尚无模型调用记录。模板生成和刷新配置状态不产生模型请求。</p>'}</section>`;
   }
   async function openProject(id, view = "explore") {
-    if (state.mutating || state.experimentBusy || state.literatureBusy) { toast("当前操作仍在进行，保存完成后再切换研究项目。"); return; }
+    if (state.mutating || state.experimentBusy || state.literatureBusy || leanBusy()) { toast("当前操作仍在进行，保存完成后再切换研究项目。"); return; }
     const token = ++state.opening;
     const target = view === "records" ? $("#records-content") : view === "literature" ? $("#literature-content") : view === "experiments" ? $("#experiments-content") : $("#project-content");
     setView(view);
@@ -478,7 +960,7 @@
     }
   }
   function newProject() {
-    if (state.mutating || state.experimentBusy || state.literatureBusy) { toast("当前操作仍在进行，保存完成后再新建研究。"); return; }
+    if (state.mutating || state.experimentBusy || state.literatureBusy || leanBusy()) { toast("当前操作仍在进行，保存完成后再新建研究。"); return; }
     ++state.opening;
     state.project = null;
     remember(null);
@@ -493,7 +975,7 @@
     $("#intake-panel").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
   }
   async function mutateProject(action, body, button, loadingText) {
-    if (state.literatureBusy || state.experimentBusy) { toast("查询或实验仍在进行，保存完成后再修改研究方向。"); return; }
+    if (state.literatureBusy || state.experimentBusy || leanBusy()) { toast("查询或实验仍在进行，保存完成后再修改研究方向。"); return; }
     if (!state.project || state.mutating) return;
     state.mutating = true;
     state.generating = action === "generate" || action === "advance" || (action === "answers" && state.project?.workflow?.mode === "skill");
@@ -558,6 +1040,21 @@
     } catch (error) { message($("#global-message"), error.message || "连接失败，请稍后重试。"); toast(error.message || "连接失败，请稍后重试。", true); }
     finally { done(); }
   }
+  function downloadLeanUnsaved(button) {
+    const projectId = state.project?.id;
+    if (!projectId || button.dataset.projectId !== projectId) return;
+    const entry = leanUI?.exportUnsaved?.(projectId, button.dataset.runId);
+    if (!entry || entry.context?.project_id !== projectId) return;
+    const url = URL.createObjectURL(new Blob([JSON.stringify(entry, null, 2)], { type: "application/json;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `lean-${String(entry.id).replace(/[^a-zA-Z0-9_-]/g, "_")}-unsaved.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast("已下载未保存结果；此次下载不代表结果已存入项目历史。");
+  }
   const samples = {
     svd: { idea: "我想研究随机低秩逼近：在个人电脑上比较过采样和幂迭代，看看怎样用较少的计算让近似误差更稳定。", goal: "experimental", context: "我有线性代数基础，会用 Python 和 NumPy。希望首轮先在可复现的合成矩阵上验证。" },
     reading: { idea: "我想研究 AI 辅助论文阅读：如何帮助学生准确找到论文关键结论的原文依据，并判断回答是否超出了资料支持范围？", goal: "comparison", context: "希望先用公开论文和人工标注的问题做小规模比较，关注引用准确性与可核查性。" },
@@ -586,6 +1083,25 @@
     if (action === "about") { setView("about"); $$(".mode-info").forEach(element => { element.open = false; }); }
     if (action === "literature") setView("literature");
     if (action === "experiments") setView("experiments");
+    if (action === "validation-numeric" || action === "validation-theory") {
+      if (!state.mutating && !state.literatureBusy && !state.experimentBusy && !leanBusy()) { captureTheoryDraft(); captureExperimentDraft(); }
+      chooseValidationMode(action === "validation-theory" ? "theory" : "numeric");
+      await loadExperiments();
+    }
+    if (action === "lean-run" || action === "lean-refresh") await performLean(action, button);
+    if (action === "lean-download-unsaved") downloadLeanUnsaved(button);
+    if (action === "theory-preview") await inspectNextContext(button);
+    if (["check-add-reference","check-remove-reference"].includes(action) && state.project && !state.mutating && !leanBusy()) {
+      changeCheckReferences(button.closest(".checking-form"),action==="check-add-reference"?1:-1);
+    }
+    if (action === "artifact-describe" || action === "artifact-read") await inspectArtifact(button);
+    if (action === "check-rebase") { try { await rebaseCheck(button.dataset.checkId); } catch (error) { toast(error.message, true); } }
+    if (action === "failure-review") await saveFailureReview(button);
+    if (action === "failure-rebase") await saveFailureReview(button, true);
+    if (action === "theory-propose") await performTheory("propose", button);
+    if (action === "theory-accept" || action === "theory-reject") await performTheory(action === "theory-accept" ? "accept" : "reject", button, button.dataset.proposalId);
+    if (action === "theory-example") await createTheoryExample(button);
+    if (action === "theory-discard-draft" && state.project) { clearTheoryDraft(state.project.id); renderExperiments(); }
     if (action === "reload-experiments") await loadExperiments(true);
     if (action === "revise-from-experiments") await reviseFromExperiments(button);
     if (action === "search-idea") {
@@ -614,6 +1130,8 @@
     if (action === "download-json") await download("json", button);
   });
   document.addEventListener("submit", async event => {
+    if (event.target.classList.contains("checking-form")) { event.preventDefault(); if (event.target.reportValidity()) await saveCheck(event.target); return; }
+    if (event.target.id === "theory-card-form") { event.preventDefault(); if (event.target.reportValidity()) await performTheory("save", $('button[type="submit"]', event.target)); return; }
     if (event.target.id === "literature-form") { event.preventDefault(); if (event.target.reportValidity()) await searchLiterature(event.target); return; }
     if (event.target.id === "experiment-form") { event.preventDefault(); if (event.target.reportValidity()) await runExperiment(event.target); return; }
     if (event.target.id === "material-form") {
@@ -630,7 +1148,7 @@
     if (event.target.id === "idea-form") {
       event.preventDefault();
       const form = event.target;
-      if (state.mutating || state.literatureBusy || state.experimentBusy || !form.reportValidity()) return;
+      if (state.mutating || state.literatureBusy || state.experimentBusy || leanBusy() || !form.reportValidity()) return;
       const body = Object.fromEntries(new FormData(form));
       body.initial_idea = body.initial_idea.trim();
       if (body.initial_idea.length < 5) { message($("#form-message"), "再补充一点想法，至少写 5 个字。"); $("#initial-idea").focus(); return; }
@@ -664,14 +1182,30 @@
     }
   });
   document.addEventListener("change", event => {
-    if (["record-project", "literature-project", "experiment-project"].includes(event.target.id) && (state.mutating || state.literatureBusy || state.experimentBusy)) {
+    const checkForm = event.target.closest(".checking-form");
+    if (checkForm) {
+      captureCheckDraft(checkForm);
+      if (event.target.name === "target_key") {
+        const target = list(checkingWorkspace().targets).find(t => t.target_key === event.target.value);
+        const d = checkDraft(state.project.id,"new",checkingWorkspace());
+        if (target?.target_scope === "case") { d.case_key = target.case_key; d.card_proposition = ""; }
+        else if (!d.card_proposition) d.card_proposition = "OTHER";
+        checkForm.querySelector('[name="case_key"]').value = d.case_key || "";
+        checkForm.querySelector('[name="card_proposition"]').value = d.card_proposition;
+        persistCheckDraft(state.project.id,"new",d);
+        checkForm.querySelector(".checking-target").innerHTML = checkingTarget(target);
+      }
+    }
+    if (["record-project", "literature-project", "experiment-project"].includes(event.target.id) && (state.mutating || state.literatureBusy || state.experimentBusy || leanBusy())) {
       event.target.value = state.project?.id || "";
       toast("当前操作仍在进行，保存完成后再切换研究项目。");
       return;
     }
+    if (event.target.id === "lean-case-picker" && state.project && event.target.dataset.projectId === state.project.id && !leanBusy()) { leanUI?.chooseCase(state.project.id, event.target.value); return; }
     if (event.target.id === "planning-mode") { event.target.dataset.chosen = "true"; renderIntakeMode(); }
     if (event.target.closest("#idea-form")) persistIntakeDraft();
     if (event.target.closest("#experiment-form")) captureExperimentDraft();
+    if (event.target.closest("#theory-card-form")) captureTheoryDraft();
     captureReadingDraft(event.target);
     if (["literature-provider", "literature-limit"].includes(event.target.id)) captureLiteratureDraft();
     if (event.target.id === "record-project" && event.target.value) openProject(event.target.value, "records");
@@ -689,8 +1223,21 @@
     if (form) { const draft = Object.fromEntries(new FormData(form)); draft.confirmed = draft.confirmed === "on"; state.readingDrafts[form.dataset.draftKey] = draft; }
   }
   document.addEventListener("input", event => {
+    const checkForm = event.target.closest(".checking-form"); if (checkForm) captureCheckDraft(checkForm);
+    if (event.target.dataset.failureReview && event.target.dataset.projectId === state.project?.id) {
+      const projectId = state.project.id, id = event.target.dataset.failureReview;
+      const item = list((state.theoryWorkspaces[projectId] || state.project.theory || {}).failure_records).find(r => r.id === id);
+      if (item) {
+        const key = `${projectId}:${id}`, draft = failureDraft(projectId, item);
+        draft.reason = event.target.value;
+        failureDrafts[key] = draft;
+        try { localStorage.setItem(`yanzheng.failureDraft.${key}`, JSON.stringify(draft)); } catch {}
+      }
+    }
+    if (event.target.id === "theory-review-reason" && event.target.dataset.projectId === state.project?.id) theoryReviewDrafts[`${event.target.dataset.projectId}:${event.target.dataset.proposalId}`] = event.target.value;
     if (event.target.closest("#idea-form")) persistIntakeDraft();
     if (event.target.closest("#experiment-form")) captureExperimentDraft();
+    if (event.target.closest("#theory-card-form")) captureTheoryDraft();
     if (event.target.closest("#answers-form") && state.project) state.answerDrafts[state.project.id] = Object.fromEntries(new FormData($("#answers-form")));
     if (event.target.id === "revision-material" && state.project) state.materialDrafts[state.project.id] = event.target.value;
     captureReadingDraft(event.target);

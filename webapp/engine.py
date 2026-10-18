@@ -290,9 +290,10 @@ def render_plan(project):
             else:
                 lines.append("  服务未返回可记录的 token 用量；不估算用量或费用。")
     if project.get("reading_notes"):
-        lines.extend(["", "## 用户确认的阅读记录", ""])
+        lines.extend(["", "## 阅读记录与公开案例材料", ""])
         for note in project["reading_notes"]:
-            lines.append("- 来源 " + _markdown_text(note["run_id"] + "/" + note["source_id"]) + "；等级：" + _markdown_text(note["level"]) + "；位置：" + _markdown_text(note["locator"]) + "；摘录/笔记：" + _markdown_text(note["content"]))
+            origin_label = "公开案例整理（非用户阅读确认）" if note.get("origin") == "curated_example" else "用户确认"
+            lines.append("- " + origin_label + "；来源 " + _markdown_text(note["run_id"] + "/" + note["source_id"]) + "；等级：" + _markdown_text(note["level"]) + "；位置：" + _markdown_text(note["locator"]) + "；摘录/笔记：" + _markdown_text(note["content"]))
     if project.get("experiments"):
         lines.extend(["", "## 独立实验运行记录", "", "固定执行器的局部数值结果，不是数学证明；参数与选题以每轮快照为准。", ""])
         for run in project["experiments"]:

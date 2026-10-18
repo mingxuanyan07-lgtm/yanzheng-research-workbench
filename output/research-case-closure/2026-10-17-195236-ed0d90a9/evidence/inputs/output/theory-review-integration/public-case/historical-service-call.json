@@ -1,0 +1,20 @@
+{
+  "id": "06c7c5d1b59d4e02906e1e58d7072ea2",
+  "provider": "qwen",
+  "model": "qwen-plus",
+  "requested_model": "qwen-plus",
+  "status": "success",
+  "started_at": "2026-10-16T11:08:57.571+00:00",
+  "finished_at": "2026-10-16T11:09:34.024+00:00",
+  "duration_ms": 36453,
+  "request_id": "7efd52fe-e283-9989-a6d0-669d41205782",
+  "usage": {
+    "prompt_tokens": 4610,
+    "completion_tokens": 1626,
+    "total_tokens": 6236
+  },
+  "prompt_version": "theory-workspace-v1.4",
+  "attempts": 1,
+  "error_code": null,
+  "summary": "千问已返回 JSON 草案；仍需校验研究字段并由用户选择。"
+}

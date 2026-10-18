@@ -1,0 +1,26 @@
+{
+  "record_type": "independent_mathematician_review_blank_template",
+  "status": "pending",
+  "template_author": "assistant",
+  "independent_reviewer": null,
+  "reviewer_affiliation_or_relevant_background": null,
+  "reviewed_at": null,
+  "reviewed_bundle_sha256": null,
+  "actually_read_materials": [],
+  "unread_materials": [],
+  "obligations": [
+    {"id": "pointwise_limit", "conclusion": null, "reason": null, "requested_changes": []},
+    {"id": "witness_domain", "conclusion": null, "reason": null, "requested_changes": []},
+    {"id": "uniform_quantifiers", "conclusion": null, "reason": null, "requested_changes": []},
+    {"id": "relative_continuity", "conclusion": null, "reason": null, "requested_changes": []}
+  ],
+  "necessity_boundary_review": null,
+  "source_scope_review": null,
+  "raw_vs_curated_attribution_review": null,
+  "issues": [],
+  "overall_conclusion": null,
+  "signature_or_confirmation": null,
+  "application_status_change_authorized": false,
+  "formal_verification_executed_by_this_package": false,
+  "provenance": "Blank assistant-prepared form; never an independent review result. Hash and origin in root ARTIFACT_MANIFEST."
+}

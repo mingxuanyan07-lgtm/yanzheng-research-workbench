@@ -8,6 +8,7 @@
   <title>研证 · 研究方向工作台</title>
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
   <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/lean-ui.js" defer></script>
   <script src="/static/app.js" defer></script>
   <script src="/static/companion.js" defer></script>
 </head>
@@ -31,7 +32,7 @@
       <button class="nav-item" type="button" data-view="about"><span data-icon="orbit"></span><span>关于研证</span></button>
     </nav>
     <div class="sidebar-note"><span class="tiny-cross" aria-hidden="true">✦</span><p>每个好问题，<br>都值得认真走一步。</p></div>
-    <div class="sidebar-bottom"><span class="connection-dot"></span><span>本地工作空间</span><span class="version">v0.4.0</span></div>
+    <div class="sidebar-bottom"><span class="connection-dot"></span><span>本地工作空间</span><span class="version">v0.5.0</span></div>
   </aside>
   <div class="mobile-header"><a class="mobile-brand" href="#explore">研证 <span>YANZHENG</span></a><button class="icon-button" id="mobile-menu" type="button" aria-label="展开导航" aria-expanded="false"><span data-icon="menu"></span></button></div>
   <div class="app-shell">
@@ -87,7 +88,7 @@
       <section id="screen-projects" class="screen" hidden><div class="page-heading"><div class="eyebrow">YOUR RESEARCH SPACE</div><h1>研究项目</h1><p>每一个问题，都有自己的生长轨迹。</p></div><div id="project-list"></div></section>
       <section id="screen-records" class="screen" hidden><div class="page-heading"><div class="eyebrow">FOLLOW THE EVIDENCE</div><h1>研究记录</h1><p>保留想法、选择和修改的来路。</p></div><div id="records-content"></div></section>
       <section id="screen-literature" class="screen" hidden><div class="page-heading"><div class="eyebrow">LOOK UP, THEN READ</div><h1>文献工作台</h1><p>从公开题录找到阅读入口，把实际查询与阅读范围留在记录里。</p></div><div id="literature-content"></div></section>
-      <section id="screen-experiments" class="screen" hidden><div class="page-heading"><div class="eyebrow">PUT YOUR IDEA TO THE TEST</div><h1>实验工作台</h1><p>从已选方向开始，保存真实参数、基线、误差、耗时与检查，再用结果修订研究。</p></div><div id="experiments-content"></div></section>
+      <section id="screen-experiments" class="screen" hidden><div class="page-heading"><div class="eyebrow">PUT YOUR IDEA TO THE TEST</div><h1>实验与论证工作台</h1><p>用数值实验或理论论证推进研究，保存依据与缺口，由你确认每一次修订。</p></div><div id="experiments-content"></div></section>
       <section id="screen-library" class="screen" hidden><div class="page-heading"><div class="eyebrow">EXISTING CASES & EVIDENCE</div><h1>案例与证据</h1><p>查看已有实验、阅读记录和真实案例，再把启发带回自己的问题。</p></div><div id="library-content"></div></section>
       <section id="screen-about" class="screen" hidden><div class="page-heading"><div class="eyebrow">ABOUT YANZHENG</div><h1>想法向前，证据同行。</h1><p>研证面向数理与 AI 研究起步，连接研究简报、文献、选题与首轮实验。</p></div><div class="about-grid"><section class="panel about-intro"><span class="section-kicker">WHY WE BUILD</span><h2>把好奇心，变成能开始的研究。</h2><p>先整理问题和约束，再检索、阅读与比较。分清输入与假设、检索题录与内容证据，保留你为什么选择一个方向。首轮计划是一份草案，之后应依据验证结果继续修订。</p><div class="about-flow"><span>简报</span><i>→</i><span>文献</span><i>→</i><span>选择</span><i>→</i><span>草案</span><i>→</i><span>证据</span></div></section><section class="panel about-status" id="capability-content"><span class="section-kicker">CURRENT CAPABILITIES</span><h2>能力状态正在读取</h2><p class="about-disclosure">实际模型连接与可用能力由本地服务确认。</p></section></div></section>
       <footer class="footer"><span>研证 · 让研究有迹可循</span><span>IDEA <i>→</i> EVIDENCE</span></footer>

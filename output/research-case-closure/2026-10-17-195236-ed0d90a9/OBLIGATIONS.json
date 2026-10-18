@@ -1,0 +1,100 @@
+{
+  "schema_version": "external-obligation-review-v1",
+  "created_at": "2026-10-17T20:02:04.781349+08:00",
+  "not_an_application_update": true,
+  "obligations": [
+    {
+      "id": "pointwise_limit",
+      "depends_on": [],
+      "claim_ids": [
+        "C01",
+        "C02"
+      ],
+      "material": {
+        "path": "DERIVATION.md",
+        "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+        "locator": "D1,D2",
+        "support_boundary": "完整助手推导，待独立审阅"
+      },
+      "proof_draft": "complete",
+      "assistant_check": "complete",
+      "application_status": "open",
+      "formal_status": "not_formally_verified",
+      "independent_mathematician_review": "pending",
+      "independent_reviewer": null,
+      "independent_review_date": null,
+      "independent_review_conclusion": null
+    },
+    {
+      "id": "witness_domain",
+      "depends_on": [
+        "pointwise_limit"
+      ],
+      "claim_ids": [
+        "C03",
+        "C04"
+      ],
+      "material": {
+        "path": "DERIVATION.md",
+        "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+        "locator": "D3",
+        "support_boundary": "完整助手推导，待独立审阅"
+      },
+      "proof_draft": "complete",
+      "assistant_check": "complete",
+      "application_status": "open",
+      "formal_status": "not_formally_verified",
+      "independent_mathematician_review": "pending",
+      "independent_reviewer": null,
+      "independent_review_date": null,
+      "independent_review_conclusion": null
+    },
+    {
+      "id": "uniform_quantifiers",
+      "depends_on": [],
+      "claim_ids": [
+        "C06",
+        "C07"
+      ],
+      "material": {
+        "path": "DERIVATION.md",
+        "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+        "locator": "D0,D5.1",
+        "support_boundary": "完整助手推导，待独立审阅"
+      },
+      "proof_draft": "complete",
+      "assistant_check": "complete",
+      "application_status": "open",
+      "formal_status": "not_formally_verified",
+      "independent_mathematician_review": "pending",
+      "independent_reviewer": null,
+      "independent_review_date": null,
+      "independent_review_conclusion": null
+    },
+    {
+      "id": "relative_continuity",
+      "depends_on": [
+        "uniform_quantifiers"
+      ],
+      "claim_ids": [
+        "C08",
+        "C09",
+        "C10"
+      ],
+      "material": {
+        "path": "DERIVATION.md",
+        "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+        "locator": "D5.2,D5.3",
+        "support_boundary": "完整助手推导，待独立审阅"
+      },
+      "proof_draft": "complete",
+      "assistant_check": "complete",
+      "application_status": "open",
+      "formal_status": "not_formally_verified",
+      "independent_mathematician_review": "pending",
+      "independent_reviewer": null,
+      "independent_review_date": null,
+      "independent_review_conclusion": null
+    }
+  ]
+}

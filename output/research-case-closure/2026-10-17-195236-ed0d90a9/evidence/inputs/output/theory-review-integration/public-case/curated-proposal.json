@@ -1,0 +1,82 @@
+{
+  "revised_card": {
+    "title": "一致收敛保持连续性：对原点态断言的充分修订",
+    "statement": "若每个 f_n:[0,1]→ℝ 连续且 f_n 在 [0,1] 上一致收敛到 f:[0,1]→ℝ，则 f 在 [0,1] 上连续。",
+    "domain": "[0,1] 配通常距离，实值函数；n=1,2,3,...。",
+    "target": "审阅一致收敛这一充分修订的 ε/3 证明提纲，并解释原点态断言的 x^n 反例；不把充分条件误认为必要条件。全部义务仍待独立数学工作者核查。",
+    "definitions": [
+      "逐点收敛：任意固定 x∈[0,1]、ε>0，存在 N=N(x,ε)，对所有 n≥N 有 |f_n(x)-f(x)|<ε。",
+      "一致收敛：任意 ε>0，存在不依赖 x 的正整数 N，使所有 n≥N 与 x∈[0,1] 都满足 |f_n(x)-f(x)|<ε。"
+    ],
+    "assumptions": [
+      "每个 f_n:[0,1]→ℝ 连续。",
+      "f_n 在 [0,1] 上一致收敛到 f:[0,1]→ℝ。"
+    ]
+  },
+  "revision_reason": "助手人工整理的经典定理修订，不是本次千问成功输出或新定理。原普遍断言被 x^n 反例否定；另行加入本轮已核查的讲义连续性定理笔记后，提出将逐点收敛加强为一致收敛。这是改变假设的充分修订，不是必要性结论；原问题和真实失败原文保留。",
+  "proof_routes": [
+    {
+      "id": "uniform_epsilon_review",
+      "title": "充分修订的 ε/3 审阅提纲",
+      "steps": [
+        "任取 x₀∈[0,1] 与 ε>0。由一致收敛选正整数 N，使所有 x∈[0,1] 都有 |f_N(x)-f(x)|<ε/3；N 不依赖 x。",
+        "固定该 N。由 f_N 在 x₀ 的连续性，选 δ>0，使 x∈[0,1] 且 |x-x₀|<δ 时，|f_N(x)-f_N(x₀)|<ε/3。",
+        "对这样的 x，用三角不等式把 |f(x)-f(x₀)| 控制为两项近似误差与一项 f_N 连续性误差之和，严格小于 ε。任意 x₀ 均如此；端点使用区间内的相对连续性。"
+      ],
+      "obligations": [
+        {
+          "id": "uniform_quantifiers",
+          "statement": "独立核对一致收敛的量词顺序与同一个 N 对所有 x 的两项误差控制。",
+          "depends_on": []
+        },
+        {
+          "id": "relative_continuity",
+          "statement": "独立核对固定 f_N 后选择 δ、三角不等式及相对定义域端点的连续性推导。",
+          "depends_on": [
+            "uniform_quantifiers"
+          ]
+        }
+      ],
+      "gaps": [],
+      "evidence": [
+        {
+          "note_id": "demo-next-uniform-continuity-note",
+          "relation": "supports",
+          "claim": "新增加的定位正文笔记记载一致收敛定义与一致极限连续性定理；ε/3 细节由本演示人工整理，仍待独立审阅。"
+        }
+      ]
+    },
+    {
+      "id": "pointwise_counterexample_review",
+      "title": "原普遍断言的公开已知反例",
+      "steps": [
+        "f_n(x)=x^n 对每个正整数 n 在 [0,1] 连续。对 x<1 有 x^n→0，而 f_n(1)=1；故点态极限 f(x)=0（x<1）、f(1)=1。",
+        "取 ε=1/2。任意 δ>0，令 t=min(δ/2,1/2)、x=1-t，则 x∈[1/2,1)，0<|x-1|=t<δ，但 |f(x)-f(1)|=1。",
+        "因此极限在定义域内的端点 1 不连续。这个反例已足以否定原普遍断言；它不证明一致收敛是极限连续的必要条件。"
+      ],
+      "obligations": [
+        {
+          "id": "pointwise_limit",
+          "statement": "独立核对每项连续性及所有 x∈[0,1] 的点态极限。",
+          "depends_on": []
+        },
+        {
+          "id": "witness_domain",
+          "statement": "独立核对每个 δ>0 下见证点的合法性、严格距离界与不连续性量词。",
+          "depends_on": [
+            "pointwise_limit"
+          ]
+        }
+      ],
+      "gaps": [],
+      "evidence": [
+        {
+          "note_id": "quality-pointwise-note",
+          "relation": "limits",
+          "claim": "原输入的 x^n 定位笔记限制原点态连续性断言；该笔记不被用作修订定理的出处。"
+        }
+      ]
+    }
+  ],
+  "search_leads": []
+}

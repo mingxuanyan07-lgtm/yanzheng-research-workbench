@@ -160,6 +160,7 @@ def _component(value):
 def _confirmed_notes(project, run_id, source_id):
     return [note for note in project.get("reading_notes", [])
             if isinstance(note, dict) and note.get("run_id") == run_id and note.get("source_id") == source_id
+            and note.get("origin", "user_attested") == "user_attested"
             and note.get("confirmed") is True and note.get("level") in ("abstract_checked", "fulltext_checked")
             and isinstance(note.get("content"), str) and note["content"].strip()
             and isinstance(note.get("locator"), str) and note["locator"].strip() and _date(note.get("checked_at"))]

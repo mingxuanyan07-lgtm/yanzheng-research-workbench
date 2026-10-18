@@ -1,0 +1,388 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-17T20:29:56.257993+08:00",
+  "project": "研证",
+  "scope": "成熟本地单人科研工作台与一个可复核案例；无Demo/视频建设",
+  "status": "automated_regression_passed_joint_release_pending",
+  "conclusion": "本轮自动回归通过，整体待联合验收。Lean间歇超时未解决，8097前后端版本不一致；案例材料完成，产品内审阅闭环与独立数学审阅未完成。",
+  "stage": "核心能力已实现，正在收口运行可靠性与案例审阅闭环；尚不称成熟产品",
+  "required_baseline_files": [
+    {
+      "path": "README.md",
+      "exists": true,
+      "sha256": "0f00b0cfe983f7568e5ec079096a01e48052d01837eba173bd1c40542f4ec44f"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "exists": true,
+      "sha256": "c6bd8b20b9b720fa78b82a233d3e8f62d1d33a41817524035005c10403dee611"
+    },
+    {
+      "path": "docs/理论论证工作流.md",
+      "exists": true,
+      "sha256": "ebcbcc04d84941aa6543e176e578051a9014f61622b42ac72307e90c9d955f51"
+    },
+    {
+      "path": "output/acceptance-2026-10-17/validation.json",
+      "exists": true,
+      "sha256": "ddaebe2efe6f0a95edd1346558874534399d9c48f47874e84077fcd43c7c25f7"
+    },
+    {
+      "path": "output/release-check/README.md",
+      "exists": true,
+      "sha256": "de849879bbe75a11367ccb11492ce9b24c0674d904c06caa4e73f56707af94c9"
+    },
+    {
+      "path": "output/release-check/ENGINEERING_READY.json",
+      "exists": true,
+      "sha256": "cf426abfef14f97ed6cdb55ae262425555d1553aad25ce05ea473a803a1be4bd"
+    },
+    {
+      "path": "output/theory-quality-next/README.md",
+      "exists": true,
+      "sha256": "ba4340e6df54893cb2051889e4d93d300b285dfff8e6064b7abc6b749c5e1070"
+    },
+    {
+      "path": "output/theory-quality-next/READY.json",
+      "exists": true,
+      "sha256": "a50fd03befc143860c33ba50d6ecfbeefe4d7aa2a8a7ec77eecf626d80b48c35"
+    },
+    {
+      "path": "output/theory-quality-next/DEMO.md",
+      "exists": true,
+      "sha256": "0b86033ad33a519e766f25f54a626ce9661b92efab5dd78d343f742bf6e83448"
+    }
+  ],
+  "delivery_READY_sha256": {
+    "output\\lean-reliability\\round-20261017-runtime-01\\READY.json": "5b58ad6708b76d958ded3278a11752f4103440e3cf2324f089b7079003f8401c",
+    "output\\theory-review-integration\\round-20261017-feedback-195340\\READY.json": "97b68bfe48040ce81079fc912ba1fad7275d2d8b2b3ba56f034973275cef5b78",
+    "output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\READY.json": "1d4b95a0aa923209d1dbf4aa4a476d3977b8a4e1e26235343a5b4a22e1a5eb52"
+  },
+  "integrity_gate": {
+    "evidence": "freeze-gate-corrected.json",
+    "checks": [
+      {
+        "manifest": "A source",
+        "count": 23,
+        "mismatches": []
+      },
+      {
+        "manifest": "B source",
+        "count": 22,
+        "mismatches": []
+      },
+      {
+        "manifest": "A artifacts",
+        "count": 879,
+        "mismatches": []
+      },
+      {
+        "manifest": "B artifacts",
+        "count": 56,
+        "mismatches": []
+      },
+      {
+        "manifest": "C artifacts",
+        "count": 60,
+        "mismatches": []
+      },
+      {
+        "manifest": "C outer checksum",
+        "count": 64,
+        "mismatches": []
+      },
+      {
+        "manifest": "A manifest control",
+        "count": 1,
+        "mismatches": []
+      },
+      {
+        "manifest": "C control",
+        "count": 2,
+        "mismatches": []
+      }
+    ],
+    "A_frozen": true,
+    "B_frozen": true,
+    "A_exclusive_handoff": {
+      "released_to": "总验收窗口",
+      "released_at": "2026-10-17T12:14:07.176337+00:00",
+      "A_will_not_run_lean_or_edit_frozen_sources_after_handoff": true
+    },
+    "source_count_final": 41,
+    "final_source_unchanged": true,
+    "final_check": "final-source-verification.json"
+  },
+  "automated_regression": {
+    "python": {
+      "tests": 232,
+      "passed": 232,
+      "failure_entries": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 22.737371399998665,
+      "require_lean": true,
+      "evidence": "full-regression-corrected/result.json",
+      "log": "full-regression-corrected/python-tests.txt"
+    },
+    "frontend": {
+      "tests": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "log": "full-regression/frontend-tests.txt",
+      "note": "同一冻结源码；首轮前端有效通过，未重复执行。"
+    },
+    "isolation": "临时数据库；模型及检索替身；真实Lean；未触及真实研究库或模型配置。",
+    "first_python_attempt": {
+      "valid_for_product_acceptance": false,
+      "classification": "audit_harness_error_not_product_regression",
+      "failure_entries": 1,
+      "errors": 68,
+      "cause": "审计网络守卫误拦Windows标准库socketpair，使TestClient无法创建事件循环。",
+      "correction": "仅放行标准库socketpair函数自身的loopback connect，保持其余网络连接与真实配置/库访问拦截。",
+      "evidence": "HARNESS-FAILURE.json",
+      "preserved": true
+    },
+    "automatic_product_retries": 0
+  },
+  "actual_lean_execution": {
+    "evidence": "full-regression-corrected/real-lean-runs.json",
+    "observations": [
+      {
+        "case_id": "nat_add_zero",
+        "status": "passed",
+        "expected": "passed",
+        "matches_expected": true,
+        "compiler_duration_ms": 1147.738,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "direct_sorry",
+        "status": "incomplete",
+        "expected": "incomplete",
+        "matches_expected": true,
+        "compiler_duration_ms": 1115.032,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "indirect_sorry",
+        "status": "incomplete",
+        "expected": "incomplete",
+        "matches_expected": true,
+        "compiler_duration_ms": 1180.904,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "direct_axiom",
+        "status": "error",
+        "expected": "error",
+        "matches_expected": true,
+        "compiler_duration_ms": 1181.792,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "indirect_axiom",
+        "status": "error",
+        "expected": "error",
+        "matches_expected": true,
+        "compiler_duration_ms": 1130.309,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "native_decide_trust",
+        "status": "error",
+        "expected": "error",
+        "matches_expected": true,
+        "compiler_duration_ms": 1146.051,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "invalid_equality",
+        "status": "error",
+        "expected": "error",
+        "matches_expected": true,
+        "compiler_duration_ms": 1180.542,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "implication_identity",
+        "status": "passed",
+        "expected": "passed",
+        "matches_expected": true,
+        "compiler_duration_ms": 1177.954,
+        "tree_termination_confirmed": true
+      },
+      {
+        "case_id": "timeout_fixture",
+        "status": "timeout",
+        "expected": "timeout",
+        "matches_expected": true,
+        "compiler_duration_ms": 339.37,
+        "tree_termination_confirmed": true
+      }
+    ],
+    "raw_stream_hashes_checked": 54,
+    "all_observed_expected_statuses": true,
+    "meaning": "本次9项真实执行符合合同；预期error/incomplete/timeout不是本轮测试失败。单轮通过不消除历史间歇失败。",
+    "natural_language_case_proven": false
+  },
+  "window_A": {
+    "directory": "output/lean-reliability/round-20261017-runtime-01",
+    "assessment": "局部进程清理修复和专项可接受；总体可靠性未通过。",
+    "implemented": "等待Job活动数为0及已核实成员句柄退出信号，保持原共享3秒清理预算，区分终止请求与终止确认。",
+    "reported_scoped_tests": {
+      "tests": 45,
+      "passed": 45,
+      "skipped": 0
+    },
+    "remaining_failure": "A本轮28次记录中首次独立nat_add_zero仍10秒无输出而超时；根因未确定。",
+    "hypothesis_boundary": "低CPU、I/O与硬缺页证据不足以把启动/导入等待认定为根因。",
+    "archive_note": "采用显式ARCHIVE-CORRECTION指向的最终artifact manifest；原manifest和失败均保留。"
+  },
+  "window_B": {
+    "directory": "output/theory-review-integration/round-20261017-feedback-195340",
+    "assessment": "三类反馈适用性修复通过本轮源码/自动回归核查；浏览器下载与运行交付待联合验收。",
+    "implemented": [
+      "生成时不可变feedback_context快照及SHA；审阅自身不进入依据指纹。",
+      "普通拒绝提议、旧rejected_outputs和failure_records统一排除过期/缺依据材料。",
+      "历史缺正文或依据明确排除，不补造；单失败导出支持JSON/Markdown。"
+    ],
+    "reported_scoped_tests": {
+      "theory": 71,
+      "model": 23,
+      "frontend": 63
+    },
+    "remaining_product_gaps": [
+      "原文快照与应用证据身份对接",
+      "逐论断/义务核查材料及审阅记录",
+      "卡—路线论证对象的显式关联"
+    ]
+  },
+  "window_C": {
+    "directory": "output/research-case-closure/2026-10-17-195236-ed0d90a9",
+    "assessment": "材料可交产品接入及独立数学审阅；不等于案例最终成功。",
+    "public_source_snapshots": 2,
+    "claims": 18,
+    "obligations": 4,
+    "original_output_comparisons": 17,
+    "finite_exact_checks": {
+      "passed": 35,
+      "universal_proof": false
+    },
+    "case_scope": {
+      "P0": "逐点收敛不足以保持连续；x^n反例。",
+      "P1": "一致收敛足以保持连续；epsilon/3论证。",
+      "P2": "一致收敛不是连续极限的必要条件；移动帽函数反例。"
+    },
+    "supervisor_reading": "主推导D1–D6未发现新的实质数学错误；仍是助手核查。",
+    "reading_evidence": "CASE-REVIEW.txt",
+    "independent_mathematician_review": "pending",
+    "application_obligations": "open",
+    "formal_status": "not_formally_verified"
+  },
+  "browser_joint_acceptance": {
+    "status": "待联合验收",
+    "new_supervisor_browser_execution": false,
+    "B_reported_temporary_environment": "8104临时数据库与test_double，已停止服务。",
+    "B_reported_passed_scope": [
+      "保存与重启恢复",
+      "项目隔离",
+      "冲突保留草稿",
+      "旧预览409",
+      "320/390px布局"
+    ],
+    "pending": "单条及整份JSON/Markdown实际浏览器下载文件核对。",
+    "reason": "B先前浏览器下载操作被权限系统明确拒绝；本轮未重试或绕过。API通过不替代浏览器验收。"
+  },
+  "running_service": {
+    "url": "http://127.0.0.1:8097/#explore",
+    "pid_at_audit": 40708,
+    "status": "mixed_backend_frontend_versions",
+    "static_HTTP_checks": [
+      {
+        "url": "/",
+        "status": 200,
+        "sha256": "07495a0e7db07ab8f5ba1473d9aa0818d905c06c8997dec9b20e70e185cc6ef1",
+        "matches_disk": true
+      },
+      {
+        "url": "/static/app.js",
+        "status": 200,
+        "sha256": "18e58aa9d995d4382fcc4c27023b956e95dc8e0a5f932adf8915c3e97c872467",
+        "matches_disk": true
+      },
+      {
+        "url": "/static/lean-ui.js",
+        "status": 200,
+        "sha256": "e8b626085b6c4d49029f663aa6def5d97e336afb892a83cb402ff454ff793441",
+        "matches_disk": true
+      },
+      {
+        "url": "/static/styles.css",
+        "status": 200,
+        "sha256": "c4e8e6a6c43f15372a3bed17d4685caeb30b6af78d88f066e9b9ef97ceb47154",
+        "matches_disk": true
+      }
+    ],
+    "backend_evidence": {
+      "path": "/api/projects/{project_id}/theory/failures/{failure_id}/export",
+      "served_parameter_names": [
+        "project_id",
+        "failure_id"
+      ],
+      "served_supports_format_query": false,
+      "current_frozen_source_supports_format_query": true,
+      "conclusion": "running backend is older than frozen source; current static frontend is served from disk"
+    },
+    "read_only_evidence": "service-read-only.json",
+    "final_process_evidence": "runtime-final.json",
+    "restarted": false,
+    "conclusion": "可访问但未加载完整新版本；不得作为本次冻结源码的运行交付。"
+  },
+  "mathematical_quality": {
+    "engineering_pass_does_not_establish_mathematics": true,
+    "v1_4_raw_model_outputs": "三份整体拒绝；本轮无新模型质量证据。",
+    "assistant_review_is_independent_expert_certification": false,
+    "known_example_is_new_theorem": false,
+    "case_final_acceptance": "pending_product_workflow_and_independent_review"
+  },
+  "priority_order": [
+    {
+      "priority": 1,
+      "owner": "A",
+      "goal": "定位未解决Lean等待，并在协调冻结维护时段交付前后端一致的8097。"
+    },
+    {
+      "priority": 2,
+      "owner": "B+C",
+      "goal": "将冻结案例转成网页内可追溯、可人工审阅、可恢复导出的最小闭环。"
+    },
+    {
+      "priority": 3,
+      "owner": "总验收/外部依赖",
+      "goal": "冻结复核、获准后的浏览器下载验收及真实独立数学审阅；各自保持未完成标志。"
+    }
+  ],
+  "next_round_prompts": {
+    "A": "NEXT-A.txt",
+    "B": "NEXT-B.txt",
+    "C": "NEXT-C.txt"
+  },
+  "conditional_planning": {
+    "rounds": "先按一轮收口建设加一轮冻结联合验收安排；若Lean根因或独立审阅带来新问题则追加修复轮。不是成熟产品完成保证。",
+    "B_C_work": "合同不扩张且现有持久化可复用时，约1–2个工作日；接口变化需重新估算。",
+    "joint_checks": "A/B冻结、服务版本一致、浏览器权限具备后，约半天至1个工作日。",
+    "A_diagnosis_and_external_review": "无法据现有证据承诺完成日期；不计入固定交付保证。"
+  },
+  "constraints_observed": {
+    "production_source_modified_by_supervisor": false,
+    "real_research_database_read_or_written": false,
+    "model_config_or_secrets_read": false,
+    "qwen_calls": 0,
+    "service_8097_restarted": false,
+    "frameworks_installed": false,
+    "historical_archives_overwritten": false,
+    "messages_sent_to_other_people_or_chats": false
+  }
+}

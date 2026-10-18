@@ -64,6 +64,8 @@ class WorkflowTest(unittest.TestCase):
         self.assertEqual(item["workflow"]["state"], "awaiting_model")
         self.assertEqual(item["direction_map"]["topics"], [])
         self.assertFalse(item["direction_map"]["provenance"]["external_model_api_called"])
+        context = json.loads(workflow.build_messages(item)[1]["content"].split("\n", 1)[1])
+        self.assertEqual(context["current_questions"], [])
         self.assert_map(item)
 
     def test_build_messages_loads_actual_two_skills_schema_and_untrusted_sources(self):

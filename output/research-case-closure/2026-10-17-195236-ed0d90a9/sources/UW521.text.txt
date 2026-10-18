@@ -1,0 +1,233 @@
+0001: Math 521 Uniform Convergence
+0002: Uniform Convergence
+0003: [under construction]
+0004: The problems with pointwise convergence
+0005: Definition. If $X$ is a metric
+0006: space, and $f_n:X\to \R$ ($n\in\N$) is a sequence of functions, then
+0007: $f_n$ converges pointwise to $f$ if for every $x\in X$ one has
+0008: $\lim_{n\to\infty} f_n(x) = f(x)$.
+0009: For example, the sequence of functions $f_n(x) = x^n/n$ converges pointwise
+0010: to zero on the interval $X=[-1,1]$, because for each $x\in [-1,1]$ one has
+0011: $|x^n/n|\leq 1/n$, and thus
+0012: \[
+0013: \lim_{n\to\infty} \frac{x^n}{n} = 0.
+0014: \]
+0015: The limit of a pointwise convergent sequence of continuous functions does not have to be continuous.
+0016: For example, consider $X=[0,1]$, and $f_n(x) = x^n$. Then
+0017: \[
+0018: \lim_{n\to\infty} f_n(x) = f(x) =
+0019: \begin{cases} 0 & (0\leq x\lt 1) \\ 1 & (x=1) \end{cases}
+0020: \]
+0021: The derivatives of a pointwise convergent sequence
+0022: of functions do not have to converge. $X=\R$, $f_n(x) = \frac1n
+0023: \sin(n^2x)$. In this case
+0024: \[
+0025: \lim_{n\to\infty} f_n(x) = 0,
+0026: \]
+0027: so the pointwise limit function is $f(x) = 0$: the sequence of functions
+0028: converges to $0$. What about the derivatives of the sequence? These are
+0029: given by
+0030: \[
+0031: f_n'(x) = n\cos (n^2x),
+0032: \]
+0033: and for most $x\in\R$ the sequence $n \cos(n^2x)$ is unbounded. The
+0034: sequence of derivatives $f_n'(x)$ does not converge pointwise.
+0035: The integrals of a pointwise convergent sequence
+0036: of functions do not have to converge.
+0037: Consider $X=[0,1]$, $f_n(x) = \frac{2n^2x}{\bigl(1+n^2x^2\bigr)^2}$.
+0038: Then
+0039: \[
+0040: \lim_{n\to\infty} f_n(x) = 0
+0041: \]
+0042: for all $x\in[0,1]$. But the integrals of $f_n$ over the interval $X$ are
+0043: \[
+0044: \int_0^1 \frac{2n^2xdx}{\bigl(1+n^2x^2\bigr)^2}
+0045: \stackrel{u=1+n^2x^2}=
+0046: \int_1^{1+n^2} \frac{du}{u^2}
+0047: = 1 - \frac1{1+n^2}.
+0048: \]
+0049: Therefore, even though $\lim_{n\to\infty} f_n(x) = 0$ for all $x\in [0,1]$,
+0050: we have
+0051: \[
+0052: \lim_{n\to\infty} \int_0^1 f_n(x) dx = 1.
+0053: \]
+0054: Uniform convergence
+0055: Definition. A sequence of functions
+0056: $f_n:X\to Y$ converges uniformly if for every $\epsilon\gt0$ there is an
+0057: $N_\epsilon\in\N$ such that for all $n\geq N_\epsilon$ and all $x\in X$ one has
+0058: $d(f_n(x), f(x))\lt \epsilon$.
+0059: Uniform convergence implies pointwise
+0060: convergence, but not the other way around.
+0061: For example, the sequence $f_n(x) = x^n$
+0062: from the previous
+0063: example converges pointwise on the interval $[0,1]$, but it
+0064: does not converge uniformly on this interval. To prove this we
+0065: show that the assumption that $f_n(x)$ converges uniformly leads
+0066: to a contradiction.
+0067: If $f_n(x)$ converges uniformly, then the limit function must
+0068: be $f(x) = 0$ for $x\in[0,1)$ and $f(1) = 1$. Uniform
+0069: convergence implies that for any $\epsilon\gt0$ there is an
+0070: $N_\epsilon\in\N$ such that $|x^n- f(x)|\lt \epsilon$ for all
+0071: $n\geq N_\epsilon$ and all $x\in [0,1]$. Assuming this is
+0072: indeed true we may choose $\epsilon$, in particular, we can
+0073: choose $\epsilon=\frac12$. Then there is an $N\in \N$ such that
+0074: for all $n\geq N$ we have $|x^n-f(x)|\lt \frac 12$. We may
+0075: choose $n$ and $x$. Let us choose $n=N$, and
+0076: $x=\bigl(\frac34\bigr)^{1/N}$. Then we have $f(x)=0$ and thus
+0077: \[
+0078: |f_N(x) - f(x)| = x^N - 0 = \frac 34 \gt \frac12,
+0079: \]
+0080: contradicting our assumption.
+0081: The uniform metric
+0082: Definition—the set of bounded
+0083: functions. If $E$ is a set, then a function $f:E\to\R$ is
+0084: bounded if there is an $M\in\R$ such that $|f(x)|\leq M$ for all $x\in E$.
+0085: We will write $\cB(E)$ for the set of all bounded functions from
+0086: $E$ to $\R$.
+0087: Definition—the uniform distance between bounded
+0088: functions. The uniform distance between two
+0089: bounded functions $f, g\in\cB(E)$ is
+0090: \[
+0091: \du(f, g) = \sup_{x\in E} |f(x) - g(x)|.
+0092: \]
+0093: The uniform distance $d(f,g)$ between two
+0094: functions $f$ and $g$ is the least upper bound of all possible
+0095: values that $|f(x)-g(x)|$ can have if $x\in E$.
+0096: Theorem. $\du(f, g)$ is a metric on $\cB(E)$.
+0097: We have to check:
+0098: $\du(f,g) = \du(g,f)$
+0099: $\du(f,g)\geq 0$ with $\du(f,g) = 0$ if and only if $f=g$
+0100: $\du(f,g) \leq \du(f,h) + \du(h,g)$
+0101: Theorem. The uniform metric $\du$ is a metric on
+0102: $\cB(E)$. A sequence of bounded functions $f_n:E\to\R$ converges
+0103: uniformly to $f$ if and only if $\du(f_n, f)\to 0$, i.e. if
+0104: and only if $f_n$ converges to $f$ in the sense of
+0105: convergence
+0106: in the metric space $\cB(E)$.
+0107: Example. Let $E = [0,1)$ and
+0108: consider the sequence of functions $f_n(x) = x^n$. We know that
+0109: $f_n(x)\to0$ pointwise on $[0,1)$.
+0110: Question: Does the sequence converge uniformly on $[0,1)$?
+0111: Answer:
+0112: Since uniform
+0113: convergence is equivalent to convergence in the uniform
+0114: metric, we can answer this question by computing $\du(f_n, f)$
+0115: and checking if $\du(f_n, f)\to0$. We have, by definition
+0116: \[
+0117: \du(f_n, f) = \sup_{0\leq x\lt 1}|x^n - 0|
+0118: =\sup_{0\leq x\lt 1} x^n = 1.
+0119: \]
+0120: Therefore
+0121: \[
+0122: \lim_{n\to\infty} \du(x^n, 0) = \lim_{n\to\infty} 1 = 1 \neq 0.
+0123: \]
+0124: The sequence of functions $x^n$ does not converge
+0125: uniformly on the interval $[0,1)$.
+0126: Left: the uniform distance between $f_n(x)= x^n$ and
+0127: $f(x)=0$ on the interval $0\leq x\lt 1$ is $d(f_n, f)=1$, so, on
+0128: the interval $[0,1)$, $x^n$ does not converge uniformly to $0$
+0129: as $n\to\infty$.
+0130: Right: on the interval $[0,a]$ the uniform distance
+0131: between $f_n(x)= x^n$ and $f(x) = 0$ is $a^n$. Since $a\lt1$,
+0132: we have $a^n\to0$ so that $f_n(x)=x^n$ does converge uniformly
+0133: to zero on the interval $[0,a]$.
+0134: Question: Does the same sequence of functions
+0135: converge uniformly on the interval $[0,a]$ if $a$ is some number
+0136: with $0\lt a \lt 1$?
+0137: Answer: We again compute the uniform distance between
+0138: the functions $f_n(x) = x^n$ and $f(x)=0$, but this time on the
+0139: interval $[0,a]$ instead of the interval $(0,1)$ that we used in
+0140: the previous example. We have
+0141: \[
+0142: \du(x^n, 0) = \sup_{0\leq x\leq a} |x^n-0| = \sup_{0\leq x\leq a} x^n = a^n.
+0143: \]
+0144: Since $0\lt a\lt 1 $ we have
+0145: \[
+0146: \lim_{n\to\infty} \du(f_n, f) = \lim_{n\to\infty} a^n = 0,
+0147: \]
+0148: so that the sequence of functions $x^n$ does converge uniformly on
+0149: the interval $[0,a]$, for any $a\in(0,1)$.
+0150: Three consequences of uniform convergence
+0151: In the following theorems $E$ is a metric space.
+0152: Theorem. Let $f_n:E\to \R$ be a sequence of
+0153: functions. If $f_n$ converges uniformly to $f:E\to \R$, and if each $f_n$ is
+0154: continuous, then $f$ is also continuous.
+0155: This theorem implies that for any uniformly convergent sequence of functions
+0156: $f_n:E\to \R$ and convergent sequence of points $x_n\in E$ one can “switch
+0157: limits,” i.e.
+0158: \[
+0159: \lim_{n\to\infty} \lim_{k\to\infty} f_n(x_k) =
+0160: \lim_{k\to\infty} \lim_{n\to\infty} f_n(x_k) .
+0161: \]
+0162: Theorem.
+0163: If $f_n:[a,b]\to\R$ is a sequence of Riemann integrable functions that
+0164: converges uniformly to $f:[a,b]\to\R$, then the limit $f$ is also Riemann
+0165: integrable and
+0166: \[
+0167: \lim_{n\to\infty} \int_a^b f_n(x) dx = \int_a^b f(x) dx.
+0168: \]
+0169: Since $f(x) = \lim_{n\to\infty} f_n(x)$ we can write the conclusion as
+0170: \[
+0171: \lim_{n\to\infty} \int_a^b f_n(x) dx = \int_a^b \lim_{n\to\infty} f_n(x) dx,
+0172: \]
+0173: In other words, this theorem justifies switching limits and integration.
+0174: Theorem.
+0175: Let $f_n:[a,b]\to\R$ be a sequence of differentiable functions whose
+0176: derivatives $f_n'$ are continuous. If $f_n$ converges uniformly to $f$ and
+0177: $f_n'$ converges uniformly to $g$, then the limit $f$ is differentiable and
+0178: its derivative is $f'=g$.
+0179: We can rewrite the conclusion as
+0180: \[
+0181: \lim_{n\to\infty}\frac{d f_n(x)}{dx} =
+0182: \frac{d \lim_{n\to\infty}f_n(x)}{dx}.
+0183: \]
+0184: This theorem justifies switching of limits and derivatives. Note
+0185: that the hypotheses of the theorem require that both the sequence
+0186: of functions $f_n$ and the sequence of their derivatives $f_n'$
+0187: must converge uniformly.
+0188: Uniform convergence of series
+0189: Pointwise convergence for series. If
+0190: $f_n$ is a sequence of functions defined on some set $E$, then we
+0191: can consider the partial sums
+0192: \[
+0193: s_n(x) = f_1(x) + \cdots + f_n(x) = \sum_{k=1}^n f_k(x).
+0194: \]
+0195: If these converge as $n\to\infty$, and if this happens for every
+0196: $x\in E$, then we say that the series converges
+0197: pointwise. The sum of the series is
+0198: \[
+0199: S(x) = \sum_{k=1}^\infty f_k(x)
+0200: \stackrel{\sf def}= \lim_{n\to\infty}\sum_{k=1}^n f_k(x)
+0201: = \lim_{n\to\infty} s_n(x).
+0202: \]
+0203: The sum $\sum_1^\infty f_k(x)$ is defined for each $x\in E$ and so
+0204: it is a function on $E$.
+0205: Uniform convergence of series. A series
+0206: $\sum_{k=1}^\infty f_k(x)$ converges uniformly if the sequence of
+0207: partial sums $s_n(x) = \sum_{k=1}^n f_k(x)$ converges uniformly.
+0208: The Weierstrass M–test. If $f_n:E\to\R$ is a
+0209: sequence of functions for which one has a sequence $M_n$ with
+0210: \[
+0211: |f_n(x)|\leq M_n \text{ for all }x\in E,
+0212: \]
+0213: and for which
+0214: \[
+0215: \sum_{n=1}^\infty M_n \lt \infty,
+0216: \]
+0217: then the series $\sum_{k=1}^\infty f_k(x)$ converges uniformly.
+0218: How to prove a series does not converge uniformly.
+0219: If $\sum f_n(x)$ is a series whose terms $f_n$ are functions on some set
+0220: $E$, and if the series converges uniformly on $E$, then
+0221: $\displaystyle\lim_{n\to\infty} \Bigl(\sup_{x\in E} |f_n(x)|\Bigr) =0$.
+0222: Let $s_n(x) = f_1(x) + \cdots + f_n(x)$ be the $n$th partial
+0223: sum of the series, and let $S(x) = \sum_1^\infty f_n(x)$ be the sum of
+0224: the series. Since the series converges uniformly, we have
+0225: $\lim_{n\to\infty} \du(s_n, S) = 0$. By the triangle inequality we also
+0226: have
+0227: $\du(s_n, s_{n-1}) \leq \du(s_{n-1}, S) + \du(S, s_n)$
+0228: so that $\du(s_n, s_{n-1}) \to 0$ as $n\to\infty$.
+0229: The uniform distance between the two consecutive partial sums $s_{n-1}$
+0230: and $s_n$ is
+0231: $\du(s_{n-1}, s_n) = \sup_{x\in E} |s_{n-1}(x) - s_n(x)| = \sup_{x\in E} |f_n(x)|$.
+0232: It follows that
+0233: $\sup_{x\in E} |f_n(x)| \to 0$ as $n\to\infty$.

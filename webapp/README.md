@@ -1,12 +1,12 @@
 # 研证 · 本地科研工作台
 
-**0.4.0 本地 Web 应用**：研究简报、Skill 科研流程、公开文献查询、用户确认阅读、候选修订、人工选题、固定随机 SVD 实验，以及 SQLite 保存与导出。项目定位见 [根 README](../README.md)，实现与后续验收见 [技术架构](../docs/研证技术架构.md) 和 [路线图](../docs/ROADMAP.md)。
+**0.5.0 本地 Web 应用**：研究简报、Skill 科研流程、公开文献查询、用户确认阅读、候选修订、人工选题、固定随机 SVD 实验、理论论证、理论核查材料与固定原件访问，以及 SQLite 保存与导出。项目定位见 [根 README](../README.md)，理论功能见 [理论论证工作流](../docs/理论论证工作流.md)，实现与后续验收见 [技术架构](../docs/研证技术架构.md) 和 [路线图](../docs/ROADMAP.md)。
 
 两个 Skill 的全文规则与 SHA 会进入同一个受约束的模型流程；它们不是两个独立智能体。模型建议、真实查询、用户声明的阅读与实际数值执行分别记录。
 
 ## 准备与启动
 
-依赖锁定版本要求 **Python 3.12 或以上**（当前 NumPy 2.5.4 的最低要求），以及安装依赖所需网络。请保留完整仓库，后端需要 `skills/` 中的规则与校验器，以及 `output/` 下运行必需的五份历史 JSON；不能只复制前端。
+依赖锁定版本要求 **Python 3.12 或以上**（当前 NumPy 2.5.4 的最低要求），以及安装依赖所需网络。请保留完整仓库，后端需要 `skills/` 中的规则与校验器、`output/` 下运行必需的五份历史 JSON，以及 `webapp/evidence_registry_manifest.json` 引用的 35 份公开原件；不能只复制前端。
 
 从仓库根目录运行：
 
@@ -23,6 +23,14 @@ cd webapp
 ```
 
 正式本机记录保存在 `webapp/data/research.db`，重启后恢复。当前仅供本地单人使用，无账户与项目权限；同源检查不代替授权。公开多用户部署需另验身份、配额、隔离、监控和备份。
+
+演示或 Qwen/Lean 真实调用请使用独立临时库，避免触碰任何人的真实研究记录（应用在导入时创建默认库，因此必须在导入前设置）：
+
+```powershell
+$env:YANZHENG_DB_PATH = Join-Path $env:TEMP "yanzheng-demo-$(Get-Random).db"
+$env:YANZHENG_MODEL_PROVIDER = "demo"
+.\.venv\Scripts\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8097
+```
 
 ## 配置百炼千问
 
@@ -82,6 +90,24 @@ webapp\.venv\Scripts\python.exe -B scripts\run_tests.py --suite all
 
 可用 `--suite web` 或 `--suite skills` 分别运行。入口在导入应用前指定临时数据库，不操作正式本机记录。
 
-2026-10-16 当前快照 **116项通过（Web 64、Skill 52）**。模型和检索测试使用模拟；固定 Worker 测试确有数值执行，包含种子复现、精确基线恒等式、参数边界、超时失败和导出。它们不证明当前真实账号已连通，也不代替新界面和科学语义验收。
+证据日 2026-10-18 的公开状态摘要见 [2026-10-18 状态摘要](../docs/STATUS-2026-10-18.md)：有效全量回归证据记录 263 项 Python 与 83 项前端零失败/零跳过、9 个真实 Lean 案例预期状态一致（历史间歇超时未解决，不能据此宣称 Lean 可靠）；A 已确认目标范围观测能力阻塞，B 四份实际 Chrome 下载完成并由 DS 复核字节，C 的 18 论断/19 材料/四义务保持 `open`、`not_formally_verified`。完整正式版与 8097 正式启动仍待联合验收，专项/历史交付档案保留在本机 `output/`，不随仓库交付。
+
+本窗口专项命令（临时库、模型替身，无Lean计算）：
+
+```powershell
+webapp/.venv/Scripts/python.exe -X utf8 -B scripts/run_tests.py --suite web --pattern 'test_theory*.py'
+webapp/.venv/Scripts/python.exe -X utf8 -B scripts/run_tests.py --suite web --pattern 'test_model*.py'
+node --test webapp/tests/frontend/*.cjs
+```
+
+前端测试 83 项（原 57 项迁移并扩容）；入口与覆盖说明见[维护说明](tests/frontend/README.md)。
 
 本机旧版真实 Qwen 调用与浏览器布局检查属于历史审计，未随仓库分发。下一阶段是新版完整真实闭环、阅读证据实质核查、精确版本/笔记绑定与修订预览，以及多数据实例/可比预算的数值评测；详见 [ROADMAP](../docs/ROADMAP.md)。
+
+## 理论核查材料与原件访问（2026-10-18）
+
+理论工作台可明确选择案例级、卡级或既有义务级目标，追加保存不可覆盖的论断、使用假设、支持范围、推导和来源定位，并可追加明确范围的助手核查或人工意见；旧材料与旧审阅不覆盖。卡、笔记或研究背景变化时显示旧关联，409 草稿与来源字段保留，核对后显式同步。没有义务的材料显示 `not_applicable`，不创建 P2 问题卡或已接受规划；核查材料不进入模型消息，下一轮预览明确排除。
+
+原件访问使用 `webapp/evidence_registry_manifest.json` 的固定 35 身份白名单，只按与项目材料明确关联的 `artifact_id` 显式读取，显示实际字节 SHA256、声明比对与转义纯文本预览；不开放任意路径、URL 或下载端点。旧 `unknown/not_connected` 声明保留，新读取事实单独追加；字节一致不认证来源真实性、内容正确、历史已读或数学成立。注册清单记录本机绝对根路径，非 Windows 或路径不可用环境会显示 `fixed_registry_unavailable`，不修改受保护清单字节。
+
+人工意见只记录外部声明，不认证身份或数学正确性；四义务保持 `open`、形式状态保持 `not_formally_verified`，独立数学审阅与研究者最终决定 pending。QA `test_fixture` 回放不是真人审阅，历史归档不随仓库交付；8104 是临时 QA 预览，不是正式服务。工程测试、字节核对和固定 Lean 案例通过都不等于自然语言命题或数学结论已获认证。

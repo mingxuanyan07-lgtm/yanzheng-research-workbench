@@ -1,0 +1,301 @@
+<!doctype html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="521.css" />
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({tex2jax:    {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    MathJax.Hub.Config(
+    { TeX: { Macros:
+    {
+    va: "\\mathbf{a}", vb: "\\mathbf{b}", ve: "\\mathbf{e}", vf: "\\mathbf{f}",
+    vu: "\\mathbf{u}", vv: "\\mathbf{v}", vw: "\\mathbf{w}", vx: "\\mathbf{x}",
+    cA: "\\mathcal{A}", cB: "\\mathcal{B}", cC: "\\mathcal{C}", cO: "\\mathcal{O}", cR: "\\mathcal{R}",
+    R: "\\mathbb{R}", Q: "\\mathbb{Q}", Z: "\\mathbb{Z}", N: "\\mathbb{N}",
+    pd: "\\partial" ,    du: "d_{\\mathrm u}"  } } });
+  </script>
+  <script 
+          type="text/javascript" 
+          async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML">
+  </script>
+  <title>Math 521 Uniform Convergence</title>
+</head>
+<body>
+  <h1>Uniform Convergence</h1>
+  <div style="text-align:center; font-family:sans-serif;">
+    [under construction]</div>
+
+  <div class="section">The problems with pointwise convergence</div>
+  <div class="subsection"><b>Definition.&nbsp;</b> If $X$ is a metric
+    space, and $f_n:X\to \R$ ($n\in\N$) is a sequence of functions, then
+    <em>$f_n$ converges pointwise to $f$</em> if for every $x\in X$ one has
+    $\lim_{n\to\infty} f_n(x) = f(x)$.  </div>
+  <p>For example, the sequence of functions $f_n(x) = x^n/n$ converges pointwise
+    to zero on the interval $X=[-1,1]$, because for each $x\in [-1,1]$ one has
+    $|x^n/n|\leq 1/n$, and thus
+    \[
+    \lim_{n\to\infty} \frac{x^n}{n} = 0.
+    \]  </p>
+  <div style="float:right; width:30%;">
+    <img alt="" src="./pointwiseconvergence-of-xn.svg"/></div>
+  <div class="subsection" id="pointwise-limit-not-continuous"><b>The limit of a pointwise convergent sequence of continuous functions does not have to be continuous.&nbsp;</b>
+    For example, consider $X=[0,1]$, and $f_n(x) = x^n$. Then
+    \[
+    \lim_{n\to\infty} f_n(x) = f(x) = 
+    \begin{cases} 0 & (0\leq x\lt 1) \\ 1 & (x=1) \end{cases}
+    \]</div>
+  <div class="subsection"><b>The derivatives of a pointwise convergent sequence
+      of functions do not have to converge.&nbsp;</b> $X=\R$, $f_n(x) = \frac1n
+    \sin(n^2x)$.  In this case
+    \[
+    \lim_{n\to\infty} f_n(x) = 0,
+    \]
+    so the pointwise limit function is $f(x) = 0$: the sequence of functions
+    converges to $0$.  What about the derivatives of the sequence?  These are
+    given by
+    \[
+    f_n'(x) = n\cos (n^2x),
+    \]
+    and for most $x\in\R$ the sequence $n \cos(n^2x)$ is unbounded. The
+    sequence of derivatives $f_n'(x)$ does not converge pointwise.</div>
+  <div class="subsection"><b>The integrals of a pointwise convergent sequence
+      of functions do not have to converge.&nbsp;</b>
+    Consider $X=[0,1]$, $f_n(x) = \frac{2n^2x}{\bigl(1+n^2x^2\bigr)^2}$.
+    Then
+    \[
+    \lim_{n\to\infty} f_n(x) = 0
+    \]
+    for all $x\in[0,1]$.  But the integrals of $f_n$ over the interval $X$ are
+    \[
+    \int_0^1 \frac{2n^2xdx}{\bigl(1+n^2x^2\bigr)^2} 
+    \stackrel{u=1+n^2x^2}=
+    \int_1^{1+n^2} \frac{du}{u^2}
+    = 1 - \frac1{1+n^2}.
+    \]
+    Therefore, even though $\lim_{n\to\infty} f_n(x) = 0$ for all $x\in [0,1]$,
+    we have
+    \[
+    \lim_{n\to\infty} \int_0^1 f_n(x) dx = 1.
+    \]</div>
+  <div class="section">Uniform convergence</div>
+  <div class="subsection"><b>Definition.&nbsp;</b>A sequence of functions
+    $f_n:X\to Y$ converges uniformly if for every $\epsilon\gt0$ there is an
+    $N_\epsilon\in\N$ such that for all $n\geq N_\epsilon$ and all $x\in X$ one has
+    $d(f_n(x), f(x))\lt \epsilon$.</div>
+  <div class="subsection"><b>Uniform convergence implies pointwise
+      convergence, but not the other way around.</b>
+
+    For example, the sequence $f_n(x) = x^n$
+    from <a href="#pointwise-limit-not-continuous">the previous
+      example</a> converges pointwise on the interval $[0,1]$, but it
+    does not converge uniformly on this interval.  To prove this we
+    show that the assumption that $f_n(x)$ converges uniformly leads
+    to a contradiction.
+    <p>
+    If $f_n(x)$ converges uniformly, then the limit function must
+    be $f(x) = 0$ for $x\in[0,1)$ and $f(1) = 1$.  Uniform
+    convergence implies that for any $\epsilon\gt0$ there is an
+    $N_\epsilon\in\N$ such that $|x^n- f(x)|\lt \epsilon$ for all
+    $n\geq N_\epsilon$ and all $x\in [0,1]$.  Assuming this is
+    indeed true we may choose $\epsilon$, in particular, we can
+    choose $\epsilon=\frac12$.  Then there is an $N\in \N$ such that
+    for all $n\geq N$ we have $|x^n-f(x)|\lt \frac 12$.  We may
+    choose $n$ and $x$.  Let us choose $n=N$, and
+    $x=\bigl(\frac34\bigr)^{1/N}$.  Then we have $f(x)=0$ and thus
+    \[
+    |f_N(x) - f(x)| = x^N - 0 = \frac 34 \gt \frac12,
+    \]
+    contradicting our assumption.
+    </p></div>
+    <div class="section" id="uniformmetric">The uniform metric</div>
+    <div class="subsection"><b>Definition&mdash;the set of bounded
+        functions.&nbsp;</b> If $E$ is a set, then a function $f:E\to\R$ is
+      bounded if there is an $M\in\R$ such that $|f(x)|\leq M$ for all $x\in E$.
+      We will write $\cB(E)$ for the <em>set of all bounded functions</em> from
+      $E$ to $\R$.
+    </div>
+
+    <div class="subsection">
+      <b>Definition&mdash;the uniform distance between bounded
+        functions.&nbsp;</b> The <em>uniform distance</em> between two
+      bounded functions $f, g\in\cB(E)$ is
+      \[
+      \du(f, g) =  \sup_{x\in E} |f(x) - g(x)|.
+      \]  </div>
+    <div class="figure">
+      <img alt="drawing of the uniform distance between two functions" src="./dfg.svg"/>
+      <div class="caption">The uniform distance $d(f,g)$ between two
+        functions $f$ and $g$ is the least upper bound of all possible
+        values that $|f(x)-g(x)|$ can have if $x\in E$. </div>
+    </div>
+    <div class="theorem">
+      <b>Theorem.&nbsp</b> $\du(f, g)$ is a metric on $\cB(E)$.  </div>
+    <div class="proof">We have to check:
+      <ul>
+        <li>$\du(f,g) = \du(g,f)$</li>
+        <li>$\du(f,g)\geq 0$ with $\du(f,g) = 0$ if and only if $f=g$</li>
+        <li>$\du(f,g) \leq \du(f,h) + \du(h,g)$</li>
+      </ul>  </div>
+
+      <div class="theorem" id="uniform-convergence-as-metric-convergence">
+        <b>Theorem.&nbsp;</b> The uniform metric $\du$ is a metric on
+        $\cB(E)$.  A sequence of bounded functions $f_n:E\to\R$ converges
+        uniformly to $f$ if and only if $\du(f_n, f)\to 0$, i.e.&nbsp;if
+        and only if $f_n$ converges to $f$ in the sense of
+        <a href="./SequencesinMetricSpaces.html#limit-def">convergence
+          in the metric space</a> $\cB(E)$.  </div>
+      <div class="subsection"><b>Example.&nbsp;</b> Let $E = [0,1)$ and
+        consider the sequence of functions $f_n(x) = x^n$.  We know that
+        $f_n(x)\to0$ pointwise on $[0,1)$.      </div>
+      <p><i>Question:&nbsp;</i>Does the sequence converge uniformly on $[0,1)$?  </p>
+      <p><i>Answer:&nbsp;</i>
+      Since <a href="#uniform-convergence-as-metric-convergence">uniform
+        convergence is equivalent to convergence in the uniform
+        metric</a>, we can answer this question by computing $\du(f_n, f)$
+      and checking if $\du(f_n, f)\to0$.  We have, by definition
+      \[
+      \du(f_n, f) = \sup_{0\leq x\lt 1}|x^n - 0|
+      =\sup_{0\leq x\lt 1} x^n = 1.
+      \]
+      Therefore
+      \[
+      \lim_{n\to\infty} \du(x^n, 0) = \lim_{n\to\infty} 1 = 1 \neq 0.
+      \]
+      The sequence of functions $x^n$ does <em>not</em> converge
+      uniformly on the interval $[0,1)$.  </p>
+      <div class="figure" id="ucxn">
+
+        <img alt="" src="./uniformconvergence-of-xn.svg"/>
+        <div class="caption">
+          <b>Left:</b> the uniform distance between $f_n(x)= x^n$ and
+          $f(x)=0$ on the interval $0\leq x\lt 1$ is $d(f_n, f)=1$, so, on
+          the interval $[0,1)$, $x^n$ does not converge uniformly to $0$
+          as $n\to\infty$.
+          <b>Right:&nbsp;</b> on the interval $[0,a]$ the uniform distance
+          between $f_n(x)= x^n$ and $f(x) = 0$ is $a^n$.  Since $a\lt1$,
+          we have $a^n\to0$ so that $f_n(x)=x^n$ does converge uniformly
+          to zero on the interval $[0,a]$.
+        </div>  
+      </div>
+      <p><i>Question:&nbsp</i> Does the same sequence of functions
+      converge uniformly on the interval $[0,a]$ if $a$ is some number
+      with $0\lt a \lt 1$?</p>
+      <p><i>Answer:&nbsp</i> We again compute the uniform distance between
+      the functions $f_n(x) = x^n$ and $f(x)=0$, but this time on the
+      interval $[0,a]$ instead of the interval $(0,1)$ that we used in
+      the previous example.  We have
+      \[
+      \du(x^n, 0) = \sup_{0\leq x\leq a} |x^n-0| = \sup_{0\leq x\leq a} x^n = a^n.
+      \]
+      Since $0\lt a\lt 1 $ we have
+      \[
+      \lim_{n\to\infty} \du(f_n, f) = \lim_{n\to\infty} a^n = 0,
+      \]
+      so that the sequence of functions $x^n$ does converge uniformly on
+      the interval $[0,a]$, for any $a\in(0,1)$.</p>
+
+      <div class="section" id="three-consequences">Three consequences of uniform convergence</div> 
+      In the following theorems $E$ is a metric space.
+      <div class="theorem"><b>Theorem.&nbsp;</b> Let $f_n:E\to \R$ be a sequence of
+        functions.  If $f_n$ converges uniformly to $f:E\to \R$, and if each $f_n$ is
+        continuous, then $f$ is also continuous.   </div>
+      <p>This theorem implies that for any uniformly convergent sequence of functions
+      $f_n:E\to \R$ and convergent sequence of points $x_n\in E$ one can &ldquo;switch
+      limits,&rdquo; i.e.
+      \[
+      \lim_{n\to\infty} \lim_{k\to\infty} f_n(x_k) = 
+      \lim_{k\to\infty} \lim_{n\to\infty} f_n(x_k) . 
+      \]  </p>
+      <div class="theorem"><b>Theorem.&nbsp;</b><!-- limits of integrals -->
+        If $f_n:[a,b]\to\R$ is a sequence of Riemann integrable functions that
+        converges uniformly to $f:[a,b]\to\R$, then the limit $f$ is also Riemann
+        integrable and 
+        \[
+        \lim_{n\to\infty} \int_a^b f_n(x) dx = \int_a^b f(x) dx.
+        \]  </div>
+      <p>Since $f(x) = \lim_{n\to\infty} f_n(x)$ we can write the conclusion as
+      \[
+      \lim_{n\to\infty} \int_a^b f_n(x) dx = \int_a^b \lim_{n\to\infty} f_n(x) dx,
+      \]
+      In other words, this theorem justifies switching limits and integration.  </p>
+
+      <div class="theorem"><b>Theorem.&nbsp;</b><!-- limits of derivatives -->
+        Let $f_n:[a,b]\to\R$ be a sequence of differentiable functions whose
+        derivatives $f_n'$ are continuous.  If $f_n$ converges uniformly to $f$ and
+        $f_n'$ converges uniformly to $g$, then the limit $f$ is differentiable and
+        its derivative is $f'=g$. </div>
+      <p>We can rewrite the conclusion as
+      \[
+      \lim_{n\to\infty}\frac{d f_n(x)}{dx} = 
+      \frac{d \lim_{n\to\infty}f_n(x)}{dx}.
+      \]
+      This theorem justifies switching of limits and derivatives.  Note
+      that the hypotheses of the theorem require that both the sequence
+      of functions $f_n$ and the sequence of their derivatives $f_n'$
+      must converge uniformly.</p>
+
+      <div class="section">Uniform convergence of series</div>
+      <div class="subsection"><b>Pointwise convergence for series.&nbsp;</b>If
+        $f_n$ is a sequence of functions defined on some set $E$, then we
+        can consider the partial sums
+        \[
+        s_n(x) = f_1(x) + \cdots + f_n(x) = \sum_{k=1}^n f_k(x).
+        \]
+        If these converge as $n\to\infty$, and if this happens for every
+        $x\in E$, then we say that <em>the series converges
+          pointwise</em>.  The sum of the series is
+        \[
+        S(x) = \sum_{k=1}^\infty f_k(x)
+        \stackrel{\sf def}= \lim_{n\to\infty}\sum_{k=1}^n f_k(x)
+        = \lim_{n\to\infty} s_n(x).
+        \]
+        The sum $\sum_1^\infty f_k(x)$ is defined for each $x\in E$ and so
+        it is a function on $E$.  </div>
+      <div class="subsection">
+        <b>Uniform convergence of series.&nbsp;</b> A series
+        $\sum_{k=1}^\infty f_k(x)$ converges uniformly if the sequence of
+        partial sums $s_n(x) = \sum_{k=1}^n f_k(x)$ converges uniformly.  </div>
+      <div class="theorem">
+        <b>The Weierstrass M&ndash;test.&nbsp;</b> If $f_n:E\to\R$ is a
+        sequence of functions for which one has a sequence  $M_n$ with
+        \[
+        |f_n(x)|\leq M_n \text{ for all }x\in E,
+        \]
+        and for which
+        \[
+        \sum_{n=1}^\infty M_n \lt \infty,
+        \]
+        then the series $\sum_{k=1}^\infty f_k(x)$ converges uniformly.  </div>
+      <div class="subsection" id="terms-to-zero-uniformly">
+        <b>How to prove a series does <em>not</em> converge uniformly.&nbsp;</b>
+        If $\sum f_n(x)$ is a series whose terms $f_n$ are functions on some set
+        $E$, and if the series converges uniformly on $E$, then 
+        <div class="displaymath">
+          $\displaystyle\lim_{n\to\infty} \Bigl(\sup_{x\in E} |f_n(x)|\Bigr) =0$.
+        </div>
+      </div>
+      <div class="proof">
+        Let $s_n(x) = f_1(x) + \cdots + f_n(x)$ be the $n$<sup>th</sup> partial
+        sum of the series, and let $S(x) = \sum_1^\infty f_n(x)$ be the sum of
+        the series.  Since the series converges uniformly, we have
+        $\lim_{n\to\infty} \du(s_n, S) = 0$.  By the triangle inequality we also
+        have
+        <div class="displaymath">
+          $\du(s_n, s_{n-1}) \leq \du(s_{n-1}, S) + \du(S, s_n)$
+        </div>
+        so that $\du(s_n, s_{n-1}) \to 0$ as $n\to\infty$.
+        <p>
+        The uniform distance between the two consecutive partial sums $s_{n-1}$
+        and $s_n$ is
+        <div class="displaymath">
+          $\du(s_{n-1}, s_n) = \sup_{x\in E} |s_{n-1}(x) - s_n(x)| = \sup_{x\in E} |f_n(x)|$.
+        </div>
+        It follows that 
+        <div class="displaymath">
+          $\sup_{x\in E} |f_n(x)| \to 0$ as $n\to\infty$.
+        </div>
+        </p>
+      </div>
+
+</body>
+<!-- vim: tw=80 
+-->

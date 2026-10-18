@@ -1,0 +1,212 @@
+{
+  "hash_scope": "exact file bytes; copies do not certify original authorship",
+  "files": [
+    {
+      "source_path": "D:\\天猫AI\\README.md",
+      "copy_path": "evidence/inputs/README.md",
+      "sha256": "872f124f96e819f5bcadaf81a834fca8e6e50f6a7461e6eaa4519bb93ed1f05b",
+      "bytes": 22258,
+      "captured_at": "2026-10-17T19:54:43.382486+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\docs\\ROADMAP.md",
+      "copy_path": "evidence/inputs/docs/ROADMAP.md",
+      "sha256": "4480b6fb30ab2cb4ae66e443a59ff028a1e10c443b2f03b72dcf1ef46d37a3a0",
+      "bytes": 11129,
+      "captured_at": "2026-10-17T19:54:43.382486+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\docs\\理论论证工作流.md",
+      "copy_path": "evidence/inputs/docs/理论论证工作流.md",
+      "sha256": "34fffd12c96bfde026686b1195d1b6f7def1ff07e0f1c5da6bb365ffbc675562",
+      "bytes": 11573,
+      "captured_at": "2026-10-17T19:54:43.382486+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\README.md",
+      "copy_path": "evidence/inputs/output/theory-quality-next/README.md",
+      "sha256": "ba4340e6df54893cb2051889e4d93d300b285dfff8e6064b7abc6b749c5e1070",
+      "bytes": 9449,
+      "captured_at": "2026-10-17T19:54:43.383717+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\READY.json",
+      "copy_path": "evidence/inputs/output/theory-quality-next/READY.json",
+      "sha256": "a50fd03befc143860c33ba50d6ecfbeefe4d7aa2a8a7ec77eecf626d80b48c35",
+      "bytes": 16435,
+      "captured_at": "2026-10-17T19:54:43.384788+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\validation.json",
+      "copy_path": "evidence/inputs/output/theory-quality-next/validation.json",
+      "sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+      "bytes": 11266,
+      "captured_at": "2026-10-17T19:54:43.385791+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\offline\\math-reference-review.md",
+      "copy_path": "evidence/inputs/output/theory-quality-next/offline/math-reference-review.md",
+      "sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+      "bytes": 9261,
+      "captured_at": "2026-10-17T19:54:43.386791+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\README.md",
+      "copy_path": "evidence/inputs/output/theory-review-integration/README.md",
+      "sha256": "48db9f4f792b3b8a221c61c26bacf8e6a2f713381353b54f4e683932d1b0caa7",
+      "bytes": 6153,
+      "captured_at": "2026-10-17T19:54:43.387791+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\api-contract.md",
+      "copy_path": "evidence/inputs/output/theory-review-integration/api-contract.md",
+      "sha256": "8ee57fe343138adf131bcca4ce75e522100810c39120af6f952706f4b8cc3bdf",
+      "bytes": 2911,
+      "captured_at": "2026-10-17T19:54:43.387791+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\acceptance-supervisor-2026-10-17-193613\\validation.json",
+      "copy_path": "evidence/inputs/output/acceptance-supervisor-2026-10-17-193613/validation.json",
+      "sha256": "3e3ac16809d9df2f2e16d2598a68868ed19531b060a9013ace9e30eb6a11087d",
+      "bytes": 12950,
+      "captured_at": "2026-10-17T19:54:43.388793+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\reviewed\\missing-condition\\feedback.json",
+      "copy_path": "evidence/inputs/output/theory-quality-next/reviewed/missing-condition/feedback.json",
+      "sha256": "beeba8bcbf1e3392286f361e22652f65fd6ff403c3c7c8a58bbb7fec1909b1c0",
+      "bytes": 7113,
+      "captured_at": "2026-10-17T19:54:43.388793+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\live\\missing-condition\\raw-model-content.txt",
+      "copy_path": "evidence/inputs/output/theory-quality-next/live/missing-condition/raw-model-content.txt",
+      "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+      "bytes": 5288,
+      "captured_at": "2026-10-17T19:54:43.389793+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\live\\missing-condition\\model-payload.json",
+      "copy_path": "evidence/inputs/output/theory-quality-next/live/missing-condition/model-payload.json",
+      "sha256": "ad0eab7df57d30233d86e55d2d23b9516cd4694bfec80ec5be0132cf0b7d8341",
+      "bytes": 5319,
+      "captured_at": "2026-10-17T19:54:43.389793+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\inputs\\missing-condition\\input-project.json",
+      "copy_path": "evidence/inputs/output/theory-quality-next/inputs/missing-condition/input-project.json",
+      "sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+      "bytes": 20970,
+      "captured_at": "2026-10-17T19:54:43.390805+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-quality-next\\inputs\\missing-condition\\messages.json",
+      "copy_path": "evidence/inputs/output/theory-quality-next/inputs/missing-condition/messages.json",
+      "sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+      "bytes": 16237,
+      "captured_at": "2026-10-17T19:54:43.391901+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\claim-ledger.json",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/claim-ledger.json",
+      "sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+      "bytes": 2939,
+      "captured_at": "2026-10-17T19:54:43.391901+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\curated-proposal.json",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/curated-proposal.json",
+      "sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+      "bytes": 4130,
+      "captured_at": "2026-10-17T19:54:43.391901+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-independent-review.json",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/historical-independent-review.json",
+      "sha256": "f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+      "bytes": 4737,
+      "captured_at": "2026-10-17T19:54:43.392904+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-output.txt",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/historical-output.txt",
+      "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+      "bytes": 5288,
+      "captured_at": "2026-10-17T19:54:43.392904+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-service-call.json",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/historical-service-call.json",
+      "sha256": "51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+      "bytes": 606,
+      "captured_at": "2026-10-17T19:54:43.392904+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\notes-and-sources.json",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/notes-and-sources.json",
+      "sha256": "733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+      "bytes": 3763,
+      "captured_at": "2026-10-17T19:54:43.393904+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\original-context.json",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/original-context.json",
+      "sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+      "bytes": 20970,
+      "captured_at": "2026-10-17T19:54:43.393904+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    },
+    {
+      "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\README.md",
+      "copy_path": "evidence/inputs/output/theory-review-integration/public-case/README.md",
+      "sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+      "bytes": 3825,
+      "captured_at": "2026-10-17T19:54:43.393904+08:00",
+      "origin": "historical_artifact_verbatim_copy",
+      "independent_human_review": false
+    }
+  ]
+}

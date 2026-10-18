@@ -1,0 +1,592 @@
+{
+  "schema_version": "research-case-claim-ledger-v1",
+  "created_at": "2026-10-17T20:02:04.781349+08:00",
+  "author_type": "assistant",
+  "scope": "已知结果复核与条件分析",
+  "independent_mathematician_review": "pending",
+  "claims": [
+    {
+      "id": "C01",
+      "claim": "每个正整数n，x^n在[0,1]上相对连续。",
+      "proposition_version": "P0",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D1",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/UW521.html",
+          "sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+          "locator": "x^n example; text15–20",
+          "support_boundary": "来源反例背景；具体n-Lipschitz估计由助手给出。"
+        }
+      ],
+      "derivation": "因式分解得|x^n-a^n|≤n|x-a|；δ=η/n。",
+      "counterexample_check": "检查n=1与a=0,1；δ依赖n合法。",
+      "applicable_conditions": "n≥1；a,x∈[0,1]；η>0",
+      "depends_on": [],
+      "obligation_ids": [
+        "pointwise_limit"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C02",
+      "claim": "点态极限是x<1时0、x=1时1。",
+      "proposition_version": "P0",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D2",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/UW521.html",
+          "sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+          "locator": "x^n example; text15–20",
+          "support_boundary": "直接记载分段极限；显式N为助手展开。"
+        }
+      ],
+      "derivation": "端点直接；0<x<1令t=1/x-1，Bernoulli和N>1/(tε)给全尾误差。",
+      "counterexample_check": "不能把N(x,ε)当全域共同N。",
+      "applicable_conditions": "∀x∈D ∀ε>0 ∃N≥1 ∀n≥N",
+      "depends_on": [
+        "C01"
+      ],
+      "obligation_ids": [
+        "pointwise_limit"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C03",
+      "claim": "f在1不连续，x=1-min(δ/2,1/2)对全δ合法。",
+      "proposition_version": "P0",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D3",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "evidence/inputs/output/theory-review-integration/public-case/curated-proposal.json",
+          "sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+          "locator": "proof_routes[1].steps[1]",
+          "support_boundary": "历史人工精确见证，待本轮推导核查。"
+        }
+      ],
+      "derivation": "ε₀=1/2；0<t≤1/2且t≤δ/2<δ；x∈[1/2,1)，函数差1。",
+      "counterexample_check": "旧x=1-δ/2在δ=4时出域；不借右侧函数值。",
+      "applicable_conditions": "∀δ>0；相对域D",
+      "depends_on": [
+        "C02"
+      ],
+      "obligation_ids": [
+        "witness_domain"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C04",
+      "claim": "P0普遍命题为假。",
+      "proposition_version": "P0",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D1–D3",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        }
+      ],
+      "derivation": "同一列满足每项连续与逐点收敛而极限不连续。",
+      "counterexample_check": "反例覆盖全部前提，不能只说经典反例。",
+      "applicable_conditions": "P0的域、值域、n量词完全不变",
+      "depends_on": [
+        "C01",
+        "C02",
+        "C03"
+      ],
+      "obligation_ids": [
+        "pointwise_limit",
+        "witness_domain"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C05",
+      "claim": "x^n到该分段极限不一致收敛。",
+      "proposition_version": "P0",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D4",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/UW521.html",
+          "sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+          "locator": "nonuniformity; text59–80",
+          "support_boundary": "来源用根式见证；本稿有理见证不是摘录。"
+        }
+      ],
+      "derivation": "ε₀=1/2；给N取n=N,x=1-1/(4n)；Bernoulli下界3/4。",
+      "counterexample_check": "峰值靠端点，固定网格不能证明或排除。",
+      "applicable_conditions": "∀N≥1 ∃n≥N ∃x∈D",
+      "depends_on": [
+        "C02"
+      ],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C06",
+      "claim": "一致收敛量词中N不依赖自变量。",
+      "proposition_version": "P1",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D0,D5.1",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/UW521.html",
+          "sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+          "locator": "Uniform convergence definition; text54–58",
+          "support_boundary": "直接支持定义。"
+        }
+      ],
+      "derivation": "∀ε>0 ∃N ∀n≥N ∀y∈D。",
+      "counterexample_check": "交换∀y与∃N得到点态收敛，C01–C05说明不够。",
+      "applicable_conditions": "同一个域D，同一极限函数",
+      "depends_on": [],
+      "obligation_ids": [
+        "uniform_quantifiers"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C07",
+      "claim": "同一个f_N同时控制x和a两个逼近误差。",
+      "proposition_version": "P1",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D5.1",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/LEBL62.html",
+          "sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+          "locator": "Theorem6.2.2 proof; text490–494",
+          "support_boundary": "来源函数指标名k；本稿名N。"
+        }
+      ],
+      "derivation": "对ε/3选统一N再特取n=N；分别代y=x和y=a。",
+      "counterexample_check": "不得用N(x)和N(a)却不解释统一选择；无需先知道x。",
+      "applicable_conditions": "一致收敛；x,a∈D",
+      "depends_on": [
+        "C06"
+      ],
+      "obligation_ids": [
+        "uniform_quantifiers"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C08",
+      "claim": "固定f_N后由其在a的相对连续性选δ。",
+      "proposition_version": "P1",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D5.2",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/LEBL62.html",
+          "sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+          "locator": "Theorem6.2.2 and proof; text483–516",
+          "support_boundary": "原文序列连续性；ε–δ展开属本稿。"
+        }
+      ],
+      "derivation": "容差ε/3；δ依赖a、ε、固定N，随后对全部邻域内x有效。",
+      "counterexample_check": "不要求δ对所有n有效；两端点只取域内x。",
+      "applicable_conditions": "每项相对连续；N已经固定",
+      "depends_on": [
+        "C07"
+      ],
+      "obligation_ids": [
+        "relative_continuity"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C09",
+      "claim": "三角不等式给|f(x)-f(a)|<ε。",
+      "proposition_version": "P1",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D5.3",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        }
+      ],
+      "derivation": "两个统一逼近误差加固定函数连续性误差，三项各<ε/3。",
+      "counterexample_check": "没有把≤ε误当<ε；直接用逐点共同界避开严格sup陷阱。",
+      "applicable_conditions": "|x-a|<δ且x∈D",
+      "depends_on": [
+        "C07",
+        "C08"
+      ],
+      "obligation_ids": [
+        "relative_continuity"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C10",
+      "claim": "一致收敛保持连续性是充分修订；此推导不需紧致性。",
+      "proposition_version": "P1",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D5",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/UW521.html",
+          "sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+          "locator": "first continuity theorem; text150–154",
+          "support_boundary": "一般度量定义域陈述，不要求紧致。"
+        },
+        {
+          "path": "sources/LEBL62.html",
+          "sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+          "locator": "Theorem6.2.2; text483–484",
+          "support_boundary": "任意实数子集陈述。"
+        }
+      ],
+      "derivation": "a与ε任意，连续性定义成立；逐步未使用有限覆盖。",
+      "counterexample_check": "不能将“P1真”标为“P0真”；不反推必要性。",
+      "applicable_conditions": "每项连续+同域一致收敛",
+      "depends_on": [
+        "C09"
+      ],
+      "obligation_ids": [
+        "relative_continuity"
+      ],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C11",
+      "claim": "h_n=max(0,1-|2nx-1|)每项在D连续。",
+      "proposition_version": "P2",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D6",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "evidence/inputs/output/theory-quality-next/offline/math-reference-review.md",
+          "sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+          "locator": "missing-condition辅助例",
+          "support_boundary": "历史助手例子；本轮展开，不是模型给出。"
+        }
+      ],
+      "derivation": "分段接点一致或2n-Lipschitz。",
+      "counterexample_check": "x=0、1/(2n)、1/n、1全包含；n=1合法。",
+      "applicable_conditions": "n≥1，D=[0,1]",
+      "depends_on": [],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C12",
+      "claim": "h_n在D上逐点至恒零连续函数。",
+      "proposition_version": "P2",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D6",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        }
+      ],
+      "derivation": "x=0恒零；x>0取N>1/x，尾项全零。",
+      "counterexample_check": "移动点x_n不固定，不能用其值1否定点态收敛。",
+      "applicable_conditions": "先固定x；N可依赖x",
+      "depends_on": [
+        "C11"
+      ],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C13",
+      "claim": "h_n不一致收敛；因此一致收敛非必要。",
+      "proposition_version": "P2",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D6",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "sources/LEBL62.html",
+          "sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+          "locator": "Exercise6.2.5 and note; text870–874",
+          "support_boundary": "只有任务题面；不作为此精确构造已证依据。"
+        }
+      ],
+      "derivation": "给N取n=N，x_n=1/(2n)，误差1；与C11–C12合并。",
+      "counterexample_check": "ε₀=1/2固定，所有N均有峰顶。",
+      "applicable_conditions": "与P1相同定义域及连续函数列",
+      "depends_on": [
+        "C11",
+        "C12"
+      ],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C14",
+      "claim": "x/n在D上一致至零，不能作为非一致反例。",
+      "proposition_version": "P2",
+      "evidence": [
+        {
+          "path": "DERIVATION.md",
+          "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "locator": "D6",
+          "support_boundary": "本轮助手推导；非原模型输出、非独立人工或形式核验。"
+        },
+        {
+          "path": "evidence/inputs/output/theory-review-integration/public-case/original-context.json",
+          "sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+          "locator": "theory.proposals[0].submitted_payload.search_leads[0]",
+          "support_boundary": "记录错误候选的原位置，不给数学背书。"
+        }
+      ],
+      "derivation": "全域误差≤1/n且x=1达到；取N>1/ε。",
+      "counterexample_check": "不是将x/n改完后记作旧模型正确。",
+      "applicable_conditions": "D=[0,1]，n≥1",
+      "depends_on": [],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_proof_draft_complete",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C15",
+      "claim": "原唯一反例笔记不足以归因修补定理。",
+      "proposition_version": "H14",
+      "evidence": [
+        {
+          "path": "evidence/inputs/output/theory-quality-next/inputs/missing-condition/messages.json",
+          "sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+          "locator": "user.evidence_notes[0] / review_feedback[0]",
+          "support_boundary": "实际冻结输入，用户内容在引导句后。"
+        },
+        {
+          "path": "evidence/inputs/output/theory-review-integration/public-case/historical-output.txt",
+          "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+          "locator": "proof_routes[0].evidence[0].claim",
+          "support_boundary": "原始越界语句。"
+        }
+      ],
+      "derivation": "逐字对比笔记内容与claim；同URL其他段落并未进入该笔记。",
+      "counterexample_check": "background标签与后来新读正文均不能追溯扩大原范围。",
+      "applicable_conditions": "仅谈历史输入支持范围，不否认P1真",
+      "depends_on": [],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_evidence_scope_failure",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C16",
+      "claim": "超长义务ID有49字符，原结构拒绝应保留。",
+      "proposition_version": "H14",
+      "evidence": [
+        {
+          "path": "evidence/inputs/output/theory-review-integration/public-case/historical-output.txt",
+          "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+          "locator": "proof_routes[2].obligations[0].id",
+          "support_boundary": "原字符串。"
+        },
+        {
+          "path": "evidence/inputs/output/theory-quality-next/inputs/missing-condition/messages.json",
+          "sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+          "locator": "system ID max40 contract",
+          "support_boundary": "历史合同。"
+        }
+      ],
+      "derivation": "标准库len和ASCII合同检查，原字节不变。",
+      "counterexample_check": "结构错误不推出数学命题为假。",
+      "applicable_conditions": "原v1.4输出",
+      "depends_on": [],
+      "obligation_ids": [],
+      "verification_status": "assistant_checked_archival_fact",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C17",
+      "claim": "v1.4三份原样输出均整体拒绝；本轮无新模型改善证据。",
+      "proposition_version": "HISTORICAL",
+      "evidence": [
+        {
+          "path": "evidence/inputs/output/theory-quality-next/validation.json",
+          "sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+          "locator": "overall_status / cases[*].overall_usable_as_returned",
+          "support_boundary": "历史报告，不是本轮重试或重评全部三案。"
+        }
+      ],
+      "derivation": "保留历史状态；本轮禁止新增请求。",
+      "counterexample_check": "主案正确片段/人工稿不计为模型整体成功。",
+      "applicable_conditions": "历史三案结论与本轮执行事实分开",
+      "depends_on": [],
+      "obligation_ids": [],
+      "verification_status": "historical_report_checked",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    },
+    {
+      "id": "C18",
+      "claim": "四应用义务仍open；独立审阅pending；无形式证明。",
+      "proposition_version": "REVIEW_STATUS",
+      "evidence": [
+        {
+          "path": "evidence/inputs/output/theory-review-integration/public-case/README.md",
+          "sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+          "locator": "人工版与四项义务说明",
+          "support_boundary": "历史应用状态依据，非当前DB读取。"
+        },
+        {
+          "path": "evidence/inputs/output/theory-review-integration/public-case/claim-ledger.json",
+          "sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+          "locator": "independent_mathematician_review",
+          "support_boundary": "旧助手记录仍待真人。"
+        }
+      ],
+      "derivation": "本轮只交外部材料，不写应用状态。",
+      "counterexample_check": "助手自查、有限计算和旧independent文件名均不构成人工专家认证。",
+      "applicable_conditions": "本轮及已提供历史材料",
+      "depends_on": [],
+      "obligation_ids": [],
+      "verification_status": "status_boundary_preserved",
+      "unresolved_questions": [
+        "独立数学工作者尚未审阅本条的推理、范围与归因。"
+      ],
+      "actor": "assistant",
+      "independent_mathematician_review": "pending",
+      "formal_status": "not_formally_verified"
+    }
+  ]
+}

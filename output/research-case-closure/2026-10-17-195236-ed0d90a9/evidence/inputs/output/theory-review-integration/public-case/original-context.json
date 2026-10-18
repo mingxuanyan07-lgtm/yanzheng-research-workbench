@@ -1,0 +1,370 @@
+{
+  "id": "quality-missing-condition",
+  "title": "遗漏条件：点态极限保持连续性？",
+  "created_at": "2026-10-16T01:08:40.977764+00:00",
+  "updated_at": "2026-10-16T01:16:06.650533+00:00",
+  "stage": "clarifying",
+  "intake_form": {
+    "initial_idea": "若每个 f_n:[0,1]→ℝ 连续且 f_n 逐点收敛到 f:[0,1]→ℝ，则 f 在 [0,1] 上连续。",
+    "goal": "theory",
+    "resources": "laptop",
+    "time_horizon": "week",
+    "context": "公开已知数学的质量验收；不是新定理。"
+  },
+  "direction_map": {
+    "schema_version": "1.0",
+    "record_type": "research_direction_map",
+    "created_at": "2026-10-16T01:08:40.977764+00:00",
+    "stage": "clarifying",
+    "initial_idea": "若每个 f_n:[0,1]→ℝ 连续且 f_n 逐点收敛到 f:[0,1]→ℝ，则 f 在 [0,1] 上连续。",
+    "intake": {
+      "known": {
+        "goal": "理论与条件分析",
+        "resources": "普通笔记本",
+        "time_horizon": "一周起步",
+        "provided_context": "公开已知数学的质量验收；不是新定理。"
+      },
+      "assumptions": [],
+      "unknowns": [
+        "你希望研究哪个具体对象或场景？请举一个你关心的问题。",
+        "第一轮你最想得到什么：可复现的现象、方法对比，还是一个可推导的命题？",
+        "你已有哪些数据、论文、代码或观察？暂时没有也可以说明。"
+      ]
+    },
+    "questions": [
+      {
+        "id": "research_object",
+        "question": "你希望研究哪个具体对象或场景？请举一个你关心的问题。",
+        "why_it_matters": "明确对象后才能确定候选方向与检索关键词。"
+      },
+      {
+        "id": "desired_result",
+        "question": "第一轮你最想得到什么：可复现的现象、方法对比，还是一个可推导的命题？",
+        "why_it_matters": "预期结果会影响首轮验证与候选排序。"
+      },
+      {
+        "id": "available_material",
+        "question": "你已有哪些数据、论文、代码或观察？暂时没有也可以说明。",
+        "why_it_matters": "现有材料决定起步成本与需要补充的依据。"
+      }
+    ],
+    "provenance": {
+      "generator": "local_demo_rules",
+      "live_search_performed": false,
+      "external_model_api_called": false,
+      "new_experiments_executed": false
+    },
+    "search_log": [],
+    "sources": [],
+    "topics": [],
+    "recommendation": {
+      "topic_id": null,
+      "reason": "等待补充信息后比较方向；本地规则未调用千问。",
+      "would_change_if": [
+        "具体研究对象、材料或目标改变时重新比较。"
+      ]
+    },
+    "selected_topic_id": null,
+    "next_action": "回答澄清问题，再查看本地示例候选。"
+  },
+  "history": [
+    {
+      "id": "d0240133cee842f59969b6197a2579c8",
+      "action": "created",
+      "summary": "创建研究记录；本地规则模式，未调用外部模型。",
+      "created_at": "2026-10-16T01:08:40.977764+00:00"
+    },
+    {
+      "id": "43f617f62b5344c686aedc1e81b9d19b",
+      "action": "theory_card_saved",
+      "summary": "保存数学问题卡第 1 版；原用户选题保持不变，论证尚未形式核验。",
+      "created_at": "2026-10-16T01:08:40.977764+00:00"
+    },
+    {
+      "id": "ee7c6af9520e4971be44fe6fb3a5898d",
+      "action": "theory_proposal_created",
+      "summary": "保存待确认的命题修订与证明路线；当前问题卡和用户选题尚未更改，全部论证未形式核验。",
+      "created_at": "2026-10-16T01:09:11.874303+00:00"
+    },
+    {
+      "id": "375d8b5d0e834637a80b7374fc81ae20",
+      "action": "theory_proposal_rejected",
+      "summary": "用户拒绝数学修订提议；原问题卡、路线与选题保持不变，提议归档供复盘。拒绝理由：助手QA审阅：保留正确的x^n反例识别和ε/3主干，但拒绝整份提议。当前定义域是[0,1]，端点不能表述为两侧极限不等；紧区间上的等度连续与点态收敛可推出整列一致收敛，不能无依据否定；x/n也不能作非一致例。仅有反例笔记不支持补救定理的文献归因。请定位每条反例、结论和笔记范围再审阅。此为助手审阅意见，仍待独立数学工作者检查。",
+      "created_at": "2026-10-16T01:16:06.650533+00:00"
+    }
+  ],
+  "literature_searches": [
+    {
+      "id": "provided-quality",
+      "sources": [
+        {
+          "id": "S001",
+          "title": "Math 521 — Uniform Convergence",
+          "authors": [
+            "UW–Madison Math 521 course notes"
+          ],
+          "year_or_version": "2017 spring webpage, checked 2026-10-16",
+          "url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html"
+        }
+      ],
+      "search_log": [],
+      "provenance": {
+        "live_search_performed": false,
+        "external_model_api_called": false
+      }
+    }
+  ],
+  "theory": {
+    "card_version": 1,
+    "card": {
+      "title": "逐点收敛是否保持连续性",
+      "statement": "若每个 f_n:[0,1]→ℝ 连续且 f_n 逐点收敛到 f:[0,1]→ℝ，则 f 在 [0,1] 上连续。",
+      "domain": "[0,1] 配通常距离，实值函数；n=1,2,3,...。",
+      "target": "审阅命题，若有反例请核对定义域与全部参数范围；可提出充分条件修订并说明它是否必要，不代替研究者接受。",
+      "definitions": [
+        "逐点收敛：任意固定 x∈[0,1]、ε>0，存在 N=N(x,ε)，对所有 n≥N 有 |f_n(x)-f(x)|<ε。"
+      ],
+      "assumptions": [
+        "每个 f_n 连续。",
+        "f_n 逐点收敛到 f。"
+      ]
+    },
+    "card_versions": [],
+    "pending_proposal": null,
+    "proposals": [
+      {
+        "revised_card": {
+          "title": "逐点收敛是否保持连续性",
+          "statement": "若每个 f_n:[0,1]→ℝ 连续且 f_n 逐点收敛到 f:[0,1]→ℝ，则 f 在 [0,1] 上连续。",
+          "domain": "[0,1] 配通常距离，实值函数；n=1,2,3,...。",
+          "target": "审阅命题：已知存在反例（如 f_n(x)=x^n），其在 [0,1] 上连续、逐点收敛，但极限函数 f(x)=0（x∈[0,1)）且 f(1)=1，不连续于 x=1；故原命题为假。目标转为：识别使极限连续的充分条件（如一致收敛），并核查其必要性。",
+          "definitions": [
+            "逐点收敛：任意固定 x∈[0,1]、ε>0，存在 N=N(x,ε)，对所有 n≥N 有 |f_n(x)-f(x)|<ε。"
+          ],
+          "assumptions": [
+            "每个 f_n 连续。",
+            "f_n 逐点收敛到 f。"
+          ]
+        },
+        "revision_reason": "原命题断言‘逐点收敛必保持连续性’，但证据笔记 quality-pointwise-note 明确给出反例 f_n(x)=x^n：每个 f_n 在 [0,1] 连续；对任意 x∈[0,1)，x^n→0；x=1 时 x^n=1→1；故 f(x)=χ_{\\{1\\}}(x)，在 x=1 处不连续（左右极限不等）。该构造满足全部原始定义域与参数范围（x∈[0,1], n∈ℕ），反例有效。因此原命题为假，无需修改定义域或量词；修订仅在于更新 target 字段以准确反映审阅结论与后续研究方向，其余字段数学内容正确且无歧义，故逐字保留。",
+        "proof_routes": [
+          {
+            "id": "route-uniform-convergence",
+            "title": "一致收敛作为充分条件",
+            "steps": [
+              "假设 f_n 连续且在 [0,1] 上一致收敛于 f。",
+              "任取 x₀∈[0,1]，对任意 ε>0，利用一致收敛选取 N 使 sup_{x∈[0,1]}|f_n(x)-f(x)|<ε/3（n≥N）。",
+              "由 f_N 连续，存在 δ>0 使 |x−x₀|<δ ⇒ |f_N(x)−f_N(x₀)|<ε/3。",
+              "结合三角不等式：|f(x)−f(x₀)| ≤ |f(x)−f_N(x)| + |f_N(x)−f_N(x₀)| + |f_N(x₀)−f(x₀)| < ε。",
+              "故 f 在 x₀ 连续；由 x₀ 任意性，f 在 [0,1] 连续。"
+            ],
+            "obligations": [
+              {
+                "id": "uniform_implies_continuous_limit",
+                "statement": "若函数列 {f_n} 在紧集 [0,1] 上一致收敛，且每 f_n 连续，则极限函数 f 连续。",
+                "depends_on": [],
+                "status": "open"
+              }
+            ],
+            "gaps": [],
+            "evidence": [
+              {
+                "note_id": "quality-pointwise-note",
+                "relation": "background",
+                "claim": "讲义指出 x^n 反例说明点态收敛不足，隐含一致收敛是常见补救条件；但未证明其必要性。",
+                "snapshot": {
+                  "note_id": "quality-pointwise-note",
+                  "origin": "curated_example",
+                  "origin_label": "预置案例的人工整理笔记；不是当前用户阅读",
+                  "run_id": "provided-quality",
+                  "source_id": "S001",
+                  "title": "Math 521 — Uniform Convergence",
+                  "authors": [
+                    "UW–Madison Math 521 course notes"
+                  ],
+                  "url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+                  "year_or_version": "2017 spring webpage, checked 2026-10-16",
+                  "locator": "The problems with pointwise convergence — x^n example",
+                  "content": "讲义给出 [0,1] 上 x^n 的点态极限：x<1 时为0，x=1 时为1，说明连续函数列的点态极限可能不连续。该笔记未证明所有其他充分条件的必要性。",
+                  "level": "fulltext_checked",
+                  "checked_at": "2026-10-16T02:00:00+00:00",
+                  "content_sha256": "3f113e2007827e82102b53ad2e3c9a07908429dba30ff0c0f0423fc3c5c5df1a",
+                  "note_sha256": "5ca669e160f6f3b62c3ba6585bc182054c527d0d86b34c4412800c0c652244ff",
+                  "source_sha256": "d0c8f4c5852ae7613da69161695e783ffda4cb041dc82fb01a26ae9e0cebbffa"
+                },
+                "relation_status": "proposed_not_semantically_verified"
+              }
+            ],
+            "proof_status": "not_formally_verified"
+          },
+          {
+            "id": "route-equicontinuity",
+            "title": "Arzelà–Ascoli 框架下的连续极限",
+            "steps": [
+              "假设 {f_n} 在 [0,1] 上等度连续且一致有界。",
+              "由 Arzelà–Ascoli 定理，存在子列 {f_{n_k}} 一致收敛于某连续函数 g。",
+              "若原列 f_n 已逐点收敛于 f，则 f = g（逐点极限唯一），故 f 连续。",
+              "注意：此路线要求额外假设（等度连续+一致有界），不保证整列收敛，仅得子列结果。"
+            ],
+            "obligations": [
+              {
+                "id": "arzela_ascoli_subseq_convergence",
+                "statement": "若 {f_n} ⊂ C([0,1]) 等度连续且一致有界，则存在一致收敛子列。",
+                "depends_on": [],
+                "status": "open"
+              }
+            ],
+            "gaps": [
+              "需验证：仅凭逐点收敛 + 等度连续，能否推出整列一致收敛？（反例：f_n(x)=x/n 在 [0,1] 上等度连续、逐点收敛于 0，且一致收敛；但一般情形不成立）"
+            ],
+            "evidence": [],
+            "proof_status": "not_formally_verified"
+          }
+        ],
+        "search_leads": [
+          "是否存在非一致收敛但极限仍连续的连续函数列？例如 f_n(x)=x/n 或分段线性‘移动尖峰’（高度 1、底宽 1/n、支撑在 [0,1/n]）——后者逐点收敛于 0（连续），但不一致收敛。",
+          "‘逐点收敛 + 单调性’（Dini 定理）：若 f_n 连续、单调递减（或增）、逐点收敛于连续 f，则在紧集上一致收敛。需核查 Dini 定理对 f 连续性的依赖是否可逆。",
+          "反例边界分析：x^n 在 x=1 处失效；是否存在反例在内部点不连续？例如 f_n(x)=max{0, 1−n|x−1/2|}（‘收缩帽’），其逐点极限为 χ_{\\{1/2\\}}，不连续于 1/2 —— 验证该构造是否满足所有原始假设。"
+        ],
+        "id": "91a192eb86334ea1b99701136bcf1de6",
+        "status": "rejected",
+        "source": "model",
+        "created_at": "2026-10-16T01:09:11.873800+00:00",
+        "base_card_version": 1,
+        "context_fingerprint": "41910646dbf77f2569e62747d1c5bf0571cf18572d15c9b185536bdddc27e77b",
+        "proof_status": "not_formally_verified",
+        "model_call_id": "01dfa1d1c1564164955487b2e7db8585",
+        "prompt_version": "theory-workspace-v1.2",
+        "submitted_payload": {
+          "revised_card": {
+            "title": "逐点收敛是否保持连续性",
+            "statement": "若每个 f_n:[0,1]→ℝ 连续且 f_n 逐点收敛到 f:[0,1]→ℝ，则 f 在 [0,1] 上连续。",
+            "domain": "[0,1] 配通常距离，实值函数；n=1,2,3,...。",
+            "target": "审阅命题：已知存在反例（如 f_n(x)=x^n），其在 [0,1] 上连续、逐点收敛，但极限函数 f(x)=0（x∈[0,1)）且 f(1)=1，不连续于 x=1；故原命题为假。目标转为：识别使极限连续的充分条件（如一致收敛），并核查其必要性。",
+            "definitions": [
+              "逐点收敛：任意固定 x∈[0,1]、ε>0，存在 N=N(x,ε)，对所有 n≥N 有 |f_n(x)-f(x)|<ε。"
+            ],
+            "assumptions": [
+              "每个 f_n 连续。",
+              "f_n 逐点收敛到 f。"
+            ]
+          },
+          "revision_reason": "原命题断言‘逐点收敛必保持连续性’，但证据笔记 quality-pointwise-note 明确给出反例 f_n(x)=x^n：每个 f_n 在 [0,1] 连续；对任意 x∈[0,1)，x^n→0；x=1 时 x^n=1→1；故 f(x)=χ_{\\{1\\}}(x)，在 x=1 处不连续（左右极限不等）。该构造满足全部原始定义域与参数范围（x∈[0,1], n∈ℕ），反例有效。因此原命题为假，无需修改定义域或量词；修订仅在于更新 target 字段以准确反映审阅结论与后续研究方向，其余字段数学内容正确且无歧义，故逐字保留。",
+          "proof_routes": [
+            {
+              "id": "route-uniform-convergence",
+              "title": "一致收敛作为充分条件",
+              "steps": [
+                "假设 f_n 连续且在 [0,1] 上一致收敛于 f。",
+                "任取 x₀∈[0,1]，对任意 ε>0，利用一致收敛选取 N 使 sup_{x∈[0,1]}|f_n(x)-f(x)|<ε/3（n≥N）。",
+                "由 f_N 连续，存在 δ>0 使 |x−x₀|<δ ⇒ |f_N(x)−f_N(x₀)|<ε/3。",
+                "结合三角不等式：|f(x)−f(x₀)| ≤ |f(x)−f_N(x)| + |f_N(x)−f_N(x₀)| + |f_N(x₀)−f(x₀)| < ε。",
+                "故 f 在 x₀ 连续；由 x₀ 任意性，f 在 [0,1] 连续。"
+              ],
+              "obligations": [
+                {
+                  "id": "uniform_implies_continuous_limit",
+                  "statement": "若函数列 {f_n} 在紧集 [0,1] 上一致收敛，且每 f_n 连续，则极限函数 f 连续。",
+                  "depends_on": []
+                }
+              ],
+              "gaps": [],
+              "evidence": [
+                {
+                  "note_id": "quality-pointwise-note",
+                  "relation": "background",
+                  "claim": "讲义指出 x^n 反例说明点态收敛不足，隐含一致收敛是常见补救条件；但未证明其必要性。"
+                }
+              ]
+            },
+            {
+              "id": "route-equicontinuity",
+              "title": "Arzelà–Ascoli 框架下的连续极限",
+              "steps": [
+                "假设 {f_n} 在 [0,1] 上等度连续且一致有界。",
+                "由 Arzelà–Ascoli 定理，存在子列 {f_{n_k}} 一致收敛于某连续函数 g。",
+                "若原列 f_n 已逐点收敛于 f，则 f = g（逐点极限唯一），故 f 连续。",
+                "注意：此路线要求额外假设（等度连续+一致有界），不保证整列收敛，仅得子列结果。"
+              ],
+              "obligations": [
+                {
+                  "id": "arzela_ascoli_subseq_convergence",
+                  "statement": "若 {f_n} ⊂ C([0,1]) 等度连续且一致有界，则存在一致收敛子列。",
+                  "depends_on": []
+                }
+              ],
+              "gaps": [
+                "需验证：仅凭逐点收敛 + 等度连续，能否推出整列一致收敛？（反例：f_n(x)=x/n 在 [0,1] 上等度连续、逐点收敛于 0，且一致收敛；但一般情形不成立）"
+              ],
+              "evidence": []
+            }
+          ],
+          "search_leads": [
+            "是否存在非一致收敛但极限仍连续的连续函数列？例如 f_n(x)=x/n 或分段线性‘移动尖峰’（高度 1、底宽 1/n、支撑在 [0,1/n]）——后者逐点收敛于 0（连续），但不一致收敛。",
+            "‘逐点收敛 + 单调性’（Dini 定理）：若 f_n 连续、单调递减（或增）、逐点收敛于连续 f，则在紧集上一致收敛。需核查 Dini 定理对 f 连续性的依赖是否可逆。",
+            "反例边界分析：x^n 在 x=1 处失效；是否存在反例在内部点不连续？例如 f_n(x)=max{0, 1−n|x−1/2|}（‘收缩帽’），其逐点极限为 χ_{\\{1/2\\}}，不连续于 1/2 —— 验证该构造是否满足所有原始假设。"
+          ]
+        },
+        "diff": [
+          {
+            "field": "target",
+            "before": "审阅命题，若有反例请核对定义域与全部参数范围；可提出充分条件修订并说明它是否必要，不代替研究者接受。",
+            "after": "审阅命题：已知存在反例（如 f_n(x)=x^n），其在 [0,1] 上连续、逐点收敛，但极限函数 f(x)=0（x∈[0,1)）且 f(1)=1，不连续于 x=1；故原命题为假。目标转为：识别使极限连续的充分条件（如一致收敛），并核查其必要性。"
+          }
+        ],
+        "reviewed_at": "2026-10-16T01:16:06.650533+00:00",
+        "review_reason": "助手QA审阅：保留正确的x^n反例识别和ε/3主干，但拒绝整份提议。当前定义域是[0,1]，端点不能表述为两侧极限不等；紧区间上的等度连续与点态收敛可推出整列一致收敛，不能无依据否定；x/n也不能作非一致例。仅有反例笔记不支持补救定理的文献归因。请定位每条反例、结论和笔记范围再审阅。此为助手审阅意见，仍待独立数学工作者检查。",
+        "researcher_reason": "助手QA审阅：保留正确的x^n反例识别和ε/3主干，但拒绝整份提议。当前定义域是[0,1]，端点不能表述为两侧极限不等；紧区间上的等度连续与点态收敛可推出整列一致收敛，不能无依据否定；x/n也不能作非一致例。仅有反例笔记不支持补救定理的文献归因。请定位每条反例、结论和笔记范围再审阅。此为助手审阅意见，仍待独立数学工作者检查。"
+      }
+    ],
+    "proof_routes": [],
+    "search_leads": [],
+    "state": "card_ready",
+    "last_error": null,
+    "proof_status": "not_formally_verified",
+    "prompt_version": "theory-workspace-v1.2",
+    "accepted_proposal_id": null
+  },
+  "reading_notes": [
+    {
+      "id": "quality-pointwise-note",
+      "run_id": "provided-quality",
+      "source_id": "S001",
+      "level": "fulltext_checked",
+      "locator": "The problems with pointwise convergence — x^n example",
+      "content": "讲义给出 [0,1] 上 x^n 的点态极限：x<1 时为0，x=1 时为1，说明连续函数列的点态极限可能不连续。该笔记未证明所有其他充分条件的必要性。",
+      "confirmed": true,
+      "origin": "curated_example",
+      "checked_at": "2026-10-16T02:00:00+00:00"
+    }
+  ],
+  "example_provenance": {
+    "id": "missing-condition",
+    "evidence_note_ids": [
+      "quality-pointwise-note"
+    ],
+    "note": "质量验收人工整理的公开笔记，不是用户阅读声明，不执行实时检索。"
+  },
+  "model_calls": [
+    {
+      "id": "01dfa1d1c1564164955487b2e7db8585",
+      "provider": "qwen",
+      "model": "qwen-plus",
+      "requested_model": "qwen-plus",
+      "prompt_version": "theory-workspace-v1.2",
+      "status": "success",
+      "started_at": "2026-10-16T01:08:41.290+00:00",
+      "finished_at": "2026-10-16T01:09:11.872+00:00",
+      "duration_ms": 30593,
+      "request_id": "b6f42bbd-9e7e-9bdc-8691-105ec8350440",
+      "usage": {
+        "prompt_tokens": 2628,
+        "completion_tokens": 1360,
+        "total_tokens": 3988
+      },
+      "attempts": 1,
+      "summary": "千问已返回 JSON 草案；仍需校验研究字段并由用户选择。",
+      "application_status": "pending_review"
+    }
+  ]
+}

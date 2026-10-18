@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "review_policy": "fixed-short-lemmas-v1",
+  "files": {
+    ".gitattributes": "ae245e11752119513980129ea87981cd7764f783fabb6250d031aa0fdf7ff93f",
+    "Audit.lean": "bdcd5e82426b072ffa9acb36c361156aae46d2fd17de569a8e397d9edc10bae3",
+    "cases.json": "6f18d5d7ff3606d58b66ecb7ab5fa492127a060d8c69a30b767a1171f784c814",
+    "cases/DirectAxiom.lean": "1ab611da8df78f9337331ffcf2a6b178f48bb8bc6bc89c963842d518a2e4cb69",
+    "cases/DirectSorry.lean": "6685bab12f1636646432af545c876f3b1968570060a5ac116285ff9c105337a9",
+    "cases/ImplicationIdentity.lean": "de52c8cb9b97fbd585e637890395f54b8384ba848bd03c84b431a676101eb993",
+    "cases/IndirectAxiom.lean": "98688245c2839c93146d925bd37f77865a6734cb623ff04f0152c9b2f2f8f298",
+    "cases/IndirectSorry.lean": "7e9092b8100422cb921f028b7058b400108a40ca13b52b1abe5d03a1c719fd6c",
+    "cases/InvalidEquality.lean": "8d5f7caf2440153d5c60b9293c835f9a5d7884f951e30d5af0c241998cb11811",
+    "cases/NatAddZero.lean": "baa75ef3e633883cd9ca1cc491afe99b35a4fd98db58cff33fc7bdfdea671ac5",
+    "cases/NativeTrust.lean": "2c8d78d02db7455a9e0ca372c145b79f5881fe772a8162f855ba7c1bac05e4b3",
+    "cases/TimeoutFixture.lean": "1dbe2f168d90f7bce70df8c69064f63fe22a402eed46a588d465fc72135fccce",
+    "lake-manifest.json": "53b25aea912f7050296c05d63dbb22d1bd551bd0f9d717358c63a0f80bfe6180",
+    "lakefile.toml": "a294595422722f8c4f6b1e5d4cc4900321eff21b76e62d60e35fdb190ea078af",
+    "lean-toolchain": "3aac669c7a910ec2389f4e4f921b605adf6ebf2d1e0c9b9cd0be4d33f3f5db71"
+  }
+}

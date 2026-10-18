@@ -1,0 +1,49 @@
+{
+  "case_id": "missing-condition",
+  "reviewed_on": "2026-10-16",
+  "reviewer": "independent_assistant_math_review",
+  "review_basis": "output/theory-quality-next/offline/math-reference-review.json",
+  "payload_path": "output/theory-quality-next/live/missing-condition/model-payload.json",
+  "input_path": "output/theory-quality-next/inputs/missing-condition/input-project.json",
+  "prompt_version": "theory-workspace-v1.4",
+  "mathematical_status": "failed_evidence_scope_with_partial_mathematical_success",
+  "mathematical_core_status": "counterexample_and_main_sufficient_route_correct",
+  "mathematical_quality_pass_under_frozen_rubric": false,
+  "mathematical_correctness_certified": false,
+  "evidence_scope_status": "failed",
+  "structural_status": "rejected",
+  "overall_usable_as_returned": false,
+  "overall_reason": "A 49-character obligation ID violates the 40-character contract; the supplied counterexample-only note is again credited with implying a sufficient repair that it did not record.",
+  "structure_issues": [
+    {"location": "proof_routes[2].obligations[0].id", "quote": "equicontinuous_pointwise_implies_continuous_limit", "length": 49, "maximum": 40}
+  ],
+  "quality_rejection_issues": [
+    {"location": "proof_routes[0].evidence[0].claim", "kind": "evidence_scope", "quote": "隐含一致收敛是常见补救条件", "reason": "The supplied located note records x^n and pointwise insufficiency only. A background label does not justify attributing a sufficient-repair theorem to that note.", "repeated_after_specific_feedback": true}
+  ],
+  "mathematical_assertion_cautions": [
+    {"location": "proof_routes[2].steps[1]", "kind": "compressed_hypotheses", "reason": "Uniform boundedness follows under the route's full assumptions including pointwise convergence; equicontinuity alone does not imply it. Expand the compactness argument instead of extracting the sentence as a standalone theorem.", "fatal_in_current_context": false},
+    {"location": "proof_routes[1]", "kind": "goal_relevance", "reason": "Dini explicitly assumes f continuous and acknowledges it cannot establish unknown limit continuity. Correct theorem but redundant for the current repair goal.", "fatal_mathematical_error": false}
+  ],
+  "checks": [
+    {"id": "original_false_claim", "status": "pass", "reason": "x^n satisfies original hypotheses and has the stated discontinuous endpoint limit."},
+    {"id": "endpoint_domain", "status": "pass", "reason": "No repeated assertion about an undefined right-hand limit."},
+    {"id": "sufficient_not_necessary", "status": "partial", "reason": "Uniform convergence is labeled sufficient; necessity remains a proposed check, not completed."},
+    {"id": "epsilon_thirds", "status": "pass", "reason": "Explicitly strengthened hypothesis, correct index and delta ordering."},
+    {"id": "equicontinuity_whole_sequence", "status": "open_question_not_false_assertion", "reason": "The model limits what this route proved; it no longer claims uniform convergence is impossible."},
+    {"id": "card_correspondence", "status": "target_changed_original_false_assertion_retained", "reason": "Only target changes; do not present this as a corrected true theorem card. Routes separately state their added hypotheses."},
+    {"id": "dini_hypotheses", "status": "pass_but_not_a_non_circular_continuity_repair", "reason": "Compact interval, continuous terms, monotone sequence and continuous limit are stated."},
+    {"id": "search_leads", "status": "questions_and_valid_example_properties", "reason": "No assertion that the shrinking hats are equicontinuous; sin(n^2*x)/n correctly has no common derivative bound."}
+  ],
+  "observed_improvement": ["Endpoint terminology corrected", "x/n not reused as a nonuniform example", "False general denial replaced by a question"],
+  "remaining_failure": "Evidence attribution feedback not resolved; multiple partly irrelevant routes still dilute the review goal",
+  "comparison_limit": "Prompt and specific feedback context changed together; limited cases do not establish general accuracy or causal prompt improvement.",
+  "source_ids_from_offline_review": ["UW521", "LEBL116"],
+  "additional_evaluator_sources": [
+    {"url": "https://www.jirka.org/ra/html/sec_liminter.html", "title": "Jiří Lebl, Basic Analysis, Section 6.2", "retrieval": "web open/find on 2026-10-16", "read_scope": ["Exercises 6.2.10 and 6.2.11 statements"], "limitation": "Exercise statements checked, not full Dini proof; not supplied to the model"}
+  ],
+  "additional_sources_inserted_into_model_input_by_reviewer": false,
+  "independent_mathematician_review": "pending",
+  "formal_verification_executed": false,
+  "model_calls_by_reviewer": 0,
+  "original_payload_modified": false
+}

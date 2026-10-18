@@ -131,7 +131,7 @@ class LiteratureApiTest(unittest.TestCase):
 
     def test_library_reads_exact_archived_counts_and_allowlists_downloads(self):
         status = self.client.get("/api/status").json()
-        self.assertEqual(status["version"], "0.4.0")
+        self.assertEqual(status["version"], "0.5.0")
         self.assertEqual(status["capabilities"]["model"], "not_configured")
         library = self.client.get("/api/library").json()
         self.assertEqual(len(library["literature"]), 4)

@@ -1,0 +1,720 @@
+{
+  "schema_version": "research-case-artifact-manifest-v1",
+  "created_at": "2026-10-17T20:09:34.987097+08:00",
+  "hash_algorithm": "SHA256",
+  "hash_scope": "Exact saved file bytes",
+  "files": [
+    {
+      "path": "ACCEPTANCE_SCENARIOS.md",
+      "bytes": 4315,
+      "sha256": "2e86e4c09e613213034f1e31be8f10d4020daf277248a772e54199ea579c9884",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "calculations/results.json",
+      "bytes": 9913,
+      "sha256": "41701737446c919efb6ee30a108dc0c66a3fa74ad11ab92f14438aa0e5a9912d",
+      "origin": {
+        "kind": "actual_finite_calculation_and_archival_checks",
+        "script": "offline_checks.py",
+        "scope": "Not universal proof certification"
+      }
+    },
+    {
+      "path": "capture_inputs_sources.py",
+      "bytes": 5552,
+      "sha256": "4fbd2ef3e2b77a69653da39dfc9119d654e5d3f759eaa6ab731f314be4bac512",
+      "origin": {
+        "kind": "assistant_authored_local_standard_library_script",
+        "purpose": "Scoped material capture, record generation, finite check, validation or packaging; never application code"
+      }
+    },
+    {
+      "path": "CASE_SPEC.md",
+      "bytes": 4257,
+      "sha256": "d998ba356038c8240923b3d6125c888d91d5d1941897786486e86885836dbd47",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "claim-ledger.json",
+      "bytes": 25165,
+      "sha256": "4be1189bcd8eecda7f7ca03abdfac07efcc58792ec6ce2b9bde5695097f07561",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "claim-ledger.md",
+      "bytes": 15743,
+      "sha256": "772a3f3d0972b8e7a45f211e22cd3fbb5069a0642237fa39f04c89882813b0c4",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "CODE_OBSERVATIONS.json",
+      "bytes": 1337,
+      "sha256": "25d4f069c6348d6c3d2a6fff1533adebcd4497daccef1164eae9562dc7d80b1f",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "DERIVATION.md",
+      "bytes": 7625,
+      "sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "evidence/inputs/docs/ROADMAP.md",
+      "bytes": 11129,
+      "sha256": "4480b6fb30ab2cb4ae66e443a59ff028a1e10c443b2f03b72dcf1ef46d37a3a0",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\docs\\ROADMAP.md",
+        "source_sha256": "4480b6fb30ab2cb4ae66e443a59ff028a1e10c443b2f03b72dcf1ef46d37a3a0",
+        "captured_at": "2026-10-17T19:54:43.382486+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/docs/理论论证工作流.md",
+      "bytes": 11573,
+      "sha256": "34fffd12c96bfde026686b1195d1b6f7def1ff07e0f1c5da6bb365ffbc675562",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\docs\\理论论证工作流.md",
+        "source_sha256": "34fffd12c96bfde026686b1195d1b6f7def1ff07e0f1c5da6bb365ffbc675562",
+        "captured_at": "2026-10-17T19:54:43.382486+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/acceptance-supervisor-2026-10-17-193613/validation.json",
+      "bytes": 12950,
+      "sha256": "3e3ac16809d9df2f2e16d2598a68868ed19531b060a9013ace9e30eb6a11087d",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\acceptance-supervisor-2026-10-17-193613\\validation.json",
+        "source_sha256": "3e3ac16809d9df2f2e16d2598a68868ed19531b060a9013ace9e30eb6a11087d",
+        "captured_at": "2026-10-17T19:54:43.388793+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/inputs/missing-condition/input-project.json",
+      "bytes": 20970,
+      "sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\inputs\\missing-condition\\input-project.json",
+        "source_sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+        "captured_at": "2026-10-17T19:54:43.390805+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/inputs/missing-condition/messages.json",
+      "bytes": 16237,
+      "sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\inputs\\missing-condition\\messages.json",
+        "source_sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+        "captured_at": "2026-10-17T19:54:43.391901+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/live/missing-condition/model-payload.json",
+      "bytes": 5319,
+      "sha256": "ad0eab7df57d30233d86e55d2d23b9516cd4694bfec80ec5be0132cf0b7d8341",
+      "origin": {
+        "kind": "historical_real_model_output_copy_not_new_success",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\live\\missing-condition\\model-payload.json",
+        "source_sha256": "ad0eab7df57d30233d86e55d2d23b9516cd4694bfec80ec5be0132cf0b7d8341",
+        "captured_at": "2026-10-17T19:54:43.389793+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/live/missing-condition/raw-model-content.txt",
+      "bytes": 5288,
+      "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+      "origin": {
+        "kind": "historical_real_model_output_copy_not_new_success",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\live\\missing-condition\\raw-model-content.txt",
+        "source_sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+        "captured_at": "2026-10-17T19:54:43.389793+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/offline/math-reference-review.md",
+      "bytes": 9261,
+      "sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\offline\\math-reference-review.md",
+        "source_sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+        "captured_at": "2026-10-17T19:54:43.386791+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/README.md",
+      "bytes": 9449,
+      "sha256": "ba4340e6df54893cb2051889e4d93d300b285dfff8e6064b7abc6b749c5e1070",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\README.md",
+        "source_sha256": "ba4340e6df54893cb2051889e4d93d300b285dfff8e6064b7abc6b749c5e1070",
+        "captured_at": "2026-10-17T19:54:43.383717+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/READY.json",
+      "bytes": 16435,
+      "sha256": "a50fd03befc143860c33ba50d6ecfbeefe4d7aa2a8a7ec77eecf626d80b48c35",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\READY.json",
+        "source_sha256": "a50fd03befc143860c33ba50d6ecfbeefe4d7aa2a8a7ec77eecf626d80b48c35",
+        "captured_at": "2026-10-17T19:54:43.384788+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/reviewed/missing-condition/feedback.json",
+      "bytes": 7113,
+      "sha256": "beeba8bcbf1e3392286f361e22652f65fd6ff403c3c7c8a58bbb7fec1909b1c0",
+      "origin": {
+        "kind": "historical_assistant_review_not_independent_human",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\reviewed\\missing-condition\\feedback.json",
+        "source_sha256": "beeba8bcbf1e3392286f361e22652f65fd6ff403c3c7c8a58bbb7fec1909b1c0",
+        "captured_at": "2026-10-17T19:54:43.388793+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-quality-next/validation.json",
+      "bytes": 11266,
+      "sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-quality-next\\validation.json",
+        "source_sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+        "captured_at": "2026-10-17T19:54:43.385791+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/api-contract.md",
+      "bytes": 2911,
+      "sha256": "8ee57fe343138adf131bcca4ce75e522100810c39120af6f952706f4b8cc3bdf",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\api-contract.md",
+        "source_sha256": "8ee57fe343138adf131bcca4ce75e522100810c39120af6f952706f4b8cc3bdf",
+        "captured_at": "2026-10-17T19:54:43.387791+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/claim-ledger.json",
+      "bytes": 2939,
+      "sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+      "origin": {
+        "kind": "historical_curated_example_not_model_success",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\claim-ledger.json",
+        "source_sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+        "captured_at": "2026-10-17T19:54:43.391901+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/curated-proposal.json",
+      "bytes": 4130,
+      "sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+      "origin": {
+        "kind": "historical_curated_example_not_model_success",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\curated-proposal.json",
+        "source_sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+        "captured_at": "2026-10-17T19:54:43.391901+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/historical-independent-review.json",
+      "bytes": 4737,
+      "sha256": "f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+      "origin": {
+        "kind": "historical_assistant_review_not_independent_human",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-independent-review.json",
+        "source_sha256": "f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+        "captured_at": "2026-10-17T19:54:43.392904+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/historical-output.txt",
+      "bytes": 5288,
+      "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+      "origin": {
+        "kind": "historical_real_model_output_copy_not_new_success",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-output.txt",
+        "source_sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+        "captured_at": "2026-10-17T19:54:43.392904+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/historical-service-call.json",
+      "bytes": 606,
+      "sha256": "51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-service-call.json",
+        "source_sha256": "51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+        "captured_at": "2026-10-17T19:54:43.392904+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/notes-and-sources.json",
+      "bytes": 3763,
+      "sha256": "733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+      "origin": {
+        "kind": "historical_curated_example_not_model_success",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\notes-and-sources.json",
+        "source_sha256": "733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+        "captured_at": "2026-10-17T19:54:43.393904+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/original-context.json",
+      "bytes": 20970,
+      "sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\original-context.json",
+        "source_sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+        "captured_at": "2026-10-17T19:54:43.393904+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/public-case/README.md",
+      "bytes": 3825,
+      "sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\README.md",
+        "source_sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+        "captured_at": "2026-10-17T19:54:43.393904+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/output/theory-review-integration/README.md",
+      "bytes": 6153,
+      "sha256": "48db9f4f792b3b8a221c61c26bacf8e6a2f713381353b54f4e683932d1b0caa7",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\output\\theory-review-integration\\README.md",
+        "source_sha256": "48db9f4f792b3b8a221c61c26bacf8e6a2f713381353b54f4e683932d1b0caa7",
+        "captured_at": "2026-10-17T19:54:43.387791+08:00"
+      }
+    },
+    {
+      "path": "evidence/inputs/README.md",
+      "bytes": 22258,
+      "sha256": "872f124f96e819f5bcadaf81a834fca8e6e50f6a7461e6eaa4519bb93ed1f05b",
+      "origin": {
+        "kind": "historical_artifact_verbatim_copy",
+        "source_path": "D:\\天猫AI\\README.md",
+        "source_sha256": "872f124f96e819f5bcadaf81a834fca8e6e50f6a7461e6eaa4519bb93ed1f05b",
+        "captured_at": "2026-10-17T19:54:43.382486+08:00"
+      }
+    },
+    {
+      "path": "evidence/theory.py.snapshot.txt",
+      "bytes": 51732,
+      "sha256": "6370d90ec1c7b28cef83b9d08b9d3761fec43c5c01b3048c11bdcb348f3eddcd",
+      "origin": {
+        "kind": "read_only_production_text_snapshot",
+        "source_path": "D:/天猫AI/webapp/theory.py",
+        "observations": "CODE_OBSERVATIONS.json",
+        "scope": "Snapshot is concurrent updated version; not initial version; no execution."
+      }
+    },
+    {
+      "path": "EXECUTION_LOG.md",
+      "bytes": 2755,
+      "sha256": "32c8e1566ddf67331ac447eb2965f0684bdde36a34c859d451b4d1431d78a0d2",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "finalize_delivery.py",
+      "bytes": 9394,
+      "sha256": "94499827f0f43c2a710aa3c092fa95659a9258b97bf9983b73f29c357637813a",
+      "origin": {
+        "kind": "assistant_authored_local_standard_library_script",
+        "purpose": "Scoped material capture, record generation, finite check, validation or packaging; never application code"
+      }
+    },
+    {
+      "path": "FORMAL_SEMANTICS_REQUIREMENTS.md",
+      "bytes": 2696,
+      "sha256": "72b83ead4e925d2ea68d7ead726061d9cf2749cecae81883bf95b521d0ecbd5d",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "HANDOFF.md",
+      "bytes": 2555,
+      "sha256": "520d18936106582d11a1043c6370f83863462fa23165c03817c819ead071ab8f",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "INPUT_MANIFEST.json",
+      "bytes": 10844,
+      "sha256": "c0ba63d33eea834f2ab8437df352e0b1cd8f9a985279ed195e4de6bec3a24a1b",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "ISSUES.md",
+      "bytes": 6438,
+      "sha256": "9943ea71e06017dd209dba9e548a2dc6cf1e036d6f12cab073c69c2ac86d7ccf",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "MODEL_COMPARISON.md",
+      "bytes": 7420,
+      "sha256": "a618f9a5fefd28135d7233d461f20db0ab55a1aef5c838189b29837f5415ba3c",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "OBLIGATIONS.json",
+      "bytes": 3147,
+      "sha256": "9717992e515de0f076fc2a55f58688cbb7d2fc6ef0474f6805f69cf4815400eb",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "OBLIGATIONS.md",
+      "bytes": 2044,
+      "sha256": "64373bd0e9c6bc9ba09b9f3d1528d3593e2cea380eae5fca0213ac0f0119a53f",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "offline_checks.py",
+      "bytes": 4865,
+      "sha256": "f715874ea08733b4b12dc86c1f5fee81106a0c99b1f56df429fc29af3025b43a",
+      "origin": {
+        "kind": "assistant_authored_local_standard_library_script",
+        "purpose": "Scoped material capture, record generation, finite check, validation or packaging; never application code"
+      }
+    },
+    {
+      "path": "prepare_records.py",
+      "bytes": 16499,
+      "sha256": "a04d88dccb3716ce37d4bfcec1237ba7cbdd9dd0b16e30dda5452b57911743f5",
+      "origin": {
+        "kind": "assistant_authored_local_standard_library_script",
+        "purpose": "Scoped material capture, record generation, finite check, validation or packaging; never application code"
+      }
+    },
+    {
+      "path": "PROTECTED_BASELINE.json",
+      "bytes": 1903,
+      "sha256": "bef94e9673d143880f3ed1cdf71ce1c6bfeb9e79678376106cc16567e33cb315",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "README.md",
+      "bytes": 5158,
+      "sha256": "e46b804a6e14993def1fc184eb1de56c2f698489c5ea4d2ec94834a982b0ac65",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "review-package/QUESTIONS.md",
+      "bytes": 2148,
+      "sha256": "a58965399d445049805ee35e535bb94ccac50ea16ebbc67274785bcc2c8dd3b4",
+      "origin": {
+        "kind": "assistant_prepared_independent_review_material_or_blank_form",
+        "sources": [
+          "CASE_SPEC.md",
+          "DERIVATION.md",
+          "claim-ledger.json"
+        ],
+        "independent_human_review": "pending"
+      }
+    },
+    {
+      "path": "review-package/README.md",
+      "bytes": 1814,
+      "sha256": "fd27c846014f7855146fb931e6ebf22f93f04233fe4fb4a9d0e4738f1a66ed9f",
+      "origin": {
+        "kind": "assistant_prepared_independent_review_material_or_blank_form",
+        "sources": [
+          "CASE_SPEC.md",
+          "DERIVATION.md",
+          "claim-ledger.json"
+        ],
+        "independent_human_review": "pending"
+      }
+    },
+    {
+      "path": "review-package/REVIEW_FORM.json",
+      "bytes": 1160,
+      "sha256": "0bddf15eb59b0312b71903cfee43998ee2f627cc51e579f83c1d84183788ed2c",
+      "origin": {
+        "kind": "assistant_prepared_independent_review_material_or_blank_form",
+        "sources": [
+          "CASE_SPEC.md",
+          "DERIVATION.md",
+          "claim-ledger.json"
+        ],
+        "independent_human_review": "pending"
+      }
+    },
+    {
+      "path": "SOURCE_DRIFT.json",
+      "bytes": 1442,
+      "sha256": "b09bf051ae4e9ce5c0cd5ef925faa6a6c971bf257da9fa2a66023d879ebf863b",
+      "origin": {
+        "kind": "actual_validation_or_preserved_diagnostic",
+        "script": "validate_bundle.py",
+        "scope": "Structure/integrity; runtime and independent review not performed"
+      }
+    },
+    {
+      "path": "SOURCE_VERIFICATION.json",
+      "bytes": 10136,
+      "sha256": "e963dc684bd13a20c377a8b0085e595feab3a9075c537c6a1ef5ab4d6e0cb707",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "SOURCE_VERIFICATION.md",
+      "bytes": 3709,
+      "sha256": "8c8698802b5d03afa5d77a579a1b722271a849fd5e591a6dd98c89ffbe463797",
+      "origin": {
+        "kind": "assistant_authored_material_or_record",
+        "sources": [
+          "INPUT_MANIFEST.json",
+          "SOURCE_VERIFICATION.json",
+          "DERIVATION.md"
+        ],
+        "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+      }
+    },
+    {
+      "path": "sources/LEBL62.html",
+      "bytes": 188648,
+      "sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+      "origin": {
+        "kind": "public_source_snapshot_or_extraction_or_http_facts",
+        "source_register": "sources/retrieval.json",
+        "reading_register": "SOURCE_VERIFICATION.json"
+      }
+    },
+    {
+      "path": "sources/LEBL62.text.txt",
+      "bytes": 50527,
+      "sha256": "ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b",
+      "origin": {
+        "kind": "public_source_snapshot_or_extraction_or_http_facts",
+        "source_register": "sources/retrieval.json",
+        "reading_register": "SOURCE_VERIFICATION.json"
+      }
+    },
+    {
+      "path": "sources/retrieval.json",
+      "bytes": 2578,
+      "sha256": "1280f9a1a0a48467a479ef21c131941406e6ff5ef25d22fd81e47194d73c2227",
+      "origin": {
+        "kind": "public_source_snapshot_or_extraction_or_http_facts",
+        "source_register": "sources/retrieval.json",
+        "reading_register": "SOURCE_VERIFICATION.json"
+      }
+    },
+    {
+      "path": "sources/UW521.html",
+      "bytes": 14270,
+      "sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+      "origin": {
+        "kind": "public_source_snapshot_or_extraction_or_http_facts",
+        "source_register": "sources/retrieval.json",
+        "reading_register": "SOURCE_VERIFICATION.json"
+      }
+    },
+    {
+      "path": "sources/UW521.text.txt",
+      "bytes": 10876,
+      "sha256": "9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554",
+      "origin": {
+        "kind": "public_source_snapshot_or_extraction_or_http_facts",
+        "source_register": "sources/retrieval.json",
+        "reading_register": "SOURCE_VERIFICATION.json"
+      }
+    },
+    {
+      "path": "validate_bundle.py",
+      "bytes": 9273,
+      "sha256": "88c9f825394cd4f4c8800d49b8c0a947aa48b4c455f8539e23bd4d91c8bc02b6",
+      "origin": {
+        "kind": "assistant_authored_local_standard_library_script",
+        "purpose": "Scoped material capture, record generation, finite check, validation or packaging; never application code"
+      }
+    },
+    {
+      "path": "validation/attempt-01.json",
+      "bytes": 4421,
+      "sha256": "5ae130651263e223b3c9eaf7c084470d9afa126f9433b9fc6e4e168607f5e6e3",
+      "origin": {
+        "kind": "actual_validation_or_preserved_diagnostic",
+        "script": "validate_bundle.py",
+        "scope": "Structure/integrity; runtime and independent review not performed"
+      }
+    },
+    {
+      "path": "validation/literature-contract.txt",
+      "bytes": 98,
+      "sha256": "63e5da17f4291838c40db5af383849bc44a576974223e488ddbc84d7d40106bf",
+      "origin": {
+        "kind": "actual_validation_or_preserved_diagnostic",
+        "script": "validate_bundle.py",
+        "scope": "Structure/integrity; runtime and independent review not performed"
+      }
+    },
+    {
+      "path": "validation.json",
+      "bytes": 5493,
+      "sha256": "2a37b368b76cd4fd60937206a006db8c84995e25b6e126a7deea7a5a9a98e022",
+      "origin": {
+        "kind": "actual_validation_or_preserved_diagnostic",
+        "script": "validate_bundle.py",
+        "scope": "Structure/integrity; runtime and independent review not performed"
+      }
+    }
+  ],
+  "excluded_control_files": [
+    "ARTIFACT_MANIFEST.json",
+    "PACKAGE_CHECK.json",
+    "READY.json",
+    "SHA256SUMS.txt",
+    "review-package.zip"
+  ],
+  "control_integrity": "READY hashes this manifest; SHA256SUMS hashes every file except itself after packaging.",
+  "meaning": "Integrity and provenance labels, not mathematical certification."
+}

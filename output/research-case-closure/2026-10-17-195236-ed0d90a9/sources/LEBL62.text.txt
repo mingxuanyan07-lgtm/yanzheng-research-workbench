@@ -1,0 +1,1038 @@
+0001: RA Interchange of limits
+0002: Skip to main content
+0003: Basic Analysis I & II Introduction to Real Analysis, Volumes I & II
+0004: Jiří Lebl
+0005: ContentsIndexHome
+0006: PDF(I)
+0007: PDF(II)
+0008: Book(I)
+0009: Book(II)
+0010: Search Book
+0011: close
+0012: Search Results:
+0013: No results.
+0014: Dark ModePrevUpNext
+0015: \(\require{cancel}\require{mathtools}\newcommand{\avoidbreak}{\postdisplaypenalty=100}
+0016: \renewcommand{\thefootnote}{\fnsymbol{footnote}}
+0017: \newcommand{\ann}{\operatorname{ann}}
+0018: \renewcommand{\Re}{\operatorname{Re}}
+0019: \renewcommand{\Im}{\operatorname{Im}}
+0020: \newcommand{\Orb}{\operatorname{Orb}}
+0021: \newcommand{\hol}{\operatorname{hol}}
+0022: \newcommand{\aut}{\operatorname{aut}}
+0023: \newcommand{\codim}{\operatorname{codim}}
+0024: \newcommand{\sing}{\operatorname{sing}}
+0025: \newcommand{\esssup}{\operatorname{ess~sup}}
+0026: \newcommand{\essran}{\operatorname{essran}}
+0027: \newcommand{\innprod}[2]{\langle #1 | #2 \rangle}
+0028: \newcommand{\linnprod}[2]{\langle #1 , #2 \rangle}
+0029: \newcommand{\supp}{\operatorname{supp}}
+0030: \newcommand{\Nul}{\operatorname{Nul}}
+0031: \newcommand{\Ran}{\operatorname{Ran}}
+0032: \newcommand{\sabs}[1]{\lvert {#1} \rvert}
+0033: \newcommand{\snorm}[1]{\lVert {#1} \rVert}
+0034: \newcommand{\abs}[1]{\left\lvert {#1} \right\rvert}
+0035: \newcommand{\norm}[1]{\left\lVert {#1} \right\rVert}
+0036: \newcommand{\babs}[1]{\bigl\lvert {#1} \bigr\rvert}
+0037: \newcommand{\bnorm}[1]{\bigl\lVert {#1} \bigr\rVert}
+0038: \newcommand{\Babs}[1]{\Bigl\lvert {#1} \Bigr\rvert}
+0039: \newcommand{\Bnorm}[1]{\Bigl\lVert {#1} \Bigr\rVert}
+0040: \newcommand{\bbabs}[1]{\biggl\lvert {#1} \biggr\rvert}
+0041: \newcommand{\bbnorm}[1]{\biggl\lVert {#1} \biggr\rVert}
+0042: \newcommand{\BBabs}[1]{\Biggl\lvert {#1} \Biggr\rvert}
+0043: \newcommand{\BBnorm}[1]{\Biggl\lVert {#1} \Biggr\rVert}
+0044: \newcommand{\C}{{\mathbb{C}}}
+0045: \newcommand{\R}{{\mathbb{R}}}
+0046: \newcommand{\Z}{{\mathbb{Z}}}
+0047: \newcommand{\N}{{\mathbb{N}}}
+0048: \newcommand{\Q}{{\mathbb{Q}}}
+0049: \newcommand{\D}{{\mathbb{D}}}
+0050: \newcommand{\F}{{\mathbb{F}}}
+0051: \newcommand{\bB}{{\mathbb{B}}}
+0052: \newcommand{\bC}{{\mathbb{C}}}
+0053: \newcommand{\bR}{{\mathbb{R}}}
+0054: \newcommand{\bZ}{{\mathbb{Z}}}
+0055: \newcommand{\bN}{{\mathbb{N}}}
+0056: \newcommand{\bQ}{{\mathbb{Q}}}
+0057: \newcommand{\bD}{{\mathbb{D}}}
+0058: \newcommand{\bF}{{\mathbb{F}}}
+0059: \newcommand{\bH}{{\mathbb{H}}}
+0060: \newcommand{\bO}{{\mathbb{O}}}
+0061: \newcommand{\bP}{{\mathbb{P}}}
+0062: \newcommand{\bK}{{\mathbb{K}}}
+0063: \newcommand{\bV}{{\mathbb{V}}}
+0064: \newcommand{\CP}{{\mathbb{CP}}}
+0065: \newcommand{\RP}{{\mathbb{RP}}}
+0066: \newcommand{\HP}{{\mathbb{HP}}}
+0067: \newcommand{\OP}{{\mathbb{OP}}}
+0068: \newcommand{\sA}{{\mathscr{A}}}
+0069: \newcommand{\sB}{{\mathscr{B}}}
+0070: \newcommand{\sC}{{\mathscr{C}}}
+0071: \newcommand{\sF}{{\mathscr{F}}}
+0072: \newcommand{\sG}{{\mathscr{G}}}
+0073: \newcommand{\sH}{{\mathscr{H}}}
+0074: \newcommand{\sM}{{\mathscr{M}}}
+0075: \newcommand{\sO}{{\mathscr{O}}}
+0076: \newcommand{\sP}{{\mathscr{P}}}
+0077: \newcommand{\sQ}{{\mathscr{Q}}}
+0078: \newcommand{\sR}{{\mathscr{R}}}
+0079: \newcommand{\sS}{{\mathscr{S}}}
+0080: \newcommand{\sI}{{\mathscr{I}}}
+0081: \newcommand{\sL}{{\mathscr{L}}}
+0082: \newcommand{\sK}{{\mathscr{K}}}
+0083: \newcommand{\sU}{{\mathscr{U}}}
+0084: \newcommand{\sV}{{\mathscr{V}}}
+0085: \newcommand{\sX}{{\mathscr{X}}}
+0086: \newcommand{\sY}{{\mathscr{Y}}}
+0087: \newcommand{\sZ}{{\mathscr{Z}}}
+0088: \newcommand{\fS}{{\mathfrak{S}}}
+0089: \newcommand{\interior}{\operatorname{int}}
+0090: \newcommand{\id}{\textit{id}}
+0091: \newcommand{\im}{\operatorname{im}}
+0092: \newcommand{\rank}{\operatorname{rank}}
+0093: \newcommand{\Tor}{\operatorname{Tor}}
+0094: \newcommand{\Torsion}{\operatorname{Torsion}}
+0095: \newcommand{\Ext}{\operatorname{Ext}}
+0096: \newcommand{\Hom}{\operatorname{Hom}}
+0097: \newcommand{\from}{\ensuremath{\leftarrow}}
+0098: \newcommand{\dhat}[1]{\hat{\hat{#1}}}
+0099: \newcommand{\spn}{\operatorname{span}}
+0100: \newcommand{\myincludegraphics}[3][]{\includegraphics[#1]{figures/#2}}
+0101: \newcommand{\myincludepdft}[2]{\subimport*{figures/}{#1.pdf_t}}
+0102: \newcommand{\nicefrac}[2]{{}^{#1}\!/\!{}_{#2}}
+0103: \newcommand{\qedhere}{}
+0104: \newcommand{\widebar}[1]{\overline{#1}}
+0105: \newcommand{\allowbreak}{}
+0106: \newcommand{\lt}{<}
+0107: \newcommand{\gt}{>}
+0108: \newcommand{\amp}{&}
+0109: \definecolor{fillinmathshade}{gray}{0.9}
+0110: \newcommand{\fillinmath}[1]{\mathchoice{\colorbox{fillinmathshade}{$\displaystyle \phantom{\,#1\,}$}}{\colorbox{fillinmathshade}{$\textstyle \phantom{\,#1\,}$}}{\colorbox{fillinmathshade}{$\scriptstyle \phantom{\,#1\,}$}}{\colorbox{fillinmathshade}{$\scriptscriptstyle\phantom{\,#1\,}$}}}
+0111: \)
+0112: Front Matter
+0113: 0 Introduction
+0114: 0.1 About this book
+0115: 0.1.1 About Volume I
+0116: 0.1.2 About Volume II
+0117: 0.2 About analysis
+0118: 0.3 Basic set theory
+0119: 0.3.1 Sets
+0120: 0.3.2 Induction
+0121: 0.3.3 Functions
+0122: 0.3.4 Relations and equivalence classes
+0123: 0.3.5 Cardinality
+0124: 0.3.6 Exercises
+0125: 1 Real Numbers
+0126: 1.1 Basic properties
+0127: 1.1.1 Exercises
+0128: 1.2 The set of real numbers
+0129: 1.2.1 The set of real numbers
+0130: 1.2.2 Archimedean property
+0131: 1.2.3 Using supremum and infimum
+0132: 1.2.4 Maxima and minima
+0133: 1.2.5 Exercises
+0134: 1.3 Absolute value and bounded functions
+0135: 1.3.1 Exercises
+0136: 1.4 Intervals and the size of \(\R\)
+0137: 1.4.1 Exercises
+0138: 1.5 Decimal representation of the reals
+0139: 1.5.1 Exercises
+0140: 2 Sequences and Series
+0141: 2.1 Sequences and limits
+0142: 2.1.1 Monotone sequences
+0143: 2.1.2 Tail of a sequence
+0144: 2.1.3 Subsequences
+0145: 2.1.4 Exercises
+0146: 2.2 Facts about limits of sequences
+0147: 2.2.1 Limits and inequalities
+0148: 2.2.2 Continuity of algebraic operations
+0149: 2.2.3 Recursively defined sequences
+0150: 2.2.4 Some convergence tests
+0151: 2.2.5 Exercises
+0152: 2.3 Limit superior, limit inferior, and Bolzano–Weierstrass
+0153: 2.3.1 Upper and lower limits
+0154: 2.3.2 Using limit inferior and limit superior
+0155: 2.3.3 Bolzano–Weierstrass theorem
+0156: 2.3.4 Infinite limits
+0157: 2.3.5 Exercises
+0158: 2.4 Cauchy sequences
+0159: 2.4.1 Exercises
+0160: 2.5 Series
+0161: 2.5.1 Definition
+0162: 2.5.2 Cauchy series
+0163: 2.5.3 Basic properties
+0164: 2.5.4 Absolute convergence
+0165: 2.5.5 Comparison test and the \(p\)-series
+0166: 2.5.6 Ratio test
+0167: 2.5.7 Exercises
+0168: 2.6 More on series
+0169: 2.6.1 Root test
+0170: 2.6.2 Alternating series test
+0171: 2.6.3 Rearrangements
+0172: 2.6.4 Multiplication of series
+0173: 2.6.5 Power series
+0174: 2.6.6 Exercises
+0175: 3 Continuous Functions
+0176: 3.1 Limits of functions
+0177: 3.1.1 Cluster points
+0178: 3.1.2 Limits of functions
+0179: 3.1.3 Sequential limits
+0180: 3.1.4 Limits of restrictions and one-sided limits
+0181: 3.1.5 Exercises
+0182: 3.2 Continuous functions
+0183: 3.2.1 Definition and basic properties
+0184: 3.2.2 Composition of continuous functions
+0185: 3.2.3 Discontinuous functions
+0186: 3.2.4 Exercises
+0187: 3.3 Extreme and intermediate value theorems
+0188: 3.3.1 Min-max or extreme value theorem
+0189: 3.3.2 Bolzano’s intermediate value theorem
+0190: 3.3.3 Exercises
+0191: 3.4 Uniform continuity
+0192: 3.4.1 Uniform continuity
+0193: 3.4.2 Continuous extension
+0194: 3.4.3 Lipschitz continuous functions
+0195: 3.4.4 Exercises
+0196: 3.5 Limits at infinity
+0197: 3.5.1 Limits at infinity
+0198: 3.5.2 Infinite limit
+0199: 3.5.3 Compositions
+0200: 3.5.4 Exercises
+0201: 3.6 Monotone functions and continuity
+0202: 3.6.1 Continuity of monotone functions
+0203: 3.6.2 Continuity of inverse functions
+0204: 3.6.3 Exercises
+0205: 4 The Derivative
+0206: 4.1 The derivative
+0207: 4.1.1 Definition and basic properties
+0208: 4.1.2 Chain rule
+0209: 4.1.3 Exercises
+0210: 4.2 Mean value theorem
+0211: 4.2.1 Relative minima and maxima
+0212: 4.2.2 Rolle’s theorem
+0213: 4.2.3 Mean value theorem
+0214: 4.2.4 Applications
+0215: 4.2.5 Continuity of derivatives and the intermediate value theorem
+0216: 4.2.6 Exercises
+0217: 4.3 Taylor’s theorem
+0218: 4.3.1 Derivatives of higher orders
+0219: 4.3.2 Taylor’s theorem
+0220: 4.3.3 Exercises
+0221: 4.4 Inverse function theorem
+0222: 4.4.1 Inverse function theorem
+0223: 4.4.2 Exercises
+0224: 5 The Riemann Integral
+0225: 5.1 The Riemann integral
+0226: 5.1.1 Partitions and lower and upper integrals
+0227: 5.1.2 Riemann integral
+0228: 5.1.3 More notation
+0229: 5.1.4 Exercises
+0230: 5.2 Properties of the integral
+0231: 5.2.1 Additivity
+0232: 5.2.2 Linearity and monotonicity
+0233: 5.2.3 Continuous functions
+0234: 5.2.4 More on integrable functions
+0235: 5.2.5 Exercises
+0236: 5.3 Fundamental theorem of calculus
+0237: 5.3.1 First form of the theorem
+0238: 5.3.2 Second form of the theorem
+0239: 5.3.3 Change of variables
+0240: 5.3.4 Exercises
+0241: 5.4 The logarithm and the exponential
+0242: 5.4.1 The logarithm
+0243: 5.4.2 The exponential
+0244: 5.4.3 Exercises
+0245: 5.5 Improper integrals
+0246: 5.5.1 Integral test for series
+0247: 5.5.2 Exercises
+0248: 6 Sequences of Functions
+0249: 6.1 Pointwise and uniform convergence
+0250: 6.1.1 Pointwise convergence
+0251: 6.1.2 Uniform convergence
+0252: 6.1.3 Convergence in uniform norm
+0253: 6.1.4 Exercises
+0254: 6.2 Interchange of limits
+0255: 6.2.1 Continuity of the limit
+0256: 6.2.2 Integral of the limit
+0257: 6.2.3 Derivative of the limit
+0258: 6.2.4 Convergence of power series
+0259: 6.2.5 Exercises
+0260: 6.3 Picard’s theorem
+0261: 6.3.1 First order ordinary differential equation
+0262: 6.3.2 The theorem
+0263: 6.3.3 Examples
+0264: 6.3.4 Exercises
+0265: 7 Metric Spaces
+0266: 7.1 Metric spaces
+0267: 7.1.1 Exercises
+0268: 7.2 Open and closed sets
+0269: 7.2.1 Topology
+0270: 7.2.2 Connected sets
+0271: 7.2.3 Closure and boundary
+0272: 7.2.4 Exercises
+0273: 7.3 Sequences and convergence
+0274: 7.3.1 Sequences
+0275: 7.3.2 Convergence in euclidean space
+0276: 7.3.3 Convergence and topology
+0277: 7.3.4 Exercises
+0278: 7.4 Completeness and compactness
+0279: 7.4.1 Cauchy sequences and completeness
+0280: 7.4.2 Compactness
+0281: 7.4.3 Exercises
+0282: 7.5 Continuous functions
+0283: 7.5.1 Continuity
+0284: 7.5.2 Compactness and continuity
+0285: 7.5.3 Continuity and topology
+0286: 7.5.4 Uniform continuity
+0287: 7.5.5 Cluster points and limits of functions
+0288: 7.5.6 Exercises
+0289: 7.6 Fixed point theorem and Picard’s theorem again
+0290: 7.6.1 Fixed point theorem
+0291: 7.6.2 Picard’s theorem
+0292: 7.6.3 Exercises
+0293: 8 Several Variables and Partial Derivatives
+0294: 8.1 Vector spaces, linear mappings, and convexity
+0295: 8.1.1 Vector spaces
+0296: 8.1.2 Linear combinations and dimension
+0297: 8.1.3 Linear mappings
+0298: 8.1.4 Convexity
+0299: 8.1.5 Exercises
+0300: 8.2 Analysis with vector spaces
+0301: 8.2.1 Norms
+0302: 8.2.2 Matrices
+0303: 8.2.3 Determinants
+0304: 8.2.4 Exercises
+0305: 8.3 The derivative
+0306: 8.3.1 The derivative
+0307: 8.3.2 Partial derivatives
+0308: 8.3.3 Gradients, curves, and directional derivatives
+0309: 8.3.4 The Jacobian
+0310: 8.3.5 Exercises
+0311: 8.4 Continuity and the derivative
+0312: 8.4.1 Bounding the derivative
+0313: 8.4.2 Continuously differentiable functions
+0314: 8.4.3 Exercises
+0315: 8.5 Inverse and implicit function theorems
+0316: 8.5.1 Implicit function theorem
+0317: 8.5.2 Exercises
+0318: 8.6 Higher order derivatives
+0319: 8.6.1 Exercises
+0320: 9 One-dimensional Integrals in Several Variables
+0321: 9.1 Differentiation under the integral
+0322: 9.1.1 Exercises
+0323: 9.2 Path integrals
+0324: 9.2.1 Piecewise smooth paths
+0325: 9.2.2 Path integral of a one-form
+0326: 9.2.3 Path integral of a function
+0327: 9.2.4 Exercises
+0328: 9.3 Path independence
+0329: 9.3.1 Path independent integrals
+0330: 9.3.2 Vector fields
+0331: 9.3.3 Exercises
+0332: 10 Multivariable Integral
+0333: 10.1 Riemann integral over rectangles
+0334: 10.1.1 Rectangles and partitions
+0335: 10.1.2 Upper and lower integrals
+0336: 10.1.3 The Riemann integral
+0337: 10.1.4 Integrals of continuous functions
+0338: 10.1.5 Integration of functions with compact support
+0339: 10.1.6 Exercises
+0340: 10.2 Iterated integrals and the Fubini theorem
+0341: 10.2.1 Exercises
+0342: 10.3 Outer measure and null sets
+0343: 10.3.1 Outer measure and null sets
+0344: 10.3.2 Examples and basic properties
+0345: 10.3.3 Images of null sets under differentiable functions
+0346: 10.3.4 Exercises
+0347: 10.4 The set of Riemann integrable functions
+0348: 10.4.1 Oscillation and continuity
+0349: 10.4.2 The set of Riemann integrable functions
+0350: 10.4.3 Exercises
+0351: 10.5 Jordan measurable sets
+0352: 10.5.1 Volume and Jordan measurable sets
+0353: 10.5.2 Integration over Jordan measurable sets
+0354: 10.5.3 Images of Jordan measurable subsets
+0355: 10.5.4 Exercises
+0356: 10.6 Green’s theorem
+0357: 10.6.1 Exercises
+0358: 10.7 Change of variables
+0359: 10.7.1 Exercises
+0360: 11 Functions as Limits
+0361: 11.1 Complex numbers
+0362: 11.1.1 The complex plane
+0363: 11.1.2 Complex numbers and limits
+0364: 11.1.3 Complex-valued functions
+0365: 11.1.4 Exercises
+0366: 11.2 Swapping limits
+0367: 11.2.1 Continuity
+0368: 11.2.2 Integration
+0369: 11.2.3 Differentiation
+0370: 11.2.4 Exercises
+0371: 11.3 Power series and analytic functions
+0372: 11.3.1 Analytic functions
+0373: 11.3.2 Convergence of power series
+0374: 11.3.3 Properties of analytic functions
+0375: 11.3.4 Power series as analytic functions
+0376: 11.3.5 Identity theorem for analytic functions
+0377: 11.3.6 Exercises
+0378: 11.4 Complex exponential and trigonometric functions
+0379: 11.4.1 The complex exponential
+0380: 11.4.2 Trigonometric functions and \(\pi\)
+0381: 11.4.3 The unit circle and polar coordinates
+0382: 11.4.4 Exercises
+0383: 11.5 Maximum principle and the fundamental theorem of algebra
+0384: 11.5.1 Exercises
+0385: 11.6 Equicontinuity and the Arzelà–Ascoli theorem
+0386: 11.6.1 Exercises
+0387: 11.7 The Stone–Weierstrass theorem
+0388: 11.7.1 Weierstrass approximation
+0389: 11.7.2 Stone–Weierstrass approximation
+0390: 11.7.3 Exercises
+0391: 11.8 Fourier series
+0392: 11.8.1 Trigonometric polynomials
+0393: 11.8.2 Fourier series
+0394: 11.8.3 Orthonormal systems
+0395: 11.8.4 The Dirichlet kernel and approximate delta functions
+0396: 11.8.5 Localization
+0397: 11.8.6 Parseval’s theorem
+0398: 11.8.7 Exercises
+0399: Back Matter
+0400: Further Reading
+0401: Index
+0402: Section 6.2 Interchange of limits
+0403: Note: 1–2.5 lectures, subsections on derivatives and power series (which requires Section 2.6) optional.
+0404: 🔗
+0405: Large parts of modern analysis deal mainly with the question of the interchange of two limiting operations. When we have a chain of two limits, we cannot always just swap the limits. For instance,
+0406: \begin{equation}
+0407: 0 =
+0408: \lim_{n\to\infty}
+0409: \left(
+0410: \lim_{k\to\infty}
+0411: \frac{n}{n + k}
+0412: \right)
+0413: \neq
+0414: \lim_{k\to\infty}
+0415: \left(
+0416: \lim_{n\to\infty}
+0417: \frac{n}{n + k}
+0418: \right)
+0419: = 1 .
+0420: \end{equation}
+0421: 🔗
+0422: When talking about sequences of functions, interchange of limits comes up quite often. We look at several instances: continuity of the limit, the integral of the limit, the derivative of the limit, and the convergence of power series.
+0423: 🔗
+0424: Subsection 6.2.1 Continuity of the limit
+0425: If we have a sequence \(\{ f_n \}_{n=1}^\infty\) of continuous functions, is the limit continuous? Suppose \(f\) is the (pointwise) limit of \(\{ f_n \}_{n=1}^\infty\text{.}\) If \(\lim_{k\to\infty} x_k = x\text{,}\) we are interested in the following interchange of limits, where the equality to prove is marked with a question mark. Equality is not always true. In fact, the limits to the left of the question mark might not even exist.
+0426: \begin{equation}
+0427: \lim_{k \to \infty}
+0428: f(x_k)
+0429: =
+0430: \lim_{k \to \infty}
+0431: \Bigl(
+0432: \lim_{n \to \infty} f_n(x_k)
+0433: \Bigr)
+0434: \overset{?}{=}
+0435: \lim_{n \to \infty}
+0436: \Bigl(
+0437: \lim_{k \to \infty}
+0438: f_n(x_k)
+0439: \Bigr)
+0440: =
+0441: \lim_{n \to \infty}
+0442: f_n(x)
+0443: =
+0444: f(x) .
+0445: \end{equation}
+0446: We wish to find conditions on the sequence \(\{ f_n \}_{n=1}^\infty\) so that the equation above holds. If we only require pointwise convergence, then the limit of a sequence of functions need not be continuous, and the equation above need not hold.
+0447: 🔗
+0448: Example 6.2.1.
+0449: Define \(f_n \colon [0,1] \to \R\) as
+0450: \begin{equation}
+0451: f_n(x) \coloneqq
+0452: \begin{cases}
+0453: 1-nx & \text{if } x < \nicefrac{1}{n},\\
+0454: 0 & \text{if } x \geq \nicefrac{1}{n}.
+0455: \end{cases}
+0456: \end{equation}
+0457: See Figure 6.4.
+0458: 🔗
+0459: Figure 6.4. Graph of \(f_n(x)\text{.}\)
+0460: 🔗
+0461: Each function \(f_n\) is continuous. Fix an \(x \in (0,1]\text{.}\) If \(n \geq \nicefrac{1}{x}\text{,}\) then \(x \geq \nicefrac{1}{n}\text{.}\) Therefore, for \(n \geq \nicefrac{1}{x}\text{,}\) we have \(f_n(x) = 0\text{,}\) and so
+0462: \begin{equation}
+0463: \lim_{n \to \infty} f_n(x) = 0.
+0464: \end{equation}
+0465: On the other hand, if \(x=0\text{,}\) then
+0466: \begin{equation}
+0467: \lim_{n \to \infty} f_n(0) =
+0468: \lim_{n \to \infty} 1 = 1.
+0469: \end{equation}
+0470: Thus the pointwise limit of \(f_n\) is the function \(f \colon [0,1] \to \R\) defined by
+0471: \begin{equation}
+0472: f(x) \coloneqq
+0473: \begin{cases}
+0474: 1 & \text{if } x = 0,\\
+0475: 0 & \text{if } x > 0.
+0476: \end{cases}
+0477: \end{equation}
+0478: The function \(f\) is not continuous at 0.
+0479: 🔗
+0480: 🔗
+0481: If we, however, require the convergence to be uniform, the limits can be interchanged.
+0482: 🔗
+0483: Theorem 6.2.2.
+0484: Suppose \(S \subset \R\text{.}\) Let \(\{ f_n \}_{n=1}^\infty\) be a sequence of continuous functions \(f_n \colon S \to \R\) converging uniformly to \(f \colon S \to \R\text{.}\) Then \(f\) is continuous.
+0485: 🔗
+0486: 🔗
+0487: Proof.
+0488: Let \(x \in S\) be fixed. Let \(\{ x_n \}_{n=1}^\infty\) be a sequence in \(S\) converging to \(x\text{.}\)
+0489: 🔗
+0490: Let \(\epsilon > 0\) be given. As \(\{ f_k \}_{k=1}^\infty\) converges uniformly to \(f\text{,}\) we find a \(k \in \N\) such that
+0491: \begin{equation}
+0492: \babs{f_k(y)-f(y)} < \nicefrac{\epsilon}{3}
+0493: \end{equation}
+0494: for all \(y \in S\text{.}\) As \(f_k\) is continuous at \(x\text{,}\) we find an \(N \in \N\) such that for all \(m \geq N\text{,}\)
+0495: \begin{equation}
+0496: \babs{f_k(x_m)-f_k(x)} < \nicefrac{\epsilon}{3} .
+0497: \end{equation}
+0498: Thus for all \(m \geq N\text{,}\)
+0499: \begin{equation}
+0500: \begin{split}
+0501: \babs{f(x_m)-f(x)}
+0502: & =
+0503: \babs{f(x_m)-f_k(x_m)+f_k(x_m)-f_k(x)+f_k(x)-f(x)}
+0504: \\
+0505: & \leq
+0506: \babs{f(x_m)-f_k(x_m)}+
+0507: \babs{f_k(x_m)-f_k(x)}+
+0508: \babs{f_k(x)-f(x)}
+0509: \\
+0510: & <
+0511: \nicefrac{\epsilon}{3} +
+0512: \nicefrac{\epsilon}{3} +
+0513: \nicefrac{\epsilon}{3} = \epsilon .
+0514: \end{split}
+0515: \end{equation}
+0516: Therefore, \(\bigl\{ f(x_m) \bigr\}_{m=1}^\infty\) converges to \(f(x)\text{,}\) and consequently \(f\) is continuous at \(x\text{.}\) As \(x\) was arbitrary, \(f\) is continuous everywhere.
+0517: 🔗
+0518: 🔗
+0519: 🔗
+0520: Subsection 6.2.2 Integral of the limit
+0521: Again, if we simply require pointwise convergence, then the integral of a limit of a sequence of functions need not be equal to the limit of the integrals.
+0522: 🔗
+0523: Example 6.2.3.
+0524: Define \(f_n \colon [0,1] \to \R\) as
+0525: \begin{equation}
+0526: f_n(x) \coloneqq
+0527: \begin{cases}
+0528: 0 & \text{if } x = 0,\\
+0529: n-n^2x & \text{if } 0 < x < \nicefrac{1}{n},\\
+0530: 0 & \text{if } x \geq \nicefrac{1}{n}.
+0531: \end{cases}
+0532: \end{equation}
+0533: See Figure 6.5.
+0534: 🔗
+0535: Figure 6.5. Graph of \(f_n(x)\text{.}\)
+0536: 🔗
+0537: Each \(f_n\) is Riemann integrable (it is continuous on \((0,1]\) and bounded), and the fundamental theorem of calculus says that
+0538: \begin{equation}
+0539: \int_0^1 f_n =
+0540: \int_0^{\nicefrac{1}{n}} (n-n^2x)\,dx = \nicefrac{1}{2} .
+0541: \end{equation}
+0542: Let us compute the pointwise limit of \(\{ f_n \}_{n=1}^\infty\text{.}\) Fix an \(x \in (0,1]\text{.}\) For \(n \geq \nicefrac{1}{x}\text{,}\) we have \(x \geq \nicefrac{1}{n}\) and so \(f_n(x) = 0\text{.}\) Hence,
+0543: \begin{equation}
+0544: \lim_{n \to \infty} f_n(x) = 0.
+0545: \end{equation}
+0546: We also have \(f_n(0) = 0\) for all \(n\text{.}\) So the pointwise limit of \(\{ f_n \}_{n=1}^\infty\) is the zero function. In summary,
+0547: \begin{equation}
+0548: \nicefrac{1}{2} =
+0549: \lim_{n\to\infty}
+0550: \int_0^1 f_n (x)\,dx
+0551: \neq
+0552: \int_0^1
+0553: \left(
+0554: \lim_{n\to\infty}
+0555: f_n(x)\right)\,dx
+0556: =
+0557: \int_0^1 0\,dx = 0 .
+0558: \end{equation}
+0559: 🔗
+0560: 🔗
+0561: But if we require the convergence to be uniform, the limits can be interchanged. 1
+0562: Weaker conditions are sufficient for this kind of theorem, but to prove such a generalization requires more sophisticated machinery than we cover here: the Lebesgue integral. In particular, the theorem holds with pointwise convergence as long as \(f\) is integrable and there is an \(M\) such that \(\snorm{f_n}_{[a,b]} \leq M\) for all \(n\text{.}\)
+0563: 🔗
+0564: Theorem 6.2.4.
+0565: Let \(\{ f_n \}_{n=1}^\infty\) be a sequence of Riemann integrable functions \(f_n \colon [a,b] \to \R\) converging uniformly to \(f \colon [a,b]
+0566: \to \R\text{.}\) Then \(f\) is Riemann integrable, and
+0567: \begin{equation}
+0568: \int_a^b f = \lim_{n\to\infty} \int_a^b f_n .
+0569: \end{equation}
+0570: 🔗
+0571: 🔗
+0572: Proof.
+0573: Let \(\epsilon > 0\) be given. As \(f_n\) goes to \(f\) uniformly, we find an \(M \in \N\) such that for all \(n \geq M\text{,}\) we have \(\babs{f_n(x)-f(x)} < \frac{\epsilon}{2(b-a)}\) for all \(x \in [a,b]\text{.}\) In particular, by reverse triangle inequality, \(\babs{f(x)} < \frac{\epsilon}{2(b-a)} + \babs{f_n(x)}\) for all \(x\text{.}\) Hence, \(f\) is bounded, as \(f_n\) is bounded. Note that \(f_n\) is integrable and compute
+0574: \begin{equation}
+0575: \begin{split}
+0576: \overline{\int_a^b} f
+0577: -
+0578: \underline{\int_a^b} f
+0579: & =
+0580: \overline{\int_a^b} \bigl( f(x) - f_n(x) + f_n(x) \bigr)\,dx
+0581: -
+0582: \underline{\int_a^b} \bigl( f(x) - f_n(x) + f_n(x) \bigr)\,dx
+0583: \\
+0584: & \leq
+0585: \overline{\int_a^b} \bigl( f(x) - f_n(x) \bigr)\,dx + \overline{\int_a^b} f_n(x) \,dx
+0586: -
+0587: \underline{\int_a^b} \bigl( f(x) - f_n(x) \bigr)\,dx - \underline{\int_a^b} f_n(x) \,dx
+0588: \\
+0589: & =
+0590: \overline{\int_a^b} \bigl( f(x) - f_n(x) \bigr)\,dx + \int_a^b f_n(x) \,dx
+0591: -
+0592: \underline{\int_a^b} \bigl( f(x) - f_n(x) \bigr)\,dx - \int_a^b f_n(x) \,dx
+0593: \\
+0594: & =
+0595: \overline{\int_a^b} \bigl( f(x) - f_n(x) \bigr)\,dx
+0596: -
+0597: \underline{\int_a^b} \bigl( f(x) - f_n(x) \bigr)\,dx
+0598: \\
+0599: & \leq
+0600: \frac{\epsilon}{2(b-a)} (b-a) +
+0601: \frac{\epsilon}{2(b-a)} (b-a) = \epsilon .
+0602: \end{split}
+0603: \end{equation}
+0604: The first inequality is Proposition 5.2.5. The second inequality follows by Proposition 5.1.8 and the fact that for all \(x \in [a,b]\text{,}\) we have \(\frac{-\epsilon}{2(b-a)} < f(x)-f_n(x) < \frac{\epsilon}{2(b-a)}\text{.}\) As \(\epsilon > 0\) was arbitrary, \(f\) is Riemann integrable.
+0605: 🔗
+0606: Finally, we compute \(\int_a^b f\text{.}\) We apply Proposition 5.1.10 in the calculation. Again, for all \(n \geq M\) (where \(M\) is the same as above),
+0607: \begin{equation}
+0608: \begin{split}
+0609: \abs{\int_a^b f - \int_a^b f_n} & =
+0610: \abs{ \int_a^b \bigl(f(x) - f_n(x)\bigr)\,dx}
+0611: \\
+0612: & \leq
+0613: \frac{\epsilon}{2(b-a)} (b-a) = \frac{\epsilon}{2} < \epsilon .
+0614: \end{split}
+0615: \end{equation}
+0616: Therefore, \(\bigl\{ \int_a^b f_n \bigr\}_{n=1}^\infty\) converges to \(\int_a^b f\text{.}\)
+0617: 🔗
+0618: 🔗
+0619: Example 6.2.5.
+0620: Suppose we wish to compute
+0621: \begin{equation}
+0622: \lim_{n\to\infty} \int_0^1 \frac{nx+ \sin(nx^2)}{n} \,dx .
+0623: \end{equation}
+0624: It is impossible to compute the integrals for any particular \(n\) using calculus as \(\sin(nx^2)\) has no closed-form antiderivative. However, we can compute the limit. We have shown before that \(\frac{nx+ \sin(nx^2)}{n}\) converges uniformly on \([0,1]\) to \(x\text{.}\) By Theorem 6.2.4, the limit exists and
+0625: \begin{equation}
+0626: \lim_{n\to\infty} \int_0^1 \frac{nx+ \sin(nx^2)}{n} \,dx
+0627: =
+0628: \int_0^1
+0629: x \,dx = \nicefrac{1}{2} .
+0630: \end{equation}
+0631: 🔗
+0632: 🔗
+0633: Example 6.2.6.
+0634: If convergence is only pointwise, the limit need not even be Riemann integrable. On \([0,1]\) define
+0635: \begin{equation}
+0636: f_n(x) \coloneqq
+0637: \begin{cases}
+0638: 1 & \text{if } x = \nicefrac{p}{q} \text{ in lowest terms and } q \leq n, \\
+0639: 0 & \text{otherwise.}
+0640: \end{cases}
+0641: \end{equation}
+0642: Each function \(f_n\) differs from the zero function at finitely many points; there are only finitely many fractions in \([0,1]\) with denominator less than or equal to \(n\text{.}\) So \(f_n\) is integrable and \(\int_0^1 f_n = \int_0^1 0 =
+0643: 0\text{.}\) It is an easy exercise to show that \(\{ f_n \}_{n=1}^\infty\) converges pointwise to the Dirichlet function
+0644: \begin{equation}
+0645: f(x) \coloneqq
+0646: \begin{cases}
+0647: 1 & \text{if } x \in \Q, \\
+0648: 0 & \text{otherwise,}
+0649: \end{cases}
+0650: \end{equation}
+0651: which is not Riemann integrable.
+0652: 🔗
+0653: 🔗
+0654: Example 6.2.7.
+0655: In fact, if the convergence is only pointwise, the limit of bounded functions is not even necessarily bounded. Define \(f_n \colon [0,1] \to \R\) by
+0656: \begin{equation}
+0657: f_n(x) \coloneqq
+0658: \begin{cases}
+0659: 0 & \text{if } x < \nicefrac{1}{n},\\
+0660: \nicefrac{1}{x} & \text{else.}
+0661: \end{cases}
+0662: \end{equation}
+0663: For every \(n\) we get that \(\babs{f_n(x)} \leq n\) for all \(x \in [0,1]\) so the functions are bounded. However, \(\{ f_n \}_{n=1}^\infty\) converges pointwise to the unbounded function
+0664: \begin{equation}
+0665: f(x) \coloneqq
+0666: \begin{cases}
+0667: 0 & \text{if } x = 0,\\
+0668: \nicefrac{1}{x} & \text{else.}
+0669: \end{cases}
+0670: \end{equation}
+0671: 🔗
+0672: 🔗
+0673: 🔗
+0674: Subsection 6.2.3 Derivative of the limit
+0675: While uniform convergence is enough to swap limits with integrals, it is not enough to swap limits with derivatives, unless you also have uniform convergence of the derivatives themselves.
+0676: 🔗
+0677: Example 6.2.8.
+0678: Let \(f_n(x) \coloneqq \frac{\sin(nx)}{n}\text{.}\) Then \(f_n\) converges uniformly to 0. See Figure 6.6. The derivative of the limit is 0. However, \(f_n'(x) = \cos(nx)\text{,}\) which does not converge even pointwise. For example, \(f_n'(\pi) = {(-1)}^n\text{.}\) Moreover, \(f_n'(0) = 1\) for all \(n\text{,}\) which does converge, but not to \(0\text{.}\)
+0679: 🔗
+0680: Figure 6.6. Graphs of \(\frac{\sin(nx)}{n}\) for \(n=1,2,\ldots,10\text{,}\) with higher \(n\) in fainter gray.
+0681: 🔗
+0682: 🔗
+0683: Example 6.2.9.
+0684: Let \(f_n(x) \coloneqq \frac{1}{1+nx^2}\text{.}\) If \(x \neq 0\text{,}\) then \(\lim_{n \to \infty} f_n(x) = 0\text{,}\) but \(\lim_{n \to \infty} f_n(0) = 1\text{.}\) Hence, \(\{ f_n \}_{n=1}^\infty\) converges pointwise to a function that is not continuous at \(0\text{.}\) We compute
+0685: \begin{equation}
+0686: f_n'(x) = \frac{-2 n x}{(1+ n x^2)^2} .
+0687: \end{equation}
+0688: For every \(x\text{,}\) \(\lim_{n\to\infty} f_n'(x) = 0\text{,}\) so the derivatives converge pointwise to 0, but the reader can check that the convergence is not uniform on any interval containing \(0\text{.}\) The limit of \(f_n\) is not differentiable at \(0\)—it is not even continuous at \(0\text{.}\) See Figure 6.7.
+0689: 🔗
+0690: Figure 6.7. Graphs of \(\frac{1}{1+nx^2}\) and its derivative for \(n=1,2,\ldots,10\text{,}\) with higher \(n\) in fainter gray.
+0691: 🔗
+0692: 🔗
+0693: See the exercises for more examples. Using the fundamental theorem of calculus, we find an answer for continuously differentiable functions. The following theorem is true even if we do not assume continuity of the derivatives, but the proof is more difficult.
+0694: 🔗
+0695: Theorem 6.2.10.
+0696: Let \(I\) be a bounded interval and let \(f_n \colon I \to \R\) be continuously differentiable functions. Suppose \(\{ f_n' \}_{n=1}^\infty\) converges uniformly to \(g \colon I \to \R\text{,}\) and suppose \(\bigl\{ f_n(c) \bigr\}_{n=1}^\infty\) is a convergent sequence for some \(c \in I\text{.}\) Then \(\{ f_n \}_{n=1}^\infty\) converges uniformly to a continuously differentiable function \(f \colon I \to \R\text{,}\) and \(f' = g\text{.}\)
+0697: 🔗
+0698: 🔗
+0699: Proof.
+0700: Define \(f(c) \coloneqq \lim_{n\to \infty} f_n(c)\text{.}\) As \(f_n'\) are continuous and hence Riemann integrable, via the fundamental theorem of calculus, we find that for \(x \in I\text{,}\)
+0701: \begin{equation}
+0702: f_n(x) = f_n(c) + \int_c^x f_n' .
+0703: \end{equation}
+0704: As \(\{ f_n' \}_{n=1}^\infty\) converges uniformly on \(I\text{,}\) it converges uniformly on \([c,x]\) (or \([x,c]\) if \(x < c\)). Thus, the limit as \(n \to \infty\) on the right-hand side exists. Define \(f\) at the remaining points (where \(x\neq c\)) by this limit:
+0705: \begin{equation}
+0706: f(x) \coloneqq
+0707: \lim_{n\to\infty} f_n(c) + \lim_{n\to\infty} \int_c^x f_n'
+0708: =
+0709: f(c) + \int_c^x g .
+0710: \end{equation}
+0711: The function \(g\) is continuous, being the uniform limit of continuous functions. Hence, \(f\) is differentiable and \(f'(x) = g(x)\) for all \(x \in I\) by the second form of the fundamental theorem.
+0712: 🔗
+0713: It remains to prove uniform convergence. Suppose \(I\) has a lower bound \(a\) and upper bound \(b\text{.}\) Let \(\epsilon > 0\) be given. Take \(M\) such that for all \(n \geq M\text{,}\) we have \(\babs{f(c)-f_n(c)} < \nicefrac{\epsilon}{2}\) and \(\babs{g(x)-f_n'(x)} < \frac{\epsilon}{2(b-a)}\) for all \(x \in I\text{.}\) Then
+0714: \begin{equation}
+0715: \begin{split}
+0716: \babs{f(x) - f_n(x)} & =
+0717: \abs{\left(f(c) + \int_c^x g\right) - \left( f_n(c) + \int_c^x f_n' \right)}
+0718: \\
+0719: & \leq
+0720: \babs{f(c) - f_n(c)} + \abs{\int_c^x g - \int_c^x f_n'}
+0721: \\
+0722: & =
+0723: \babs{f(c) - f_n(c)} + \abs{\int_c^x \bigl(g(s) - f_n'(s)\bigr) \, ds}
+0724: \\
+0725: & <
+0726: \frac{\epsilon}{2}
+0727: +
+0728: \frac{\epsilon}{2(b-a)}
+0729: (b-a)
+0730: =\epsilon. \qedhere
+0731: \end{split}
+0732: \end{equation}
+0733: 🔗
+0734: 🔗
+0735: The proof goes through without boundedness of \(I\text{,}\) except for the uniform convergence of \(f_n\) to \(f\text{.}\) As an example suppose \(I = \R\) and let \(f_n(x) \coloneqq \nicefrac{x}{n}\text{.}\) Then \(f_n'(x)=\nicefrac{1}{n}\text{,}\) which converges uniformly to \(0\text{.}\) However, \(\{f_n\}_{n=1}^\infty\) converges to 0 only pointwise.
+0736: 🔗
+0737: 🔗
+0738: Subsection 6.2.4 Convergence of power series
+0739: In Section 2.6 we saw that a power series converges absolutely inside its radius of convergence, so it converges pointwise. Let us show that it (and all its derivatives) also converges uniformly. This fact allows us to swap several types of limits. Not only is the limit continuous, but we can also integrate and even differentiate convergent power series term by term.
+0740: 🔗
+0741: Proposition 6.2.11.
+0742: Let \(\sum_{n=0}^\infty c_n {(x-a)}^n\) be a convergent power series with a radius of convergence \(\rho\text{,}\) where \(0 < \rho \leq \infty\text{.}\) Then the series converges uniformly in \([a-r,a+r]\) whenever \(0 < r < \rho\text{.}\)
+0743: 🔗
+0744: In particular, the series converges (pointwise) to a continuous function on \((a-\rho,a+\rho)\) if \(\rho < \infty\text{,}\) or on \(\R\) if \(\rho = \infty\text{.}\)
+0745: 🔗
+0746: 🔗
+0747: Proof.
+0748: Let \(I \coloneqq (a-\rho,a+\rho)\) if \(\rho < \infty\text{,}\) or let \(I \coloneqq \R\) if \(\rho= \infty\text{.}\) Take \(0 < r < \rho\text{.}\) The series converges absolutely for every \(x \in I\text{,}\) in particular if \(x = a+r\text{.}\) So \(\sum_{n=0}^\infty \sabs{c_n} r^n\) converges. Given \(\epsilon >0\text{,}\) find \(M\) such that for all \(k \geq M\text{,}\)
+0749: \begin{equation}
+0750: \sum_{n=k+1}^\infty \sabs{c_n} {r}^n < \epsilon .
+0751: \end{equation}
+0752: For all \(x \in [a-r,a+r]\) and all \(m > k\text{,}\)
+0753: \begin{multline*}
+0754: \abs{\sum_{n=0}^m c_n {(x-a)}^n -
+0755: \sum_{n=0}^k c_n {(x-a)}^n}
+0756: =
+0757: \abs{\sum_{n=k+1}^m c_n {(x-a)}^n}
+0758: \\
+0759: \leq
+0760: \sum_{n=k+1}^m \sabs{c_n} {\sabs{x-a}}^n
+0761: \leq
+0762: \sum_{n=k+1}^m \sabs{c_n} {r}^n
+0763: \leq
+0764: \sum_{n=k+1}^\infty \sabs{c_n} {r}^n
+0765: <\epsilon.
+0766: \end{multline*}
+0767: The partial sums are therefore uniformly Cauchy on \([a-r,a+r]\) and hence converge uniformly on that set.
+0768: 🔗
+0769: Moreover, the partial sums are polynomials, which are continuous, and so their uniform limit on \([a-r,a+r]\) is a continuous function. As \(r < \rho\) was arbitrary, the limit function is continuous on all of \(I\text{.}\)
+0770: 🔗
+0771: 🔗
+0772: As we said, we will show that power series can be differentiated and integrated term by term. The differentiated or integrated series is again a power series, and we will show it has the same radius of convergence. Therefore, any power series defines an infinitely differentiable function.
+0773: 🔗
+0774: We first prove that we can antidifferentiate, as integration only needs uniform limits.
+0775: 🔗
+0776: Corollary 6.2.12.
+0777: Let \(\sum_{n=0}^\infty c_n {(x-a)}^n\) be a convergent power series with a radius of convergence \(0 < \rho \leq \infty\text{.}\) Let \(I \coloneqq (a-\rho,a+\rho)\) if \(\rho < \infty\) or \(I \coloneqq \R\) if \(\rho= \infty\text{.}\) Let \(f \colon I \to \R\) be the limit. Then
+0778: \begin{equation}
+0779: \int_a^x f = \sum_{n=1}^\infty \frac{c_{n-1}}{n} {(x-a)}^{n} ,
+0780: \end{equation}
+0781: where the radius of convergence of this series is at least \(\rho\text{.}\)
+0782: 🔗
+0783: 🔗
+0784: Proof.
+0785: Take \(0 < r < \rho\text{.}\) The partial sums \(\sum_{n=0}^k c_n {(x-a)}^n\) converge uniformly on \([a-r,a+r]\text{.}\) For every fixed \(x \in [a-r,a+r]\text{,}\) the convergence is also uniform on \([a,x]\) (or \([x,a]\) if \(x < a\)). Hence,
+0786: \begin{equation}
+0787: \int_a^x f =
+0788: \int_a^x \lim_{k\to\infty} \sum_{n=0}^k c_n {(s-a)}^n \, ds
+0789: =
+0790: \lim_{k\to\infty}
+0791: \int_a^x \sum_{n=0}^k c_n {(s-a)}^n \, ds
+0792: =
+0793: \lim_{k\to\infty}
+0794: \sum_{n=1}^{k+1} \frac{c_{n-1}}{n} {(x-a)}^{n} . \qedhere
+0795: \end{equation}
+0796: 🔗
+0797: 🔗
+0798: Corollary 6.2.13.
+0799: Let \(\sum_{n=0}^\infty c_n {(x-a)}^n\) be a convergent power series with a radius of convergence \(0 < \rho \leq \infty\text{.}\) Let \(I \coloneqq (a-\rho,a+\rho)\) if \(\rho < \infty\) or \(I \coloneqq \R\) if \(\rho= \infty\text{.}\) Let \(f \colon I \to \R\) be the limit. Then \(f\) is a differentiable function, and
+0800: \begin{equation}
+0801: f'(x) = \sum_{n=0}^\infty (n+1) c_{n+1} {(x-a)}^{n} ,
+0802: \end{equation}
+0803: where the radius of convergence of this series is \(\rho\text{.}\)
+0804: 🔗
+0805: 🔗
+0806: Proof.
+0807: Take \(0 < r < \rho\text{.}\) The series converges uniformly on \([a-r,a+r]\text{,}\) but we need uniform convergence of the derivative. Let
+0808: \begin{equation}
+0809: R \coloneqq \limsup_{n \to \infty} \sabs{c_n}^{1/n} .
+0810: \end{equation}
+0811: As the series is convergent, \(R < \infty\text{.}\) The radius of convergence \(\rho\) is \(\nicefrac{1}{R}\) (or \(\rho = \infty\) if \(R=0\)).
+0812: 🔗
+0813: Let \(\epsilon > 0\) be given. In Example 2.2.14, we saw \(\lim_{n\to\infty} n^{1/n} = 1\text{.}\) Hence, there exists an \(N\) such that for all \(n \geq N\text{,}\) we have \(n^{1/n} < 1+\epsilon\text{.}\) So
+0814: \begin{equation}
+0815: R =
+0816: \limsup_{n \to \infty}
+0817: \sabs{c_n}^{1/n}
+0818: \leq
+0819: \limsup_{n \to \infty}
+0820: \sabs{n c_n}^{1/n}
+0821: \leq
+0822: (1+\epsilon)
+0823: \limsup_{n \to \infty}
+0824: \sabs{c_n}^{1/n}
+0825: =
+0826: (1+\epsilon)R .
+0827: \end{equation}
+0828: As \(\epsilon\) was arbitrary, \(\limsup_{n \to \infty} \sabs{n c_n}^{1/n} = R\text{.}\) Therefore, \(\sum_{n=1}^\infty n c_{n} {(x-a)}^{n}\) has radius of convergence \(\rho\text{.}\) Dividing by \((x-a)\text{,}\) we find \(\sum_{n=0}^\infty (n+1) c_{n+1} {(x-a)}^{n}\) has radius of convergence \(\rho\) as well.
+0829: 🔗
+0830: Consequently, the partial sums \(\sum_{n=0}^k (n+1) c_{n+1} {(x-a)}^{n}\text{,}\) which are derivatives of the partial sums \(\sum_{n=0}^{k+1} c_{n} {(x-a)}^{n}\text{,}\) converge uniformly on \([a-r,a+r]\text{.}\) Furthermore, the series clearly converges at \(x=a\text{.}\) We may thus apply Theorem 6.2.10, and we are done as \(r < \rho\) was arbitrary.
+0831: 🔗
+0832: 🔗
+0833: Example 6.2.14.
+0834: We could have used this result to define the exponential function. That is, the power series
+0835: \begin{equation}
+0836: f(x) \coloneqq \sum_{n=0}^\infty \frac{x^n}{n!}
+0837: \end{equation}
+0838: has radius of convergence \(\rho=\infty\text{.}\) Furthermore, \(f(0) = 1\text{.}\) Differentiating term by term, we find that \(f'(x) = f(x)\text{.}\)
+0839: 🔗
+0840: 🔗
+0841: Example 6.2.15.
+0842: The series
+0843: \begin{equation}
+0844: \sum_{n=1}^\infty n x^n
+0845: \end{equation}
+0846: converges to \(\frac{x}{{(1-x)}^2}\) on \((-1,1)\text{.}\)
+0847: 🔗
+0848: Proof: On \((-1,1)\text{,}\) \(\sum_{n=0}^\infty x^n\) converges to \(\frac{1}{1-x}\text{.}\) The derivative \(\sum_{n=1}^\infty n x^{n-1}\) then converges on the same interval to \(\frac{1}{{(1-x)}^2}\text{.}\) Multiplying by \(x\) obtains the result.
+0849: 🔗
+0850: 🔗
+0851: 🔗
+0852: Exercises 6.2.5 Exercises
+0853: 6.2.1.
+0854: Find an explicit example of a sequence of differentiable functions on \([-1,1]\) that converge uniformly to a function \(f\) such that \(f\) is not differentiable. Hint: There are many possibilities. The simplest is perhaps to combine \(\sabs{x}\) and \(\frac{n}{2}x^2 +
+0855: \frac{1}{2n}\text{.}\) Another is to consider \(\sqrt{x^2+{(\nicefrac{1}{n})}^2}\text{.}\) Show that these functions are differentiable, converge uniformly, and then show that the limit is not differentiable.
+0856: 🔗
+0857: 🔗
+0858: 6.2.2.
+0859: Let \(f_n(x) \coloneqq \frac{x^n}{n}\text{.}\) Show that \(\{ f_n \}_{n=1}^\infty\) converges uniformly to a differentiable function \(f\) on \([0,1]\) (find \(f\)). However, show that \(f'(1) \neq \lim\limits_{n\to\infty} f_n'(1)\text{.}\)
+0860: 🔗
+0861: 🔗
+0862: 6.2.3.
+0863: Let \(f \colon [0,1] \to \R\) be Riemann integrable (hence bounded). Find \(\displaystyle \lim_{n\to\infty} \int_0^1 \frac{f(x)}{n} \,dx\text{.}\)
+0864: 🔗
+0865: 🔗
+0866: 6.2.4.
+0867: Show \(\displaystyle \lim_{n\to\infty} \int_1^2 e^{-nx^2} \,dx = 0\text{.}\) Feel free to use calculus facts about the exponential.
+0868: 🔗
+0869: 🔗
+0870: 6.2.5.
+0871: Find an example of a sequence of continuous functions on \((0,1)\) that converges pointwise to a continuous function on \((0,1)\text{,}\) but the convergence is not uniform.
+0872: 🔗
+0873: 🔗
+0874: Note: In the previous exercise, \((0,1)\) was picked for simplicity. For a more challenging exercise, replace \((0,1)\) with \([0,1]\text{.}\)
+0875: 🔗
+0876: 6.2.6.
+0877: True/False; prove or find a counterexample to the following statement: If \(\{ f_n \}_{n=1}^\infty\) is a sequence of everywhere discontinuous functions on \([0,1]\) that converge uniformly to a function \(f\text{,}\) then \(f\) is everywhere discontinuous.
+0878: 🔗
+0879: 🔗
+0880: 6.2.7.
+0881: For a continuously differentiable function \(f \colon [a,b] \to \R\text{,}\) define
+0882: \begin{equation}
+0883: \snorm{f}_{C^1} \coloneqq \snorm{f}_{[a,b]} + \snorm{f'}_{[a,b]} .
+0884: \end{equation}
+0885: Suppose \(\{ f_n \}_{n=1}^\infty\) is a sequence of continuously differentiable functions such that for every \(\epsilon >0\text{,}\) there exists an \(M\) such that for all \(n,k \geq M\text{,}\) we have
+0886: \begin{equation}
+0887: \snorm{f_n-f_k}_{C^1} < \epsilon .
+0888: \end{equation}
+0889: Show that \(\{ f_n \}_{n=1}^\infty\) converges uniformly to some continuously differentiable function \(f \colon [a,b] \to \R\text{.}\)
+0890: 🔗
+0891: 🔗
+0892: Suppose \(f \colon [0,1] \to \R\) is Riemann integrable. For the following two exercises define the number
+0893: \begin{equation}
+0894: \snorm{f}_{L^1} \coloneqq
+0895: \int_0^1 \babs{f(x)}\,dx .
+0896: \end{equation}
+0897: It is true that \(\sabs{f}\) is integrable whenever \(f\) is, see Exercise 5.2.15. The number is called the \(L^1\)-norm and defines another very common type of convergence called the \(L^1\)-convergence. It is, however, a bit more subtle.
+0898: 🔗
+0899: 6.2.8.
+0900: Suppose \(\{ f_n \}_{n=1}^\infty\) is a sequence of Riemann integrable functions on \([0,1]\) that converges uniformly to \(0\text{.}\) Show that
+0901: \begin{equation}
+0902: \lim_{n\to\infty} \snorm{f_n}_{L^1} = 0 .
+0903: \end{equation}
+0904: 🔗
+0905: 🔗
+0906: 6.2.9.
+0907: Find a sequence \(\{ f_n \}_{n=1}^\infty\) of Riemann integrable functions on \([0,1]\) converging pointwise to \(0\text{,}\) but such that
+0908: \begin{equation}
+0909: \lim_{n\to\infty} \snorm{f_n}_{L^1} \text{ does not exist (is } \infty\text{)}.
+0910: \end{equation}
+0911: 🔗
+0912: 🔗
+0913: 6.2.10.
+0914: (Hard) Prove Dini’s theorem: Let \(f_n \colon [a,b] \to \R\) be a sequence of continuous functions such that
+0915: \begin{equation}
+0916: 0 \leq f_{n+1}(x) \leq f_n(x) \leq \cdots \leq f_1(x)
+0917: \qquad \text{for all } n \in \N.
+0918: \end{equation}
+0919: Suppose \(\{ f_n \}_{n=1}^\infty\) converges pointwise to \(0\text{.}\) Show that \(\{ f_n \}_{n=1}^\infty\) converges to zero uniformly.
+0920: 🔗
+0921: 🔗
+0922: 6.2.11.
+0923: Suppose \(f_n \colon [a,b] \to \R\) is a sequence of continuous functions that converges pointwise to a continuous \(f \colon [a,b] \to \R\text{.}\) Suppose that for every \(x \in [a,b]\text{,}\) the sequence \(\bigl\{ \babs{f_n(x)-f(x)} \bigr\}_{n=1}^\infty\) is monotone. Show that the sequence \(\{f_n\}_{n=1}^\infty\) converges uniformly.
+0924: 🔗
+0925: 🔗
+0926: 6.2.12.
+0927: Find sequences of Riemann integrable functions \(f_n \colon [0,1] \to \R\) such that \(\{ f_n \}_{n=1}^\infty\) converges to zero pointwise, and such that
+0928: 🔗
+0929: \(\bigl\{ \int_0^1 f_n \bigr\}_{n=1}^\infty\) increases without bound,
+0930: 🔗
+0931: 🔗
+0932: \(\bigl\{ \int_0^1 f_n \bigr\}_{n=1}^\infty\) is the sequence \(-1,1,-1,1,-1,1, \ldots\text{.}\)
+0933: 🔗
+0934: 🔗
+0935: 🔗
+0936: It is possible to define a joint limit of a double sequence \(\{ x_{n,m} \}_{n,m=1}^\infty\) of real numbers (that is a function from \(\N \times \N\) to \(\R\)). We say \(L\) is the joint limit of \(\{ x_{n,m} \}_{n,m=1}^\infty\) and write
+0937: \begin{equation}
+0938: \lim_{\substack{n\to\infty\\m\to\infty}}
+0939: x_{n,m} = L ,
+0940: \qquad
+0941: \text{or}
+0942: \qquad
+0943: \lim_{(n,m) \to \infty}
+0944: x_{n,m} = L ,
+0945: \end{equation}
+0946: if for every \(\epsilon > 0\text{,}\) there exists an \(M\) such that if \(n \geq M\) and \(m \geq M\text{,}\) then \(\sabs{x_{n,m} - L} < \epsilon\text{.}\)
+0947: 🔗
+0948: 6.2.13.
+0949: Suppose the joint limit (see above) of \(\{ x_{n,m} \}_{n,m=1}^\infty\) is \(L\text{,}\) and suppose that for all \(n\text{,}\) \(\lim\limits_{m \to \infty} x_{n,m}\) exists, and for all \(m\text{,}\) \(\lim\limits_{n \to \infty} x_{n,m}\) exists. Then show \(\lim\limits_{n\to\infty}\lim\limits_{m \to \infty} x_{n,m}
+0950: =
+0951: \lim\limits_{m\to\infty}\lim\limits_{n \to \infty} x_{n,m} = L\text{.}\)
+0952: 🔗
+0953: 🔗
+0954: 6.2.14.
+0955: A joint limit (see above) does not mean the iterated limits exist. Consider \(x_{n,m} \coloneqq \frac{{(-1)}^{n+m}}{\min \{n,m \}}\text{.}\)
+0956: 🔗
+0957: Show that for no \(n\) does \(\lim\limits_{m \to \infty} x_{n,m}\) exist, and for no \(m\) does \(\lim\limits_{n \to \infty} x_{n,m}\) exist. So neither \(\lim\limits_{n\to\infty}\lim\limits_{m \to \infty} x_{n,m}\) nor \(\lim\limits_{m\to\infty}\lim\limits_{n \to \infty} x_{n,m}\) makes any sense at all.
+0958: 🔗
+0959: 🔗
+0960: Show that the joint limit of \(\{ x_{n,m} \}_{n,m=1}^\infty\) exists and equals 0.
+0961: 🔗
+0962: 🔗
+0963: 🔗
+0964: 6.2.15.
+0965: We say that a sequence of functions \(f_n \colon \R \to \R\) converges uniformly on compact subsets if for every \(k \in \N\text{,}\) the sequence \(\{ f_n \}_{n=1}^\infty\) converges uniformly on \([-k,k]\text{.}\)
+0966: 🔗
+0967: Prove that if \(f_n \colon \R \to \R\) is a sequence of continuous functions converging uniformly on compact subsets, then the limit is continuous.
+0968: 🔗
+0969: 🔗
+0970: Prove that if \(f_n \colon \R \to \R\) is a sequence of functions Riemann integrable on every closed and bounded interval \([a,b]\text{,}\) and converging uniformly on compact subsets to an \(f \colon \R \to \R\text{,}\) then for every interval \([a,b]\text{,}\) we have \(f \in \sR\bigl([a,b]\bigr)\text{,}\) and \(\int_a^b f = \lim\limits_{n\to\infty} \int_a^b f_n\text{.}\)
+0971: 🔗
+0972: 🔗
+0973: 🔗
+0974: 6.2.16.
+0975: (Challenging) Find a sequence of continuous functions \(f_n \colon [0,1] \to \R\) that converge to the popcorn function \(f \colon [0,1] \to \R\text{,}\) that is, the function such that \(f(\nicefrac{p}{q}) \coloneqq \nicefrac{1}{q}\) (if \(\nicefrac{p}{q}\) is in lowest terms) and \(f(x) \coloneqq 0\) if \(x\) is not rational (note that \(f(0) = f(1) = 1\)), see Example 3.2.12. So a pointwise limit of continuous functions can have a dense set of discontinuities. See also the next exercise.
+0976: 🔗
+0977: 🔗
+0978: 6.2.17.
+0979: (Challenging) The Dirichlet function \(f \colon [0,1] \to \R\text{,}\) that is, the function such that \(f(x) \coloneqq 1\) if \(x \in \Q\) and \(f(x) \coloneqq 0\) if \(x \notin \Q\text{,}\) is not the pointwise limit of continuous functions, although this is difficult to show. Prove, however, that \(f\) is a pointwise limit of functions that are themselves pointwise limits of continuous functions.
+0980: 🔗
+0981: 🔗
+0982: 6.2.18.
+0983: 🔗
+0984: Find a sequence of Lipschitz continuous functions on \([0,1]\) whose uniform limit is \(\sqrt{x}\text{,}\) which is a non-Lipschitz function.
+0985: 🔗
+0986: 🔗
+0987: On the other hand, show that if \(f_n \colon S \to \R\) are Lipschitz with a uniform constant \(K\) (meaning all of them satisfy the definition with the same constant) and \(\{ f_n \}_{n=1}^\infty\) converges pointwise to \(f \colon S \to \R\text{,}\) then the limit \(f\) is a Lipschitz continuous function with Lipschitz constant \(K\text{.}\)
+0988: 🔗
+0989: 🔗
+0990: 🔗
+0991: 6.2.19.
+0992: (requires Section 2.6) If \(\sum_{n=0}^\infty c_n {(x-a)}^n\) has radius of convergence \(\rho\text{,}\) show that the term by term integral \(\sum_{n=1}^\infty \frac{c_{n-1}}{n} {(x-a)}^n\) has radius of convergence \(\rho\text{.}\) Note that we only proved above that the radius of convergence was at least \(\rho\text{.}\)
+0993: 🔗
+0994: 🔗
+0995: 6.2.20.
+0996: (requires Section 2.6 and Section 4.3) Suppose \(f(x) \coloneqq \sum_{n=0}^\infty c_n {(x-a)}^n\) converges in \((a-\rho,a+\rho)\text{.}\)
+0997: 🔗
+0998: Suppose that \(f^{(k)}(a) = 0\) for all \(k=0,1,2,3,\ldots\text{.}\) Prove that \(c_n = 0\) for all \(n\text{,}\) or in other words, \(f(x) = 0\) for all \(x \in (a-\rho,a+\rho)\text{.}\)
+0999: 🔗
+1000: 🔗
+1001: Using part a) prove a version of what is called the “identity theorem for analytic functions”: If there exists an \(\epsilon > 0\) such that \(f(x) = 0\) for all \(x \in (a-\epsilon, a+\epsilon)\text{,}\) then \(f(x) = 0\) for all \(x \in (a-\rho,a+\rho)\text{.}\)
+1002: 🔗
+1003: 🔗
+1004: 🔗
+1005: 6.2.21.
+1006: Let \(f_n(x) \coloneqq \frac{x}{1+{(nx)}^2}\text{.}\) Notice that \(f_n\) are differentiable functions.
+1007: 🔗
+1008: Show that \(\{ f_n \}_{n=1}^\infty\) converges uniformly to 0.
+1009: 🔗
+1010: 🔗
+1011: Show that \(\sabs{f_n'(x)} \leq 1\) for all \(x\) and all \(n\text{.}\)
+1012: 🔗
+1013: 🔗
+1014: Show that \(\{ f_n' \}_{n=1}^\infty\) converges pointwise to a function discontinuous at the origin.
+1015: 🔗
+1016: 🔗
+1017: Let \(\{ a_n \}_{n=1}^\infty\) be an enumeration of the rational numbers. Define
+1018: \begin{equation}
+1019: g_n(x) \coloneqq \sum_{k=1}^n 2^{-k} f_n(x-a_k) .
+1020: \end{equation}
+1021: Show that \(\{ g_n \}_{n=1}^\infty\) converges uniformly to 0.
+1022: 🔗
+1023: 🔗
+1024: Show that \(\{ g_n' \}_{n=1}^\infty\) converges pointwise to a function \(\psi\) that is discontinuous at every rational number and continuous at every irrational number. In particular, \(\lim\limits_{n\to\infty} g_n'(x) \neq 0\) for every rational number \(x\text{.}\)
+1025: 🔗
+1026: 🔗
+1027: 🔗
+1028: 6.2.22.
+1029: (requires Section 5.5) Show that uniform convergence is not enough to pass the limit through improper integrals over infinite intervals. That is, find a sequence of functions \(f_n \colon \R \to
+1030: \R\) Riemann integrable on every bounded interval, converging uniformly to zero, and such that \(\int_{-\infty}^\infty f_n = 1\) for every \(n\text{.}\)
+1031: 🔗
+1032: 🔗
+1033: 🔗
+1034: 🔗
+1035: PrevTopNext
+1036: PreTeXt logo
+1037: For a higher quality printout use the PDF versions: https://www.jirka.org/ra/realanal.pdf, https://www.jirka.org/ra/realanal2.pdf
+1038: or https://jirilebl.github.io/ra/realanal.pdf, https://jirilebl.github.io/ra/realanal2.pdf

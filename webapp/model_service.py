@@ -20,6 +20,25 @@ import httpx
 
 BASE = Path(__file__).resolve().parent
 MAX_RESPONSE_BYTES = 256 * 1024
+MAX_CAPTURE_CHARACTERS = 50000
+
+
+def capture_text(text, *, kind="model_content", complete=True, secret=""):
+    """Bound actual response text before parsing; never fabricate a JSON draft."""
+    if not isinstance(text, str):
+        return {"kind": "missing", "text": "", "complete": False,
+                "truncated": False, "sha256": None, "limit_characters": MAX_CAPTURE_CHARACTERS}
+    digest = hashlib.sha256(text.encode("utf-8", errors="replace")).hexdigest() if complete else None
+    redacted = bool(secret and secret in text)
+    safe = text.replace(secret, "[REDACTED_CREDENTIAL]") if redacted else text
+    return {"kind": kind, "text": safe[:MAX_CAPTURE_CHARACTERS],
+            "text_representation": "provider_message_string" if kind == "model_content" else "response_body_decoded_utf8_with_replacement",
+            "hash_scope": "UTF-8 encoded text, not HTTP wire bytes",
+            "complete": complete, "truncated": len(safe) > MAX_CAPTURE_CHARACTERS or not complete,
+            "original_characters": len(text) if complete else None,
+            "sha256": digest, "redacted": redacted,
+            "saved_sha256": hashlib.sha256(safe[:MAX_CAPTURE_CHARACTERS].encode("utf-8", errors="replace")).hexdigest(),
+            "limit_characters": MAX_CAPTURE_CHARACTERS}
 PROMPT_VERSION = "direction-v1"
 _REQUEST_GATE = threading.Lock()
 _ALLOWED_KEYS = frozenset({
@@ -229,9 +248,13 @@ class ModelService:
             self._last_call_signature = signature
             self._outcome = record["status"]
 
-    def complete(self, messages):
+    def complete_for_theory(self, messages):
+        return self.complete(messages, capture_response=True)
+
+    def complete(self, messages, *, capture_response=False):
         config = self._configuration()  # Freeze this call's configuration.
         started = time.monotonic()
+        captured = capture_text(None)
         record = {
             "id": uuid.uuid4().hex, "provider": "qwen", "model": config["model"],
             "requested_model": config["model"], "status": "failed",
@@ -245,7 +268,8 @@ class ModelService:
             record.update(error_code=code, summary=message, finished_at=_stamp(),
                           duration_ms=round((time.monotonic() - started) * 1000))
             self._save(record, config["signature"])
-            raise ModelServiceError(message, status, record) from None
+            failure_record = {**record, "_response_capture": captured} if capture_response else record
+            raise ModelServiceError(message, status, failure_record) from None
 
         if not config["configured"]:
             failed("not_configured", config["configuration_error"] or
@@ -282,9 +306,14 @@ class ModelService:
                         for chunk in response.iter_bytes():
                             size += len(chunk)
                             if size > MAX_RESPONSE_BYTES:
+                                prefix = b"".join(chunks) + chunk[:max(0, MAX_RESPONSE_BYTES - sum(map(len, chunks)))]
+                                captured = capture_text(prefix.decode("utf-8", errors="replace"),
+                                    kind="response_body_prefix", complete=False, secret=config["key"])
                                 failed("response_too_large", "模型响应超过安全大小上限，本次结果没有应用。")
                             chunks.append(chunk)
                         body = b"".join(chunks)
+                        captured = capture_text(body.decode("utf-8", errors="replace"),
+                            kind="response_body", secret=config["key"])
                         try:
                             envelope = json.loads(body, parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
                         except (ValueError, UnicodeError, RecursionError):
@@ -296,6 +325,13 @@ class ModelService:
                             if (isinstance(returned_model, str) and _MODEL_RE.fullmatch(returned_model)
                                     and config["key"] not in returned_model):
                                 record["model"] = returned_model
+                            response_choices = envelope.get("choices")
+                            first = response_choices[0] if isinstance(response_choices, list) and response_choices else None
+                            response_message = first.get("message") if isinstance(first, dict) else None
+                            if isinstance(response_message, dict) and isinstance(response_message.get("content"), str):
+                                captured = capture_text(response_message["content"], secret=config["key"])
+                            elif 200 <= response.status_code < 300:
+                                captured = capture_text(None)
                         if response.status_code in (401, 403):
                             failed("authentication", "百炼未接受当前凭据或权限，请核对 Key、工作空间和地域配置。", 502)
                         if response.status_code in (402, 429):
@@ -336,6 +372,9 @@ class ModelService:
                           duration_ms=round((time.monotonic() - started) * 1000),
                           summary="千问已返回 JSON 草案；仍需校验研究字段并由用户选择。")
             self._save(record, config["signature"])
-            return parsed, copy.deepcopy(record)
+            result_record = copy.deepcopy(record)
+            if capture_response:
+                result_record["_response_capture"] = captured
+            return parsed, result_record
         finally:
             _REQUEST_GATE.release()

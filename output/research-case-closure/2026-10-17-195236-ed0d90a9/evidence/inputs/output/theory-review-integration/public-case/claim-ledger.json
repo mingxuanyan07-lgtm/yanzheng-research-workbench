@@ -1,0 +1,64 @@
+{
+  "source": "curated_example",
+  "independent_mathematician_review": "pending",
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "原点态收敛命题被 x^n 在[0,1]的反例否定",
+      "note_id": "quality-pointwise-note",
+      "locator": "The problems with pointwise convergence — x^n example",
+      "support": "原笔记明确记载 x<1 极限0、x=1 极限1；限制原普遍断言。",
+      "not_supported": "不能由这条反例笔记推出一致收敛修补定理的来源或必要性。",
+      "open_obligations": [
+        "pointwise_limit",
+        "witness_domain"
+      ]
+    },
+    {
+      "id": "C2",
+      "claim": "一致收敛是连续极限的充分修订",
+      "note_id": "demo-next-uniform-continuity-note",
+      "locator": "Uniform convergence — definition; Three consequences of uniform convergence — first theorem ONLY",
+      "support": "后来人工补充笔记明确记载一致收敛定义和连续性定理陈述；不要求紧致定义域。",
+      "not_supported": "不是冻结输入已有的资料，不是模型检索；笔记没有宣称读完整节证明，不支持一致收敛必要性。",
+      "open_obligations": [
+        "uniform_quantifiers",
+        "relative_continuity"
+      ]
+    },
+    {
+      "id": "C3",
+      "claim": "ε/3提纲中同一个N同时控制两个近似误差，再由固定f_N选δ",
+      "note_id": "demo-next-uniform-continuity-note",
+      "locator": "curated-proposal.json proof_routes[0].steps[0:3]",
+      "support": "定义和定理陈述有笔记；具体三角不等式推导为助手人工整理。",
+      "not_supported": "不能声称程序已核验量词、原文逐行证明或Lean核验完成。",
+      "open_obligations": [
+        "uniform_quantifiers",
+        "relative_continuity"
+      ]
+    },
+    {
+      "id": "C4",
+      "claim": "不连续见证 x=1-min(δ/2,1/2) 对每个δ>0都合法",
+      "note_id": "quality-pointwise-note",
+      "locator": "curated-proposal.json proof_routes[1].steps[1]",
+      "support": "反例来自笔记；全δ合法见证及严格界是人工补充推导。",
+      "not_supported": "该精确取点式不是原笔记逐字摘录；仍需独立检查端点和量词。",
+      "open_obligations": [
+        "witness_domain"
+      ]
+    },
+    {
+      "id": "C5",
+      "claim": "真实历史输出未整体通过",
+      "note_id": null,
+      "locator": "historical-output.txt proof_routes[2].obligations[0].id; proof_routes[0].evidence[0].claim",
+      "support": "原ID equicontinuous_pointwise_implies_continuous_limit 为49字符，原始结构拒绝；claim把反例笔记越界归因。",
+      "not_supported": "结构失败不推出命题为假；不把已修整示例算作真实模型成功。",
+      "open_obligations": [
+        "独立数学工作者审阅全部归因与主干推导"
+      ]
+    }
+  ]
+}

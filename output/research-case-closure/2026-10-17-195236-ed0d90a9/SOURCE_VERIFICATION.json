@@ -1,0 +1,261 @@
+{
+  "schema_version": "1.0",
+  "record_type": "research_literature_search",
+  "created_at": "2026-10-17T20:02:04.781349+08:00",
+  "request": {
+    "idea": "复核既有[0,1]点态反例、一致收敛充分修订及条件边界；直接核对种子正文。",
+    "queries": [
+      "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+      "https://www.jirka.org/ra/html/sec_liminter.html"
+    ],
+    "providers": [
+      "public_html_direct_lookup"
+    ],
+    "year_from": null,
+    "year_to": null,
+    "max_results_per_query": 1
+  },
+  "provenance": {
+    "generator": "assistant_source_review_with_saved_public_html",
+    "live_search_performed": true,
+    "external_model_api_called": false,
+    "new_experiments_executed": false,
+    "search_kind": "direct_seed_lookup_not_keyword_search",
+    "reader": "assistant"
+  },
+  "search_log": [
+    {
+      "id": "direct_UW521",
+      "provider": "public_html_direct_lookup",
+      "query": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+      "status": "success",
+      "searched_at": "2026-10-17T19:54:43.396254+08:00",
+      "attempts": 1,
+      "result_count": 1,
+      "error": null,
+      "scope": "One direct urllib public HTML request; web-tool open/find used separately for navigation, not keyword search."
+    },
+    {
+      "id": "direct_LEBL62",
+      "provider": "public_html_direct_lookup",
+      "query": "https://www.jirka.org/ra/html/sec_liminter.html",
+      "status": "success",
+      "searched_at": "2026-10-17T19:54:45.913604+08:00",
+      "attempts": 1,
+      "result_count": 1,
+      "error": null,
+      "scope": "One direct urllib public HTML request; web-tool open/find used separately for navigation, not keyword search."
+    }
+  ],
+  "sources": [
+    {
+      "id": "UW521",
+      "title": "Math 521 — Uniform Convergence",
+      "authors": [
+        "UW–Madison Math 521 course notes"
+      ],
+      "year_or_version": "2017 spring course URL; no confirmed scholarly revision; HTTP Last-Modified 2019-10-21; under construction",
+      "url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+      "origin": "prior_project",
+      "verification": "fulltext_checked",
+      "locator": "Pointwise definition; x^n example; Uniform convergence definition and nonuniformity argument; Three consequences first theorem",
+      "checked_at": "2026-10-17T20:02:04.781349+08:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": null,
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+        "pdf_url": null,
+        "license": null
+      },
+      "retrievals": [
+        {
+          "search_id": "direct_UW521",
+          "provider": "public_html_direct_lookup",
+          "url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+          "retrieved_at": "2026-10-17T19:54:45.913604+08:00"
+        }
+      ],
+      "snapshot": {
+        "source_id": "UW521",
+        "requested_url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+        "requested_at": "2026-10-17T19:54:43.396254+08:00",
+        "method": "public HTTPS GET via urllib; no credentials",
+        "reading_status": "downloaded_not_automatically_read",
+        "http_status": 200,
+        "final_url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+        "headers": {
+          "Content-Type": "text/html",
+          "Last-Modified": "Mon, 21 Oct 2019 15:54:54 GMT",
+          "ETag": "\"37be-5956db467336a\"",
+          "Date": "Sat, 17 Oct 2026 11:54:46 GMT"
+        },
+        "encoding": "utf-8",
+        "body_path": "sources/UW521.html",
+        "body_sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+        "bytes": 14270,
+        "hash_scope": "HTTP entity bytes returned by urllib, not TLS wire bytes",
+        "text_path": "sources/UW521.text.txt",
+        "text_sha256": "9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554",
+        "status": "retrieved",
+        "completed_at": "2026-10-17T19:54:45.913604+08:00",
+        "text_hash_scope": "actual saved extraction file bytes (platform newlines included)"
+      },
+      "actual_read_ranges": {
+        "file": "sources/UW521.text.txt",
+        "numbered_lines_inclusive": [
+          [
+            5,
+            8
+          ],
+          [
+            15,
+            20
+          ],
+          [
+            54,
+            80
+          ],
+          [
+            150,
+            154
+          ]
+        ],
+        "printed_pages": null
+      },
+      "support_boundary": "反例限制P0；定义与定理陈述核对P1。精确端点见证和ε–δ细节不是该处原文证明。",
+      "not_read": "Other sections not listed; no book-wide reading claim",
+      "reader_type": "assistant",
+      "independent_mathematician_review": "pending",
+      "historical_model_input_changed": false
+    },
+    {
+      "id": "LEBL62",
+      "title": "Basic Analysis — §6.2 Interchange of limits",
+      "authors": [
+        "Jiří Lebl"
+      ],
+      "year_or_version": "Current HTML snapshot; print edition/revision unconfirmed; HTTP Last-Modified 2026-05-23",
+      "url": "https://www.jirka.org/ra/html/sec_liminter.html",
+      "origin": "prior_project",
+      "verification": "fulltext_checked",
+      "locator": "§6.2.1; Example 6.2.1; Theorem 6.2.2 and proof; Exercises 6.2.5, 6.2.10, 6.2.11 statements only",
+      "checked_at": "2026-10-17T20:02:04.781349+08:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": null,
+        "openalex_id": null
+      },
+      "abstract": null,
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://www.jirka.org/ra/html/sec_liminter.html",
+        "pdf_url": null,
+        "license": null
+      },
+      "retrievals": [
+        {
+          "search_id": "direct_LEBL62",
+          "provider": "public_html_direct_lookup",
+          "url": "https://www.jirka.org/ra/html/sec_liminter.html",
+          "retrieved_at": "2026-10-17T19:54:49.453818+08:00"
+        }
+      ],
+      "snapshot": {
+        "source_id": "LEBL62",
+        "requested_url": "https://www.jirka.org/ra/html/sec_liminter.html",
+        "requested_at": "2026-10-17T19:54:45.913604+08:00",
+        "method": "public HTTPS GET via urllib; no credentials",
+        "reading_status": "downloaded_not_automatically_read",
+        "http_status": 200,
+        "final_url": "https://www.jirka.org/ra/html/sec_liminter.html",
+        "headers": {
+          "Content-Type": "text/html; charset=UTF-8",
+          "Last-Modified": "Sat, 23 May 2026 04:21:12 GMT",
+          "ETag": "\"2e0e8-6527479b79426\"",
+          "Date": "Sat, 17 Oct 2026 11:54:48 GMT"
+        },
+        "encoding": "utf-8",
+        "body_path": "sources/LEBL62.html",
+        "body_sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+        "bytes": 188648,
+        "hash_scope": "HTTP entity bytes returned by urllib, not TLS wire bytes",
+        "text_path": "sources/LEBL62.text.txt",
+        "text_sha256": "ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b",
+        "status": "retrieved",
+        "completed_at": "2026-10-17T19:54:49.453818+08:00",
+        "text_hash_scope": "actual saved extraction file bytes (platform newlines included)"
+      },
+      "actual_read_ranges": {
+        "file": "sources/LEBL62.text.txt",
+        "numbered_lines_inclusive": [
+          [
+            424,
+            519
+          ],
+          [
+            870,
+            874
+          ],
+          [
+            913,
+            923
+          ]
+        ],
+        "printed_pages": null
+      },
+      "support_boundary": "定理与序列式证明核对P1；习题题面不认证本稿峰列公式或Dini完整证明。",
+      "not_read": "Other sections not listed; no book-wide reading claim",
+      "reader_type": "assistant",
+      "independent_mathematician_review": "pending",
+      "historical_model_input_changed": false
+    }
+  ],
+  "evidence": [
+    {
+      "source_id": "UW521",
+      "relation": "limits",
+      "claim": "[0,1]上x^n的点态极限反驳P0。",
+      "locator": "The problems with pointwise convergence, x^n; saved text 15–20"
+    },
+    {
+      "source_id": "UW521",
+      "relation": "supports",
+      "claim": "一致收敛定义与连续极限充分定理陈述。",
+      "locator": "saved text 54–58,150–154"
+    },
+    {
+      "source_id": "LEBL62",
+      "relation": "supports",
+      "claim": "一致极限定理及以固定函数指标控制两个误差项的序列式证明。",
+      "locator": "Theorem 6.2.2 and proof; saved text 483–516"
+    },
+    {
+      "source_id": "LEBL62",
+      "relation": "background",
+      "claim": "习题6.2.5提示闭区间非一致且连续极限的问题；6.2.10–11只读题面。",
+      "locator": "Exercises 6.2.5,6.2.10,6.2.11"
+    }
+  ],
+  "limitations": [
+    "仅相关正文，未通读教材；网页无确认印刷版次；Last-Modified不是出版日期。",
+    "两条种子直接核对，不是广泛查新；新来源不回填原模型输入。",
+    "历史Lebl §11.6/§11.7本轮未重新核对；不承担主证明。",
+    "有限离线计算另记calculations/results.json，不计入文献检索实验事实。"
+  ],
+  "unverified_historical_references": [
+    {
+      "url": "https://www.jirka.org/ra/html/sec_arzelaascoli.html",
+      "status": "not_rechecked_this_round"
+    },
+    {
+      "url": "https://www.jirka.org/ra/html/sec_stoneweier.html",
+      "status": "not_rechecked_this_round"
+    }
+  ],
+  "next_action": "独立数学工作者按review-package问题清单核对来源范围及主稿。"
+}

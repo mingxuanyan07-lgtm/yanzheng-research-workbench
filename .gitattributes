@@ -11,3 +11,9 @@
 *.cmd text eol=crlf
 *.png binary
 *.jpg binary
+# Byte-exact runtime archives and accepted evidence originals must not be re-encoded.
+# These files are addressed by SHA256 (evidence registry manifest / frozen source locks).
+output/** -text
+lean/** -text
+webapp/evidence_registry.py -text
+webapp/evidence_registry_manifest.json -text

@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {"case_id":"nat_add_zero","file":"cases/NatAddZero.lean","target":"YanzhengCases.nat_add_zero","statement":"∀ (n : Nat), n + 0 = n","label":"自然数加零","fixture_kind":"valid_proof","expected_status":"passed"},
+    {"case_id":"implication_identity","file":"cases/ImplicationIdentity.lean","target":"YanzhengCases.implication_identity","statement":"∀ (P : Prop), P → P","label":"蕴含恒等","fixture_kind":"valid_proof","expected_status":"passed"},
+    {"case_id":"invalid_equality","file":"cases/InvalidEquality.lean","target":"YanzhengCases.invalid_equality","statement":"(0 : Nat) = 1","label":"错误证明夹具","fixture_kind":"invalid_proof","expected_status":"error"},
+    {"case_id":"direct_sorry","file":"cases/DirectSorry.lean","target":"YanzhengCases.direct_sorry","statement":"(0 : Nat) = 1","label":"直接 sorry 夹具","fixture_kind":"unfinished_proof","expected_status":"incomplete"},
+    {"case_id":"indirect_sorry","file":"cases/IndirectSorry.lean","target":"YanzhengCases.indirect_sorry","statement":"(0 : Nat) = 1","label":"间接 sorry 夹具","fixture_kind":"unfinished_proof","expected_status":"incomplete"},
+    {"case_id":"direct_axiom","file":"cases/DirectAxiom.lean","target":"YanzhengCases.direct_axiom","statement":"(0 : Nat) = 1","label":"未认可公理夹具","fixture_kind":"unapproved_axiom","expected_status":"error"},
+    {"case_id":"indirect_axiom","file":"cases/IndirectAxiom.lean","target":"YanzhengCases.indirect_axiom","statement":"(0 : Nat) = 1","label":"间接公理夹具","fixture_kind":"unapproved_axiom","expected_status":"error"},
+    {"case_id":"native_decide_trust","file":"cases/NativeTrust.lean","target":"YanzhengCases.native_decide_trust","statement":"True","label":"编译器额外信任夹具","fixture_kind":"extra_trust","expected_status":"error"},
+    {"case_id":"timeout_fixture","file":"cases/TimeoutFixture.lean","target":"YanzhengCases.timeout_fixture","statement":"True","label":"固定有限超时夹具","fixture_kind":"timeout","expected_status":"timeout"}
+  ]
+}

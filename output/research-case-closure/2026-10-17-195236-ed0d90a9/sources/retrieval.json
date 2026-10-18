@@ -1,0 +1,55 @@
+{
+  "sources": [
+    {
+      "source_id": "UW521",
+      "requested_url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+      "requested_at": "2026-10-17T19:54:43.396254+08:00",
+      "method": "public HTTPS GET via urllib; no credentials",
+      "reading_status": "downloaded_not_automatically_read",
+      "http_status": 200,
+      "final_url": "https://people.math.wisc.edu/~angenent/521.2017s/UniformConvergence.html",
+      "headers": {
+        "Content-Type": "text/html",
+        "Last-Modified": "Mon, 21 Oct 2019 15:54:54 GMT",
+        "ETag": "\"37be-5956db467336a\"",
+        "Date": "Sat, 17 Oct 2026 11:54:46 GMT"
+      },
+      "encoding": "utf-8",
+      "body_path": "sources/UW521.html",
+      "body_sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+      "bytes": 14270,
+      "hash_scope": "HTTP entity bytes returned by urllib, not TLS wire bytes",
+      "text_path": "sources/UW521.text.txt",
+      "text_sha256": "9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554",
+      "status": "retrieved",
+      "completed_at": "2026-10-17T19:54:45.913604+08:00",
+      "text_hash_scope": "actual saved extraction file bytes (platform newlines included)"
+    },
+    {
+      "source_id": "LEBL62",
+      "requested_url": "https://www.jirka.org/ra/html/sec_liminter.html",
+      "requested_at": "2026-10-17T19:54:45.913604+08:00",
+      "method": "public HTTPS GET via urllib; no credentials",
+      "reading_status": "downloaded_not_automatically_read",
+      "http_status": 200,
+      "final_url": "https://www.jirka.org/ra/html/sec_liminter.html",
+      "headers": {
+        "Content-Type": "text/html; charset=UTF-8",
+        "Last-Modified": "Sat, 23 May 2026 04:21:12 GMT",
+        "ETag": "\"2e0e8-6527479b79426\"",
+        "Date": "Sat, 17 Oct 2026 11:54:48 GMT"
+      },
+      "encoding": "utf-8",
+      "body_path": "sources/LEBL62.html",
+      "body_sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+      "bytes": 188648,
+      "hash_scope": "HTTP entity bytes returned by urllib, not TLS wire bytes",
+      "text_path": "sources/LEBL62.text.txt",
+      "text_sha256": "ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b",
+      "status": "retrieved",
+      "completed_at": "2026-10-17T19:54:49.453818+08:00",
+      "text_hash_scope": "actual saved extraction file bytes (platform newlines included)"
+    }
+  ],
+  "scope": "Fetch facts only; actual inspected ranges recorded separately."
+}

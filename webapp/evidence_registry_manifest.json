@@ -1,0 +1,1297 @@
+{
+  "schema_version": "evidence-registry-manifest-v1",
+  "created_at": "2026-10-18T08:19:03+00:00",
+  "read_limit_bytes": 1048576,
+  "allowed_root": "D:\\天猫AI",
+  "source": {
+    "description": "Fixed allowlist adapted from window C's frozen artifact index; no directory-wide grant.",
+    "index_relative_path": "output/research-case-closure/2026-10-18-005425-data-handoff-70cf9bcc/artifact-index.json",
+    "index_byte_sha256": "022b0c0c5e7a000a55ff828542105a2d93fff1ff43bc1560d4473a450fbc02fe",
+    "index_created_at": "2026-10-18T00:57:38.553460+08:00",
+    "case_id": "pointwise-limit-continuity-known-result",
+    "artifact_identity_count": 35,
+    "selection": "all artifacts explicitly listed in C's frozen index; unregistered ids are refused",
+    "adaptation_script": "scripts/build_registry_from_c_index.py"
+  },
+  "metadata": {
+    "hash_scope": "exact_saved_file_bytes",
+    "acquired_at_rule": "only from historical acquisition metadata; unknown remains null",
+    "not_claimed": "byte match does not prove source authenticity, content correctness, model reading or math truth"
+  },
+  "artifacts": [
+    {
+      "artifact_id": "sha256:1d4b95a0aa923209d1dbf4aa4a476d3977b8a4e1e26235343a5b4a22e1a5eb52",
+      "expected_byte_sha256": "1d4b95a0aa923209d1dbf4aa4a476d3977b8a4e1e26235343a5b4a22e1a5eb52",
+      "expected_bytes": 3935,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "archived_control_file_or_current_contract",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:1d4b95a0aa923209d1dbf4aa4a476d3977b8a4e1e26235343a5b4a22e1a5eb52"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/READY.json",
+          "expected_byte_sha256": "1d4b95a0aa923209d1dbf4aa4a476d3977b8a4e1e26235343a5b4a22e1a5eb52",
+          "expected_bytes": 3935,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\READY.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "archived_control_file_or_current_contract"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:d998ba356038c8240923b3d6125c888d91d5d1941897786486e86885836dbd47",
+      "expected_byte_sha256": "d998ba356038c8240923b3d6125c888d91d5d1941897786486e86885836dbd47",
+      "expected_bytes": 4257,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:d998ba356038c8240923b3d6125c888d91d5d1941897786486e86885836dbd47"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/CASE_SPEC.md",
+          "expected_byte_sha256": "d998ba356038c8240923b3d6125c888d91d5d1941897786486e86885836dbd47",
+          "expected_bytes": 4257,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\CASE_SPEC.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:4be1189bcd8eecda7f7ca03abdfac07efcc58792ec6ce2b9bde5695097f07561",
+      "expected_byte_sha256": "4be1189bcd8eecda7f7ca03abdfac07efcc58792ec6ce2b9bde5695097f07561",
+      "expected_bytes": 25165,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:4be1189bcd8eecda7f7ca03abdfac07efcc58792ec6ce2b9bde5695097f07561"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/claim-ledger.json",
+          "expected_byte_sha256": "4be1189bcd8eecda7f7ca03abdfac07efcc58792ec6ce2b9bde5695097f07561",
+          "expected_bytes": 25165,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\claim-ledger.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:9717992e515de0f076fc2a55f58688cbb7d2fc6ef0474f6805f69cf4815400eb",
+      "expected_byte_sha256": "9717992e515de0f076fc2a55f58688cbb7d2fc6ef0474f6805f69cf4815400eb",
+      "expected_bytes": 3147,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:9717992e515de0f076fc2a55f58688cbb7d2fc6ef0474f6805f69cf4815400eb"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/OBLIGATIONS.json",
+          "expected_byte_sha256": "9717992e515de0f076fc2a55f58688cbb7d2fc6ef0474f6805f69cf4815400eb",
+          "expected_bytes": 3147,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\OBLIGATIONS.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+      "expected_byte_sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+      "expected_bytes": 7625,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/DERIVATION.md",
+          "expected_byte_sha256": "0601350ffb7e37b0363ba63767c37bea4830ed283cf5ff6fe50d6ed2f397ade8",
+          "expected_bytes": 7625,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\DERIVATION.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:9943ea71e06017dd209dba9e548a2dc6cf1e036d6f12cab073c69c2ac86d7ccf",
+      "expected_byte_sha256": "9943ea71e06017dd209dba9e548a2dc6cf1e036d6f12cab073c69c2ac86d7ccf",
+      "expected_bytes": 6438,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:9943ea71e06017dd209dba9e548a2dc6cf1e036d6f12cab073c69c2ac86d7ccf"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/ISSUES.md",
+          "expected_byte_sha256": "9943ea71e06017dd209dba9e548a2dc6cf1e036d6f12cab073c69c2ac86d7ccf",
+          "expected_bytes": 6438,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\ISSUES.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:a618f9a5fefd28135d7233d461f20db0ab55a1aef5c838189b29837f5415ba3c",
+      "expected_byte_sha256": "a618f9a5fefd28135d7233d461f20db0ab55a1aef5c838189b29837f5415ba3c",
+      "expected_bytes": 7420,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:a618f9a5fefd28135d7233d461f20db0ab55a1aef5c838189b29837f5415ba3c"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/MODEL_COMPARISON.md",
+          "expected_byte_sha256": "a618f9a5fefd28135d7233d461f20db0ab55a1aef5c838189b29837f5415ba3c",
+          "expected_bytes": 7420,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\MODEL_COMPARISON.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:e963dc684bd13a20c377a8b0085e595feab3a9075c537c6a1ef5ab4d6e0cb707",
+      "expected_byte_sha256": "e963dc684bd13a20c377a8b0085e595feab3a9075c537c6a1ef5ab4d6e0cb707",
+      "expected_bytes": 10136,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:e963dc684bd13a20c377a8b0085e595feab3a9075c537c6a1ef5ab4d6e0cb707"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/SOURCE_VERIFICATION.json",
+          "expected_byte_sha256": "e963dc684bd13a20c377a8b0085e595feab3a9075c537c6a1ef5ab4d6e0cb707",
+          "expected_bytes": 10136,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\SOURCE_VERIFICATION.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:8c8698802b5d03afa5d77a579a1b722271a849fd5e591a6dd98c89ffbe463797",
+      "expected_byte_sha256": "8c8698802b5d03afa5d77a579a1b722271a849fd5e591a6dd98c89ffbe463797",
+      "expected_bytes": 3709,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:8c8698802b5d03afa5d77a579a1b722271a849fd5e591a6dd98c89ffbe463797"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/SOURCE_VERIFICATION.md",
+          "expected_byte_sha256": "8c8698802b5d03afa5d77a579a1b722271a849fd5e591a6dd98c89ffbe463797",
+          "expected_bytes": 3709,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\SOURCE_VERIFICATION.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:1280f9a1a0a48467a479ef21c131941406e6ff5ef25d22fd81e47194d73c2227",
+      "expected_byte_sha256": "1280f9a1a0a48467a479ef21c131941406e6ff5ef25d22fd81e47194d73c2227",
+      "expected_bytes": 2578,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "public_source_snapshot_or_extraction_or_http_facts",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:1280f9a1a0a48467a479ef21c131941406e6ff5ef25d22fd81e47194d73c2227"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/sources/retrieval.json",
+          "expected_byte_sha256": "1280f9a1a0a48467a479ef21c131941406e6ff5ef25d22fd81e47194d73c2227",
+          "expected_bytes": 2578,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\sources\\retrieval.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "public_source_snapshot_or_extraction_or_http_facts",
+              "source_register": "sources/retrieval.json",
+              "reading_register": "SOURCE_VERIFICATION.json"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554",
+      "expected_byte_sha256": "9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554",
+      "expected_bytes": 10876,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": "2026-10-17T19:54:45.913604+08:00",
+      "acquired_at_status": "recorded_historical_retrieval",
+      "identity_kind": "public_source_snapshot_or_extraction_or_http_facts",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/sources/UW521.text.txt",
+          "expected_byte_sha256": "9502c6fa27297081e28514a72f9138b19edf1eea04e8649d3107ca78eae53554",
+          "expected_bytes": 10876,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\sources\\UW521.text.txt",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "public_source_snapshot_or_extraction_or_http_facts",
+              "source_register": "sources/retrieval.json",
+              "reading_register": "SOURCE_VERIFICATION.json"
+            },
+            "c_source_acquired_at": "2026-10-17T19:54:45.913604+08:00",
+            "c_acquired_at_status": "recorded_historical_retrieval",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b",
+      "expected_byte_sha256": "ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b",
+      "expected_bytes": 50527,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": "2026-10-17T19:54:49.453818+08:00",
+      "acquired_at_status": "recorded_historical_retrieval",
+      "identity_kind": "public_source_snapshot_or_extraction_or_http_facts",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/sources/LEBL62.text.txt",
+          "expected_byte_sha256": "ac520a9271fc56364194fde6a9255cddbb1f87da32e177d9fdfdd14c0d17dd1b",
+          "expected_bytes": 50527,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\sources\\LEBL62.text.txt",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "public_source_snapshot_or_extraction_or_http_facts",
+              "source_register": "sources/retrieval.json",
+              "reading_register": "SOURCE_VERIFICATION.json"
+            },
+            "c_source_acquired_at": "2026-10-17T19:54:49.453818+08:00",
+            "c_acquired_at_status": "recorded_historical_retrieval",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:41701737446c919efb6ee30a108dc0c66a3fa74ad11ab92f14438aa0e5a9912d",
+      "expected_byte_sha256": "41701737446c919efb6ee30a108dc0c66a3fa74ad11ab92f14438aa0e5a9912d",
+      "expected_bytes": 9913,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "actual_finite_calculation_and_archival_checks",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:41701737446c919efb6ee30a108dc0c66a3fa74ad11ab92f14438aa0e5a9912d"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/calculations/results.json",
+          "expected_byte_sha256": "41701737446c919efb6ee30a108dc0c66a3fa74ad11ab92f14438aa0e5a9912d",
+          "expected_bytes": 9913,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\calculations\\results.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "actual_finite_calculation_and_archival_checks",
+              "script": "offline_checks.py",
+              "scope": "Not universal proof certification"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:8b101240dfe8e90e4ea417a3182c983e4cc1f2b640d05e1c5586f10ed371453b",
+      "expected_byte_sha256": "8b101240dfe8e90e4ea417a3182c983e4cc1f2b640d05e1c5586f10ed371453b",
+      "expected_bytes": 240412,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "archived_control_file_or_current_contract",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:8b101240dfe8e90e4ea417a3182c983e4cc1f2b640d05e1c5586f10ed371453b"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/review-package.zip",
+          "expected_byte_sha256": "8b101240dfe8e90e4ea417a3182c983e4cc1f2b640d05e1c5586f10ed371453b",
+          "expected_bytes": 240412,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\review-package.zip",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "archived_control_file_or_current_contract"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:fd27c846014f7855146fb931e6ebf22f93f04233fe4fb4a9d0e4738f1a66ed9f",
+      "expected_byte_sha256": "fd27c846014f7855146fb931e6ebf22f93f04233fe4fb4a9d0e4738f1a66ed9f",
+      "expected_bytes": 1814,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_prepared_independent_review_material_or_blank_form",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:fd27c846014f7855146fb931e6ebf22f93f04233fe4fb4a9d0e4738f1a66ed9f"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/review-package/README.md",
+          "expected_byte_sha256": "fd27c846014f7855146fb931e6ebf22f93f04233fe4fb4a9d0e4738f1a66ed9f",
+          "expected_bytes": 1814,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\review-package\\README.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_prepared_independent_review_material_or_blank_form",
+              "sources": [
+                "CASE_SPEC.md",
+                "DERIVATION.md",
+                "claim-ledger.json"
+              ],
+              "independent_human_review": "pending"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:a58965399d445049805ee35e535bb94ccac50ea16ebbc67274785bcc2c8dd3b4",
+      "expected_byte_sha256": "a58965399d445049805ee35e535bb94ccac50ea16ebbc67274785bcc2c8dd3b4",
+      "expected_bytes": 2148,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_prepared_independent_review_material_or_blank_form",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:a58965399d445049805ee35e535bb94ccac50ea16ebbc67274785bcc2c8dd3b4"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/review-package/QUESTIONS.md",
+          "expected_byte_sha256": "a58965399d445049805ee35e535bb94ccac50ea16ebbc67274785bcc2c8dd3b4",
+          "expected_bytes": 2148,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\review-package\\QUESTIONS.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_prepared_independent_review_material_or_blank_form",
+              "sources": [
+                "CASE_SPEC.md",
+                "DERIVATION.md",
+                "claim-ledger.json"
+              ],
+              "independent_human_review": "pending"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:0bddf15eb59b0312b71903cfee43998ee2f627cc51e579f83c1d84183788ed2c",
+      "expected_byte_sha256": "0bddf15eb59b0312b71903cfee43998ee2f627cc51e579f83c1d84183788ed2c",
+      "expected_bytes": 1160,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_prepared_independent_review_material_or_blank_form",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:0bddf15eb59b0312b71903cfee43998ee2f627cc51e579f83c1d84183788ed2c"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/review-package/REVIEW_FORM.json",
+          "expected_byte_sha256": "0bddf15eb59b0312b71903cfee43998ee2f627cc51e579f83c1d84183788ed2c",
+          "expected_bytes": 1160,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\review-package\\REVIEW_FORM.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_prepared_independent_review_material_or_blank_form",
+              "sources": [
+                "CASE_SPEC.md",
+                "DERIVATION.md",
+                "claim-ledger.json"
+              ],
+              "independent_human_review": "pending"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:a7993e8329daf360e93fa2fcc185df0ac6d488ed8e044049053c43e0762ac01f",
+      "expected_byte_sha256": "a7993e8329daf360e93fa2fcc185df0ac6d488ed8e044049053c43e0762ac01f",
+      "expected_bytes": 29312,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "archived_control_file_or_current_contract",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:a7993e8329daf360e93fa2fcc185df0ac6d488ed8e044049053c43e0762ac01f"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/ARTIFACT_MANIFEST.json",
+          "expected_byte_sha256": "a7993e8329daf360e93fa2fcc185df0ac6d488ed8e044049053c43e0762ac01f",
+          "expected_bytes": 29312,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\ARTIFACT_MANIFEST.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "archived_control_file_or_current_contract"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:c0ba63d33eea834f2ab8437df352e0b1cd8f9a985279ed195e4de6bec3a24a1b",
+      "expected_byte_sha256": "c0ba63d33eea834f2ab8437df352e0b1cd8f9a985279ed195e4de6bec3a24a1b",
+      "expected_bytes": 10844,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "assistant_authored_material_or_record",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:c0ba63d33eea834f2ab8437df352e0b1cd8f9a985279ed195e4de6bec3a24a1b"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/INPUT_MANIFEST.json",
+          "expected_byte_sha256": "c0ba63d33eea834f2ab8437df352e0b1cd8f9a985279ed195e4de6bec3a24a1b",
+          "expected_bytes": 10844,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\INPUT_MANIFEST.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "assistant_authored_material_or_record",
+              "sources": [
+                "INPUT_MANIFEST.json",
+                "SOURCE_VERIFICATION.json",
+                "DERIVATION.md"
+              ],
+              "detail": "Specific attribution and boundaries inside file; no independent human sign-off"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:daa3df102ba10e41c1531217346d5c24e2f534a961a4544e2eb9c8dfff512510",
+      "expected_byte_sha256": "daa3df102ba10e41c1531217346d5c24e2f534a961a4544e2eb9c8dfff512510",
+      "expected_bytes": 6788,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "archived_control_file_or_current_contract",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:daa3df102ba10e41c1531217346d5c24e2f534a961a4544e2eb9c8dfff512510"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/SHA256SUMS.txt",
+          "expected_byte_sha256": "daa3df102ba10e41c1531217346d5c24e2f534a961a4544e2eb9c8dfff512510",
+          "expected_bytes": 6788,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\SHA256SUMS.txt",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "archived_control_file_or_current_contract"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+      "expected_byte_sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+      "expected_bytes": 4130,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_curated_example_not_model_success",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/curated-proposal.json",
+          "expected_byte_sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+          "expected_bytes": 4130,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\curated-proposal.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_curated_example_not_model_success",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\curated-proposal.json",
+              "source_sha256": "a8168b83cdb55327ba7dde679132873c632f84c8cafbe10195b052e7ac08b218",
+              "captured_at": "2026-10-17T19:54:43.391901+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+      "expected_byte_sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+      "expected_bytes": 20970,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_artifact_verbatim_copy",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/original-context.json",
+          "expected_byte_sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+          "expected_bytes": 20970,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\original-context.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_artifact_verbatim_copy",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\original-context.json",
+              "source_sha256": "b9fef8c1a7814fe58deb87a0eafa79583a202aa913d20500325269f2e04753fb",
+              "captured_at": "2026-10-17T19:54:43.393904+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+      "expected_byte_sha256": "733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+      "expected_bytes": 3763,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_curated_example_not_model_success",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/notes-and-sources.json",
+          "expected_byte_sha256": "733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+          "expected_bytes": 3763,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\notes-and-sources.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_curated_example_not_model_success",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\notes-and-sources.json",
+              "source_sha256": "733f4cd646dfb4925055fccb67b5f755b6da1078abc3d40a4b1d061a43d2ecad",
+              "captured_at": "2026-10-17T19:54:43.393904+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+      "expected_byte_sha256": "f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+      "expected_bytes": 4737,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_assistant_review_not_independent_human",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/historical-independent-review.json",
+          "expected_byte_sha256": "f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+          "expected_bytes": 4737,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\historical-independent-review.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_assistant_review_not_independent_human",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-independent-review.json",
+              "source_sha256": "f15410a0ba5498971406bf19686c5e8d9ffeba538e2d442958c6935a6d78b7f5",
+              "captured_at": "2026-10-17T19:54:43.392904+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+      "expected_byte_sha256": "51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+      "expected_bytes": 606,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_artifact_verbatim_copy",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/historical-service-call.json",
+          "expected_byte_sha256": "51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+          "expected_bytes": 606,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\historical-service-call.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_artifact_verbatim_copy",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-service-call.json",
+              "source_sha256": "51eb63233102c925e2484d6dd9fb08ab47acb6844973ad0ac3ff242ddf975e30",
+              "captured_at": "2026-10-17T19:54:43.392904+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:9dfbdc1bc0d9f2da64fb62e453dbaed8bd84cd29a525eee0ea3b6a9e3dbe1ed0",
+      "expected_byte_sha256": "9dfbdc1bc0d9f2da64fb62e453dbaed8bd84cd29a525eee0ea3b6a9e3dbe1ed0",
+      "expected_bytes": 14678,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "current_read_only_context",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:9dfbdc1bc0d9f2da64fb62e453dbaed8bd84cd29a525eee0ea3b6a9e3dbe1ed0"
+      },
+      "locations": [
+        {
+          "path": "output/acceptance-supervisor-2026-10-17-round2/validation.json",
+          "expected_byte_sha256": "9dfbdc1bc0d9f2da64fb62e453dbaed8bd84cd29a525eee0ea3b6a9e3dbe1ed0",
+          "expected_bytes": 14678,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\acceptance-supervisor-2026-10-17-round2\\validation.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "current_read_only_context",
+              "current_reference_role": "current_read_only_context"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:3b787849d365282eeb378d550bf1ac1abc6ff789588179d6a9b293265b6c1c72",
+      "expected_byte_sha256": "3b787849d365282eeb378d550bf1ac1abc6ff789588179d6a9b293265b6c1c72",
+      "expected_bytes": 4378,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "current_read_only_context",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:3b787849d365282eeb378d550bf1ac1abc6ff789588179d6a9b293265b6c1c72"
+      },
+      "locations": [
+        {
+          "path": "output/acceptance-supervisor-2026-10-17-round2/NEXT-B.txt",
+          "expected_byte_sha256": "3b787849d365282eeb378d550bf1ac1abc6ff789588179d6a9b293265b6c1c72",
+          "expected_bytes": 4378,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\acceptance-supervisor-2026-10-17-round2\\NEXT-B.txt",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "current_read_only_context",
+              "current_reference_role": "current_read_only_context"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+      "expected_byte_sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+      "expected_bytes": 3825,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_artifact_verbatim_copy",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/README.md",
+          "expected_byte_sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+          "expected_bytes": 3825,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\README.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_artifact_verbatim_copy",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\README.md",
+              "source_sha256": "bb3d1ffb1e2beca3726014582e7d3c40fa9cff4583fd392b8d6785a2349d1e0b",
+              "captured_at": "2026-10-17T19:54:43.393904+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+      "expected_byte_sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+      "expected_bytes": 14270,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": "2026-10-17T19:54:45.913604+08:00",
+      "acquired_at_status": "recorded_historical_retrieval",
+      "identity_kind": "public_source_snapshot_or_extraction_or_http_facts",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/sources/UW521.html",
+          "expected_byte_sha256": "493d7663bab8fea176680b34a9a132309fd69d85ccd0822b39067bc0a2eda669",
+          "expected_bytes": 14270,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\sources\\UW521.html",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "public_source_snapshot_or_extraction_or_http_facts",
+              "source_register": "sources/retrieval.json",
+              "reading_register": "SOURCE_VERIFICATION.json"
+            },
+            "c_source_acquired_at": "2026-10-17T19:54:45.913604+08:00",
+            "c_acquired_at_status": "recorded_historical_retrieval",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+      "expected_byte_sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+      "expected_bytes": 188648,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": "2026-10-17T19:54:49.453818+08:00",
+      "acquired_at_status": "recorded_historical_retrieval",
+      "identity_kind": "public_source_snapshot_or_extraction_or_http_facts",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/sources/LEBL62.html",
+          "expected_byte_sha256": "de82ca50522437fe77ae8ce2ab84b001c79d119e54872303a76d2d4aba6fc73c",
+          "expected_bytes": 188648,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\sources\\LEBL62.html",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "public_source_snapshot_or_extraction_or_http_facts",
+              "source_register": "sources/retrieval.json",
+              "reading_register": "SOURCE_VERIFICATION.json"
+            },
+            "c_source_acquired_at": "2026-10-17T19:54:49.453818+08:00",
+            "c_acquired_at_status": "recorded_historical_retrieval",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+      "expected_byte_sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+      "expected_bytes": 9261,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_artifact_verbatim_copy",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-quality-next/offline/math-reference-review.md",
+          "expected_byte_sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+          "expected_bytes": 9261,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-quality-next\\offline\\math-reference-review.md",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_artifact_verbatim_copy",
+              "source_path": "D:\\天猫AI\\output\\theory-quality-next\\offline\\math-reference-review.md",
+              "source_sha256": "fef6d37acff5cc4a3bf8f0000618043c3c882595830c92acad0aecb4c9e93889",
+              "captured_at": "2026-10-17T19:54:43.386791+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+      "expected_byte_sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+      "expected_bytes": 16237,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_artifact_verbatim_copy",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-quality-next/inputs/missing-condition/messages.json",
+          "expected_byte_sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+          "expected_bytes": 16237,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-quality-next\\inputs\\missing-condition\\messages.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_artifact_verbatim_copy",
+              "source_path": "D:\\天猫AI\\output\\theory-quality-next\\inputs\\missing-condition\\messages.json",
+              "source_sha256": "9f71d460faf6069014639dbb00033cb371785ab4772c8b73082e0bbe0065039d",
+              "captured_at": "2026-10-17T19:54:43.391901+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+      "expected_byte_sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+      "expected_bytes": 5288,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_real_model_output_copy_not_new_success",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/historical-output.txt",
+          "expected_byte_sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+          "expected_bytes": 5288,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\historical-output.txt",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_real_model_output_copy_not_new_success",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\historical-output.txt",
+              "source_sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923",
+              "captured_at": "2026-10-17T19:54:43.392904+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+      "expected_byte_sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+      "expected_bytes": 11266,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_artifact_verbatim_copy",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-quality-next/validation.json",
+          "expected_byte_sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+          "expected_bytes": 11266,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-quality-next\\validation.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_artifact_verbatim_copy",
+              "source_path": "D:\\天猫AI\\output\\theory-quality-next\\validation.json",
+              "source_sha256": "b30fb61c3000ef49d0b8eb4c6ac8f1d2f2edde92c156cc1939319a00db4a9f4e",
+              "captured_at": "2026-10-17T19:54:43.385791+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": "sha256:25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+      "expected_byte_sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+      "expected_bytes": 2939,
+      "hash_scope": "exact_saved_file_bytes",
+      "acquired_at": null,
+      "acquired_at_status": "unknown_not_inferred_from_mtime",
+      "identity_kind": "historical_curated_example_not_model_success",
+      "provenance": {
+        "adapted_from": "c-artifact-index-v1",
+        "c_byte_verification": "matched_local_frozen_file",
+        "c_application_access": "not_registered_no_download_endpoint_claimed",
+        "c_hash_scope": "exact_saved_file_bytes",
+        "c_index_artifact_id": "sha256:25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537"
+      },
+      "locations": [
+        {
+          "path": "output/research-case-closure/2026-10-17-195236-ed0d90a9/evidence/inputs/output/theory-review-integration/public-case/claim-ledger.json",
+          "expected_byte_sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+          "expected_bytes": 2939,
+          "provenance": {
+            "c_original_path_metadata_only": "D:\\天猫AI\\output\\research-case-closure\\2026-10-17-195236-ed0d90a9\\evidence\\inputs\\output\\theory-review-integration\\public-case\\claim-ledger.json",
+            "c_indexed_at": "2026-10-18T00:57:38.553460+08:00",
+            "c_identity": {
+              "kind": "historical_curated_example_not_model_success",
+              "source_path": "D:\\天猫AI\\output\\theory-review-integration\\public-case\\claim-ledger.json",
+              "source_sha256": "25e0e6239f50ae3d923aa86e2901b9f2991d6f67824668bcb567efbba28c4537",
+              "captured_at": "2026-10-17T19:54:43.391901+08:00"
+            },
+            "c_source_acquired_at": null,
+            "c_acquired_at_status": "unknown_not_inferred_from_mtime",
+            "access_note": "original_path is historical metadata; access uses path only"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,413 @@
+{
+  "executed_at": "2026-10-17T20:04:01.616301+08:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "script_sha256": "f715874ea08733b4b12dc86c1f5fee81106a0c99b1f56df429fc29af3025b43a",
+  "origin": "actual_local_standard_library_execution",
+  "arithmetic": "fractions.Fraction, exact rational for listed finite inputs",
+  "scope": "Finite samples, negative controls and archival facts; not a proof of universal mathematical statements, not Lean or app tests.",
+  "checks": [
+    {
+      "id": "endpoint_1/1000000",
+      "passed": true,
+      "detail": {
+        "delta": "1/1000000",
+        "x": "1999999/2000000",
+        "distance": "1/2000000",
+        "limit_error": "1"
+      }
+    },
+    {
+      "id": "endpoint_1/2",
+      "passed": true,
+      "detail": {
+        "delta": "1/2",
+        "x": "3/4",
+        "distance": "1/4",
+        "limit_error": "1"
+      }
+    },
+    {
+      "id": "endpoint_1",
+      "passed": true,
+      "detail": {
+        "delta": "1",
+        "x": "1/2",
+        "distance": "1/2",
+        "limit_error": "1"
+      }
+    },
+    {
+      "id": "endpoint_2",
+      "passed": true,
+      "detail": {
+        "delta": "2",
+        "x": "1/2",
+        "distance": "1/2",
+        "limit_error": "1"
+      }
+    },
+    {
+      "id": "endpoint_4",
+      "passed": true,
+      "detail": {
+        "delta": "4",
+        "x": "1/2",
+        "distance": "1/2",
+        "limit_error": "1"
+      }
+    },
+    {
+      "id": "endpoint_1000000",
+      "passed": true,
+      "detail": {
+        "delta": "1000000",
+        "x": "1/2",
+        "distance": "1/2",
+        "limit_error": "1"
+      }
+    },
+    {
+      "id": "old_witness_negative_control",
+      "passed": true,
+      "detail": {
+        "delta": "4",
+        "old_x": "-1",
+        "meaning": "Old formula fails; expected failure detected, not a valid witness."
+      }
+    },
+    {
+      "id": "nonuniform_rational_1",
+      "passed": true,
+      "detail": {
+        "n": 1,
+        "x": "3/4",
+        "error_exact": "3/4",
+        "comparison": ">=3/4"
+      }
+    },
+    {
+      "id": "nonuniform_rational_2",
+      "passed": true,
+      "detail": {
+        "n": 2,
+        "x": "7/8",
+        "error_exact": "49/64",
+        "comparison": ">=3/4"
+      }
+    },
+    {
+      "id": "nonuniform_rational_3",
+      "passed": true,
+      "detail": {
+        "n": 3,
+        "x": "11/12",
+        "error_exact": "1331/1728",
+        "comparison": ">=3/4"
+      }
+    },
+    {
+      "id": "nonuniform_rational_10",
+      "passed": true,
+      "detail": {
+        "n": 10,
+        "x": "39/40",
+        "error_exact": "8140406085191601/10485760000000000",
+        "comparison": ">=3/4"
+      }
+    },
+    {
+      "id": "nonuniform_rational_100",
+      "passed": true,
+      "detail": {
+        "n": 100,
+        "x": "399/400",
+        "error_exact": "125109292654237174511680338688074978556078484113254043030541425637470513541028939319564974725429639870699584527140535306985181708130109465356587713657817011747714314651063852014709043501668520935393868094878919846150918159148983999499418237109066568211991960001/160693804425899027554196209234116260252220299378279283530137600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "comparison": ">=3/4"
+      }
+    },
+    {
+      "id": "pointwise_tail_sample_1/10_1/2",
+      "passed": true,
+      "detail": {
+        "x": "1/10",
+        "epsilon": "1/2",
+        "N": 1,
+        "sample_n": 1,
+        "note": "Only this sample computed; all n proof is D2."
+      }
+    },
+    {
+      "id": "pointwise_tail_sample_1/10_1/10",
+      "passed": true,
+      "detail": {
+        "x": "1/10",
+        "epsilon": "1/10",
+        "N": 2,
+        "sample_n": 2,
+        "note": "Only this sample computed; all n proof is D2."
+      }
+    },
+    {
+      "id": "pointwise_tail_sample_1/2_1/2",
+      "passed": true,
+      "detail": {
+        "x": "1/2",
+        "epsilon": "1/2",
+        "N": 3,
+        "sample_n": 3,
+        "note": "Only this sample computed; all n proof is D2."
+      }
+    },
+    {
+      "id": "pointwise_tail_sample_1/2_1/10",
+      "passed": true,
+      "detail": {
+        "x": "1/2",
+        "epsilon": "1/10",
+        "N": 11,
+        "sample_n": 11,
+        "note": "Only this sample computed; all n proof is D2."
+      }
+    },
+    {
+      "id": "pointwise_tail_sample_9/10_1/2",
+      "passed": true,
+      "detail": {
+        "x": "9/10",
+        "epsilon": "1/2",
+        "N": 19,
+        "sample_n": 19,
+        "note": "Only this sample computed; all n proof is D2."
+      }
+    },
+    {
+      "id": "pointwise_tail_sample_9/10_1/10",
+      "passed": true,
+      "detail": {
+        "x": "9/10",
+        "epsilon": "1/10",
+        "N": 91,
+        "sample_n": 91,
+        "note": "Only this sample computed; all n proof is D2."
+      }
+    },
+    {
+      "id": "hat_boundaries_1",
+      "passed": true,
+      "detail": {
+        "n": 1,
+        "points": [
+          "0",
+          "1/2",
+          "1",
+          "1"
+        ],
+        "values": [
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_boundaries_2",
+      "passed": true,
+      "detail": {
+        "n": 2,
+        "points": [
+          "0",
+          "1/4",
+          "1/2",
+          "1"
+        ],
+        "values": [
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_boundaries_10",
+      "passed": true,
+      "detail": {
+        "n": 10,
+        "points": [
+          "0",
+          "1/20",
+          "1/10",
+          "1"
+        ],
+        "values": [
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_boundaries_100",
+      "passed": true,
+      "detail": {
+        "n": 100,
+        "points": [
+          "0",
+          "1/200",
+          "1/100",
+          "1"
+        ],
+        "values": [
+          "0",
+          "1",
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_tail_sample_1/1000",
+      "passed": true,
+      "detail": {
+        "x": "1/1000",
+        "N": 1001,
+        "values_at_N_N1": [
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_tail_sample_1/10",
+      "passed": true,
+      "detail": {
+        "x": "1/10",
+        "N": 11,
+        "values_at_N_N1": [
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_tail_sample_1/2",
+      "passed": true,
+      "detail": {
+        "x": "1/2",
+        "N": 3,
+        "values_at_N_N1": [
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "hat_tail_sample_1",
+      "passed": true,
+      "detail": {
+        "x": "1",
+        "N": 2,
+        "values_at_N_N1": [
+          "0",
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "x_over_n_control_1",
+      "passed": true,
+      "detail": {
+        "n": 1,
+        "sample_grid_max": "1",
+        "universal_bound": "For any x in [0,1], 0<=x/n<=1/n (D6).",
+        "note": "Grid does not prove supremum; analytic bound and endpoint do."
+      }
+    },
+    {
+      "id": "x_over_n_control_2",
+      "passed": true,
+      "detail": {
+        "n": 2,
+        "sample_grid_max": "1/2",
+        "universal_bound": "For any x in [0,1], 0<=x/n<=1/n (D6).",
+        "note": "Grid does not prove supremum; analytic bound and endpoint do."
+      }
+    },
+    {
+      "id": "x_over_n_control_10",
+      "passed": true,
+      "detail": {
+        "n": 10,
+        "sample_grid_max": "1/10",
+        "universal_bound": "For any x in [0,1], 0<=x/n<=1/n (D6).",
+        "note": "Grid does not prove supremum; analytic bound and endpoint do."
+      }
+    },
+    {
+      "id": "raw_id_length",
+      "passed": true,
+      "detail": {
+        "id": "equicontinuous_pointwise_implies_continuous_limit",
+        "length": 49,
+        "contract_max": 40,
+        "meaning": "Confirm rejection fact, not repair."
+      }
+    },
+    {
+      "id": "public_raw_equal_live_raw",
+      "passed": true,
+      "detail": {
+        "sha256": "dabf301675fa6a589e0f6ccf801c8f0ca2f338573d0707633c522087b01bb923"
+      }
+    },
+    {
+      "id": "raw_semantics_equal_archived_payload",
+      "passed": true,
+      "detail": {
+        "meaning": "Parsed JSON semantic comparison; byte equality asserted separately only for text."
+      }
+    },
+    {
+      "id": "original_input_only_counterexample_note",
+      "passed": true,
+      "detail": {
+        "note_ids": [
+          "quality-pointwise-note"
+        ],
+        "later_uniform_note_present": false
+      }
+    },
+    {
+      "id": "original_input_has_specific_feedback",
+      "passed": true,
+      "detail": {
+        "feedback_count": 1,
+        "scope": "Presence only; semantic evaluation is MODEL_COMPARISON."
+      }
+    },
+    {
+      "id": "four_original_obligation_ids",
+      "passed": true,
+      "detail": {
+        "ids": [
+          "uniform_quantifiers",
+          "relative_continuity",
+          "pointwise_limit",
+          "witness_domain"
+        ]
+      }
+    }
+  ],
+  "check_count": 35,
+  "passed": 35,
+  "failed": 0,
+  "universal_proof_certified": false,
+  "independent_mathematician_review": "pending",
+  "model_requests": 0,
+  "database_access": false,
+  "website_requests": 0,
+  "lean_runs": 0
+}
