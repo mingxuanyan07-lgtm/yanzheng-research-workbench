@@ -341,6 +341,7 @@
       return `<section id="lean-workspace" class="panel lean-panel" data-project-id="${escape(id)}" aria-busy="${state.loading || localBusy ? "true" : "false"}">
         <div class="lean-panel-heading"><div><p class="lean-eyebrow">可选形式核验</p><h2>Lean 固定引理核验（试点）</h2></div><span class="lean-status lean-status-${environment?.available === true && !environmentError ? "passed" : "unavailable"}">${escape(environmentLabel)}</span></div>
         <p class="lean-intro">手动运行已注册的固定案例。通过仅针对本次准确形式陈述，不会关闭命题卡的待核查义务，也不会将整张卡标为已证明。</p>
+        <p class="lean-warning" role="note"><strong>受限交付提示：</strong>当前 Lean 超时可靠性未通过；历史记录出现过间歇超时，单次通过不等于稳定。演示或试用时请如实说明，不要把本试点作为正式稳定版能力展示。</p>
         <p class="lean-muted">关联依据项目已保存的命题，本机草稿不参与判断。固定案例与自然语言研究命题是否对应，仍需数学审阅。</p>
         <div class="lean-controls"><label class="lean-picker-label" for="lean-case-picker">注册案例<select class="lean-case-picker" id="lean-case-picker" data-project-id="${escape(id)}"${busy || state.loading || !catalogLoaded || caseError ? " disabled" : ""}>${unavailableChoice}${optionsHtml || '<option value="">案例目录尚不可用</option>'}</select></label>
           <div class="lean-action-row"><button type="button" class="lean-button lean-secondary" data-action="lean-refresh" data-project-id="${escape(id)}"${state.loading || busy ? " disabled" : ""}>${state.loading ? "正在读取…" : "刷新环境与历史"}</button><button type="button" class="lean-button lean-primary" data-action="lean-run" data-project-id="${escape(id)}"${runDisabled ? " disabled" : ""}>${localBusy ? "正在核验…" : "运行固定案例"}</button></div></div>

@@ -78,6 +78,8 @@ test("initial and projectless states never imply execution or success", () => {
   assert.match(controller.render(null), /先保存并选择/);
   const html = controller.render(project("p"));
   assert.match(html, /环境尚未读取/);
+  assert.match(html, /受限交付提示/);
+  assert.match(html, /Lean 超时可靠性未通过/);
   assert.match(html, /id="lean-case-picker"[^>]*disabled/);
   assert.match(html, /data-action="lean-run"[^>]*disabled/);
   assert.equal(controller.hasLoaded("p"), false);
