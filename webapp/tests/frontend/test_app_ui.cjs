@@ -56,7 +56,7 @@ function appHarness() {
   let source = fs.readFileSync(path.join(root, "webapp/static/app.js"), "utf8").replace(/\r\n/g, "\n");
   const cut = source.lastIndexOf("\n  paintIcons();\n  restoreIntakeDraft();");
   assert.ok(cut > 0, "Find actual bootstrap before replacing it for isolated tests");
-  source = source.slice(0, cut) + `\nwindow.appTest = {inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace};\n})();`;
+  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace};\n})();`;
   vm.runInNewContext(source, sandbox, { filename: "webapp/static/app.js" });
   return { ...sandbox.window.appTest, targets, document, calls, events, controllerOptions, downloads, requests, store,
     setFetchResponse: value => { fetchResponse = value; }, setUnsavedEntry: value => { unsavedEntry = value; },
@@ -486,7 +486,7 @@ test("feedback local recovery is keyed by project and original never has accepta
 });
 const artifactRecord = () => ({id:"record-qa",material:{claim_id:"C11",proposition:"P1",claim_text:"QA",assumptions:"QA",support_scope:"QA",derivation:"QA",artifact:null,artifact_refs:[{artifact_id:"qa-html",declared_original_bytes_sha256:null,declared_acquired_at:null}]},target:{target_scope:"card",card_version:2,card_id:"alpha:theory-card",card_sha256:"h",card},reviews:[],review_revision:0,stale_reasons:[]});
 const artifactButton = action => ({dataset:{action,projectId:"alpha",checkId:"record-qa",artifactId:"qa-html"}});
-const artifactFact = status => ({id:"read-1",artifact_id:"qa-html",recorded_at:"2026-10-18T18:00:00+08:00",result:{status,actual:{byte_sha256:"a".repeat(64),bytes:41},acquired_at:null,acquired_at_status:"unknown_not_inferred_from_mtime",preview:{status:"utf8_plain_text",text:'<script>window.qaExecuted=true</script>',truncated:false}}});
+const artifactFact = status => ({id:"read-1",artifact_id:"qa-html",recorded_at:"2026-10-18T18:00:00+08:00",result:{status,byte_match:status === "verified",actual:{byte_sha256:"a".repeat(64),bytes:41},acquired_at:null,acquired_at_status:"unknown_not_inferred_from_mtime",preview:{status:"utf8_plain_text",text:'<script>window.qaExecuted=true</script>',truncated:false}}});
 
 test("artifact metadata requires explicit action and never causes read or history mutation",async()=>{
   const {app,checking}=checkingHarness();const item=artifactRecord();checking.records=[item];checking.evidence_access={available:true};
@@ -551,4 +551,53 @@ test("only explicit native or primary references get controls; source prose gran
   item.material.artifact={artifact_id:'qa-<img src=x onerror=bad()>'};
   html=app.renderArtifactAccess(item,app.state.project,{available:true});assert.match(html,/data-action="artifact-read"/);
   assert.doesNotMatch(html,/<img src=x/);assert.equal(app.requests.length,0);
+});
+
+test("failed artifact result is saved as failure and never reported as a successful read",async()=>{
+  const {app,checking}=checkingHarness();const item=artifactRecord();checking.records=[item];
+  const fact=artifactFact("path_rejected");fact.result.byte_match=false;fact.result.preview={status:"unavailable",text:null};
+  app.setFetchResponse(url=>url.endsWith("/read")?{ok:true,json:async()=>({saved:true,fact})}:{ok:true,json:async()=>({card,checking:{...checking,records:[{...item,artifact_reads:[fact]}]}})});
+  await app.inspectArtifact(artifactButton("artifact-read"));
+  const view=app.artifactViews["alpha:record-qa:qa-html"];
+  assert.match(view.message,/核对未通过/);assert.match(view.message,/失败事实已保存/);
+  assert.doesNotMatch(view.message,/读取成功|字节核对通过/);
+  assert.equal(app.requests.filter(r=>r.options.method==="POST").length,1);
+  const html=app.renderArtifactFact(fact);assert.match(html,/核对未通过/);
+  assert.match(html,/核查时间/);assert.doesNotMatch(html,/实际读取：/);
+});
+
+test("an unverified failure cannot render an original preview even in collapsed JSON details",()=>{
+  const app=appHarness(),fact=artifactFact("unreadable");
+  fact.result.byte_match=false;fact.result.preview.text="DO_NOT_DISPLAY_PARTIAL_ORIGINAL";
+  const html=app.renderArtifactFact(fact);
+  assert.doesNotMatch(html,/artifact-preview|DO_NOT_DISPLAY_PARTIAL_ORIGINAL/);
+  assert.equal(fact.result.preview.text,"DO_NOT_DISPLAY_PARTIAL_ORIGINAL","history object is not mutated by rendering");
+});
+
+test("contradictory verified history does not display an attested preview",()=>{
+  const app=appHarness(),fact=artifactFact("verified");fact.result.byte_match=false;
+  const html=app.renderArtifactFact(fact);assert.doesNotMatch(html,/artifact-preview/);
+  assert.match(html,/核对未通过/);assert.doesNotMatch(html,/字节核对通过/);
+});
+
+test("metadata exception stays a lookup failure without reading or erasing the review draft",async()=>{
+  const {app,checking}=checkingHarness();const item=artifactRecord();checking.records=[item];
+  const form={dataset:{projectId:"alpha",checkId:item.id},fields:{opinion:"kept on metadata error",reviewer:"QA"}};
+  app.targets.set("all:.checking-form",[form]);
+  app.setFetchResponse({ok:false,status:503,json:async()=>({detail:"固定原件注册器不可用。",status:"registry_unavailable"})});
+  await app.inspectArtifact(artifactButton("artifact-describe"));
+  assert.equal(app.requests.length,1);assert.match(app.requests[0].url,/\/describe$/);
+  assert.match(app.artifactViews["alpha:record-qa:qa-html"].message,/元数据查询未完成/);
+  assert.equal(app.checkDrafts["alpha:record-qa"].opinion,"kept on metadata error");
+  assert.equal(item.artifact_reads,undefined);assert.equal(app.downloads.length,0);
+});
+
+test("read conflict preserves draft and never automatically repeats the request",async()=>{
+  const {app,checking}=checkingHarness();const item=artifactRecord();checking.records=[item];
+  app.targets.set("all:.checking-form",[{dataset:{projectId:"alpha",checkId:item.id},fields:{opinion:"409 draft retained"}}]);
+  app.setFetchResponse({ok:false,status:409,json:async()=>({detail:"上下文已变化"})});
+  await app.inspectArtifact(artifactButton("artifact-read"));
+  assert.equal(app.requests.length,1);assert.equal(app.checkDrafts["alpha:record-qa"].opinion,"409 draft retained");
+  assert.doesNotMatch(app.artifactViews["alpha:record-qa:qa-html"].message,/字节核对通过/);
+  assert.equal(item.artifact_reads,undefined);
 });

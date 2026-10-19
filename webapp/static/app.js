@@ -566,7 +566,9 @@
   }
   function renderArtifactFact(fact, saved = true) {
     const r = fact.result || {}, p = r.preview;
-    return `<article class="artifact-fact"><strong>${saved ? "已保存的历史读取事实" : "未保存到项目 · 本机保留结果"}：${escape(r.status)}</strong><p>artifact_id：${escape(fact.artifact_id)}<br>本次记录：${escape(fact.recorded_at)}；实际读取：${escape(r.read_at || "未读取")}</p><p>实际字节 SHA256：${escape(r.actual?.byte_sha256 || "unknown")}；大小：${escape(r.actual?.bytes ?? "unknown")}<br>登记副本取得时间：${escape(r.acquired_at || "unknown")} · ${escape(r.acquired_at_status || "unknown")}</p>${list(fact.stale_reasons_at_read).length ? `<p class="message is-error">读取时旧关联：${escape(fact.stale_reasons_at_read.join("、"))}</p>` : ""}${list(r.declaration_comparisons).map(c=>`<p>声明 ${Number(c.declaration_index)+1} 与本次字节对照：${escape(c.byte_sha256_comparison)}；原声明取得时间：${escape(c.declared_acquired_at || "unknown")}</p>`).join("")}${p?.text != null ? `<details><summary>查看本次 UTF-8 纯文本预览${p.truncated ? "（已截断至 12000 字符）" : ""}</summary><pre class="theory-raw artifact-preview">${escape(p.text)}</pre></details>` : `<p>纯文本预览：${escape(p?.status || "unavailable")}</p>`}<details><summary>本次完整核查事实</summary><pre class="theory-raw">${escape(JSON.stringify(fact,null,2))}</pre></details></article>`;
+    const verified = r.status === "verified" && r.byte_match === true;
+    const displayFact = verified ? fact : {...fact,result:{...r,preview:{status:"unavailable",text:null,truncated:false}}};
+    return `<article class="artifact-fact"><strong>${saved ? "已保存的历史读取事实" : "未保存到项目 · 本机保留结果"}：${escape(r.status)} · ${verified ? "字节核对通过" : "核对未通过"}</strong><p>artifact_id：${escape(fact.artifact_id)}<br>本次记录：${escape(fact.recorded_at)}；核查时间：${escape(r.read_at || "unknown")}</p><p>实际字节 SHA256：${escape(r.actual?.byte_sha256 || "unknown")}；大小：${escape(r.actual?.bytes ?? "unknown")}<br>登记副本取得时间：${escape(r.acquired_at || "unknown")} · ${escape(r.acquired_at_status || "unknown")}</p>${list(fact.stale_reasons_at_read).length ? `<p class="message is-error">读取时旧关联：${escape(fact.stale_reasons_at_read.join("、"))}</p>` : ""}${list(r.declaration_comparisons).map(c=>`<p>声明 ${Number(c.declaration_index)+1} 与本次字节对照：${escape(c.byte_sha256_comparison)}；原声明取得时间：${escape(c.declared_acquired_at || "unknown")}</p>`).join("")}${verified && p?.text != null ? `<details><summary>查看本次 UTF-8 纯文本预览${p.truncated ? "（已截断至 12000 字符）" : ""}</summary><pre class="theory-raw artifact-preview">${escape(p.text)}</pre></details>` : `<p>纯文本预览：${escape(verified ? (p?.status || "unavailable") : "unavailable")}</p>`}<details><summary>本次完整核查事实</summary><pre class="theory-raw">${escape(JSON.stringify(displayFact,null,2))}</pre></details></article>`;
   }
   function renderArtifactAccess(item, project, service) {
     const ids = [...new Set([item.material.artifact, ...list(item.material.artifact_refs)].filter(Boolean).map(r=>r.artifact_id))];
@@ -585,10 +587,10 @@
     state.mutating=true;syncMutationControls();
     try {
       const result=await api(`/api/projects/${encodeURIComponent(projectId)}/theory/checks/${encodeURIComponent(recordId)}/artifacts/${action}`,{method:"POST",body:JSON.stringify({artifact_id:artifactId})});
-      artifactViews[key]={message:action === "read" ? `本次 ${result.fact.result.status} 事实已保存。` : `登记状态：${result.status}；本次未读取字节。`,metadata:action === "describe" ? result : null};
+      artifactViews[key]={message:action === "read" ? (result.fact.result.status === "verified" && result.fact.result.byte_match === true ? "本次字节核对通过，事实已保存。" : `核对未通过（${result.fact.result.status}）；失败事实已保存。`) : `登记状态：${result.status}；本次未读取字节。`,metadata:action === "describe" ? result : null};
       if(action === "read") state.theoryWorkspaces[projectId]=await api(`/api/projects/${encodeURIComponent(projectId)}/theory`);
     } catch(error) {
-      artifactViews[key]={message:error.message};
+      artifactViews[key]={message:(action === "describe" ? "元数据查询未完成；本次未读取字节。" : "本次读取未完成。") + error.message};
       if(error.body?.fact && error.body.saved === false) {
         const facts=unsavedArtifactFacts(projectId,recordId);facts.push(error.body.fact);
         try { localStorage.setItem(`yanzheng.artifactUnsaved.${projectId}:${recordId}`,JSON.stringify(facts)); }

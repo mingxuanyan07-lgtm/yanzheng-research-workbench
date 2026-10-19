@@ -31,7 +31,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-MODULE_VERSION = "evidence-registry-v1.1"
+MODULE_VERSION = "evidence-registry-v1.2"
 MANIFEST_SCHEMA = "evidence-registry-manifest-v1"
 READ_RESULT_SCHEMA = "evidence-registry-result-v1"
 DESCRIBE_SCHEMA = "evidence-registry-description-v1"
@@ -82,8 +82,8 @@ _BASE_CAVEATS = (
     "no_semantic_or_mathematical_review_performed_here",
 )
 _KNOWN_LIMITATIONS = (
-    "no_file_lock_and_no_cache; a later read may observe a replaced file",
-    "windows_reparse_check_and_open_are_not_atomic; race window is documented, not solved",
+    "secure_reads_require_local_windows_ntfs_without_reparse_components_or_multiple_file_links",
+    "namespace_handles_held_during_read; no_cache; a_later_read_reauthorizes_the_current_file",
     "only size+sha256 compared; upstream/disk-level tampering is out of scope",
 )
 
@@ -94,6 +94,134 @@ class RegistryError(ValueError):
 
 class RegistryConflict(RegistryError):
     """The same artifact_id is declared with mutually incompatible facts."""
+
+
+class _WindowsFileGuard:
+    """Hold the complete namespace chain until the validated leaf fd is closed.
+
+    OPEN_REPARSE_POINT alone protects only the leaf. Each preceding component
+    is therefore opened first without WRITE/DELETE sharing and retained. Handle
+    metadata and volume-GUID names, not another resolve(), authorize the objects.
+    Unsupported namespaces/filesystems fail closed before any os.read call.
+    """
+
+    def __init__(self):
+        if os.name != "nt":
+            raise RegistryError("SECURE_OPEN_UNSUPPORTED_PLATFORM: Windows NTFS required")
+        import ctypes as c
+        from ctypes import wintypes as w
+        self.c, self.w = c, w
+        self.handles = []
+        self.api = c.WinDLL("kernel32", use_last_error=True)
+        class Info(c.Structure):
+            _fields_ = [("attributes", w.DWORD), ("created", w.FILETIME),
+                        ("accessed", w.FILETIME), ("written", w.FILETIME)] + [
+                (name, w.DWORD) for name in ("volume", "size_high", "size_low", "links", "index_high", "index_low")]
+        self.Info = Info
+        class Identity(c.Structure):
+            _fields_ = [("volume", c.c_ulonglong), ("file_id", c.c_ubyte * 16)]
+        self.Identity = Identity
+        signatures = {
+            "CreateFileW": ([w.LPCWSTR, w.DWORD, w.DWORD, c.c_void_p, w.DWORD, w.DWORD, w.HANDLE], w.HANDLE),
+            "CloseHandle": ([w.HANDLE], w.BOOL),
+            "GetFileInformationByHandle": ([w.HANDLE, c.POINTER(Info)], w.BOOL),
+            "GetFileInformationByHandleEx": ([w.HANDLE, c.c_int, c.c_void_p, w.DWORD], w.BOOL),
+            "GetFinalPathNameByHandleW": ([w.HANDLE, w.LPWSTR, w.DWORD, w.DWORD], w.DWORD),
+            "GetFileType": ([w.HANDLE], w.DWORD),
+            "GetVolumeInformationByHandleW": ([w.HANDLE, w.LPWSTR, w.DWORD, c.POINTER(w.DWORD),
+                c.POINTER(w.DWORD), c.POINTER(w.DWORD), w.LPWSTR, w.DWORD], w.BOOL),
+        }
+        for name, (args, result) in signatures.items():
+            try:
+                method = getattr(self.api, name)
+            except AttributeError:
+                raise RegistryError("SECURE_OPEN_UNSUPPORTED_API: required Windows function unavailable") from None
+            method.argtypes, method.restype = args, result
+
+    def _open(self, path, *, leaf):
+        # FILE_READ_ATTRIBUTES for directories; GENERIC_READ for the leaf.
+        # FILE_SHARE_READ only: existing writers/delete handles conflict too.
+        handle = self.api.CreateFileW(str(path), 0x80000000 if leaf else 0x80,
+                                      1, None, 3, 0x02000000 | 0x00200000, None)
+        if handle == self.c.c_void_p(-1).value:
+            raise self.c.WinError(self.c.get_last_error())
+        self.handles.append(handle)
+        return handle
+
+    def _info(self, handle):
+        value = self.Info()
+        if not self.api.GetFileInformationByHandle(handle, self.c.byref(value)):
+            raise self.c.WinError(self.c.get_last_error())
+        if self.api.GetFileType(handle) != 1:
+            raise RegistryError("SECURE_OPEN_NOT_DISK: disk file handles required")
+        if value.attributes & _FILE_ATTRIBUTE_REPARSE_POINT:
+            raise RegistryError("SECURE_OPEN_REPARSE: opened component is a reparse point")
+        if not (value.index_high or value.index_low):
+            raise RegistryError("SECURE_OPEN_NO_IDENTITY: zero file ID")
+        return value
+
+    def _final_name(self, handle):
+        buffer = self.c.create_unicode_buffer(32768)
+        size = self.api.GetFinalPathNameByHandleW(handle, buffer, len(buffer), 1)  # VOLUME_NAME_GUID
+        if not size or size >= len(buffer):
+            raise RegistryError("SECURE_OPEN_NO_FINAL_PATH: volume-GUID path unavailable")
+        return buffer.value.rstrip("\\").casefold()
+
+    def _identity(self, handle):
+        value = self.Identity()
+        if not self.api.GetFileInformationByHandleEx(handle, 18, self.c.byref(value), self.c.sizeof(value)):
+            raise RegistryError("SECURE_OPEN_NO_IDENTITY: FileIdInfo unavailable")
+        # Python Windows stat uses the 64-bit volume serial and 128-bit file ID.
+        return value.volume, int.from_bytes(bytes(value.file_id), "little")
+
+    def open(self, root, root_identity, relative):
+        """Return an fd owning the very handle inspected; no path reopening."""
+        import msvcrt
+        try:
+            root = Path(root)
+            if (not re.fullmatch(r"[A-Za-z]:", root.drive) or root.anchor != root.drive + "\\"
+                    or root_identity[1] == 0):
+                raise RegistryError("SECURE_OPEN_UNSUPPORTED_ROOT: local drive and nonzero identity required")
+            prefixes = list(_path_prefixes(root))
+            current = root
+            for part in relative.split("/"):
+                current = current / part
+                prefixes.append(current)
+            parent_name = None
+            for index, path in enumerate(prefixes):
+                leaf = index == len(prefixes) - 1
+                handle = self._open(path, leaf=leaf)
+                info = self._info(handle)
+                final_name = self._final_name(handle)
+                if parent_name is None:
+                    fs = self.c.create_unicode_buffer(32)
+                    if not self.api.GetVolumeInformationByHandleW(handle, None, 0, None, None, None, fs, len(fs)):
+                        raise RegistryError("SECURE_OPEN_UNKNOWN_FILESYSTEM: cannot verify NTFS")
+                    if fs.value != "NTFS" or not final_name.startswith("\\\\?\\volume{"):
+                        raise RegistryError("SECURE_OPEN_UNSUPPORTED_FILESYSTEM: local NTFS required")
+                elif final_name != parent_name + "\\" + path.name.casefold():
+                    raise RegistryError("SECURE_OPEN_NAMESPACE_CHANGED: opened component is not the locked child")
+                if not leaf and not info.attributes & 0x10:
+                    raise RegistryError("SECURE_OPEN_NOT_DIRECTORY: ancestor is not a directory")
+                if path == root:
+                    actual = self._identity(handle)
+                    if actual != root_identity:
+                        raise RegistryError("SECURE_OPEN_ROOT_CHANGED: opened root differs from authorized object")
+                parent_name = final_name
+            if not info.attributes & 0x10 and info.links != 1:
+                raise RegistryError("SECURE_OPEN_MULTIPLE_LINKS: leaf identity has another namespace link")
+            descriptor = msvcrt.open_osfhandle(handle, os.O_RDONLY | os.O_BINARY)
+            self.handles.pop()  # ownership transferred to descriptor, not duplicated/reopened
+            return descriptor
+        except BaseException:
+            self.close()
+            raise
+
+    def close(self):
+        ok = True
+        while self.handles:
+            ok = bool(self.api.CloseHandle(self.handles.pop())) and ok
+        return ok
 
 
 def _now():
@@ -771,11 +899,15 @@ class Registry:
         except RegistryError as error:
             outcome.update(status="path_rejected", reason=_bounded_reason(str(error)))
             return outcome
-        flags = os.O_RDONLY | getattr(os, "O_BINARY", 0)
-        if hasattr(os, "O_NOFOLLOW"):
-            flags |= os.O_NOFOLLOW
+        guard = None
         try:
-            descriptor = os.open(location.abs_path, flags)
+            guard = _WindowsFileGuard()
+            # Use the declared path, never its reparse-resolved alias. The guard
+            # checks the root's load-time identity while every ancestor is locked.
+            descriptor = guard.open(self._declared_root, self._root_identity, location.rel_path)
+        except RegistryError as error:
+            outcome.update(status="path_rejected", reason=_bounded_reason(str(error)))
+            return outcome
         except FileNotFoundError:
             outcome.update(status="missing", reason="no such file")
             return outcome
@@ -851,9 +983,12 @@ class Registry:
             try:
                 os.close(descriptor)
             except OSError:
-                # A close failure cannot turn an unread/verified result into a
-                # success; descriptor may already be closed by the OS.
-                pass
+                outcome.update(status="unreadable", reason="validated descriptor close failed")
+                outcome.pop("payload", None)
+            finally:
+                if not guard.close():
+                    outcome.update(status="unreadable", reason="namespace handle close failed")
+                    outcome.pop("payload", None)
 
 
 def _merge_locations(existing, incoming, artifact_id):

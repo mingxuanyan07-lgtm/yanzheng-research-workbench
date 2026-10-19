@@ -11,7 +11,7 @@ import unittest
 from fastapi.testclient import TestClient
 from app import create_app
 from evidence_access import EvidenceAccess, MODULE_SHA256, MANIFEST_SHA256
-from evidence_registry import Registry
+from evidence_registry import Registry, RegistryError
 import test_theory_checking as fixture
 import theory
 
@@ -153,7 +153,7 @@ class EvidenceIntegrationTest(unittest.TestCase):
             self.assertTrue(any(isinstance(e,dict) and e.get('artifact_reads')==[fact] for e in entries))
             self.assertNotIn('<script>',md)
 
-    def test_preview_bounds_binary_and_fixed_production_files_are_exact_accepted_copies(self):
+    def test_preview_bounds_binary_and_production_pin_gate(self):
         from evidence_registry import ReadResult
         source=self.access.registry.read_verified('qa-html')
         source.bytes=('中'*12001).encode()
@@ -164,5 +164,135 @@ class EvidenceIntegrationTest(unittest.TestCase):
         with patch.object(self.access.registry,'read_verified',return_value=source):
             self.assertEqual(self.access.read('qa-html',[])['preview']['status'],'binary_or_non_utf8')
         base=Path(__file__).resolve().parents[1]
-        for name,expected in [('evidence_registry.py',MODULE_SHA256),('evidence_registry_manifest.json',MANIFEST_SHA256)]:
-            self.assertEqual(hashlib.sha256((base/name).read_bytes()).hexdigest(),expected)
+        self.assertEqual(hashlib.sha256((base/'evidence_registry_manifest.json').read_bytes()).hexdigest(),MANIFEST_SHA256)
+        current=hashlib.sha256((base/'evidence_registry.py').read_bytes()).hexdigest()
+        production=EvidenceAccess()
+        if current != MODULE_SHA256:
+            # A may edit its owned module before acceptance. Do not adopt it merely to make this green.
+            self.assertFalse(production.metadata()['available'])
+            self.assertEqual(production.metadata()['availability_reason'],'accepted_module_hash_mismatch')
+        self.assertEqual(production.metadata()['accepted_module_sha256'],MODULE_SHA256)
+
+    def injected_failure(self, status="path_rejected"):
+        """Trusted injection, not a real OS path/handle experiment."""
+        result = self.access.registry.read_verified('qa-html')
+        result.status = status
+        result.byte_match = False
+        result.locations = [{"path": "C:/qa-private-root/outside.bin", "status": status,
+            "reason": "failure at C:/qa-private-root/outside.bin", "provenance": {"source": "test_fixture declaration"}}]
+        result.caveats = ["failure at /qa-private-root/outside.bin", "byte_match_does_not_prove_source_authenticity"]
+        original = result.as_dict
+        result.as_dict = lambda: {**original(), "resolved_root": "C:/qa-private-root", "error": "trace /qa-private-root"}
+        return result
+
+    def test_boundary_structured_path_rejection_hides_diagnostics_and_failure_bytes(self):
+        injected = self.injected_failure()
+        with patch.object(self.access.registry, 'read_verified', return_value=injected):
+            response = self.read()
+        self.assertEqual(response.status_code,200,response.text)
+        self.assertNotIn('qa-private-root',response.text)
+        result=response.json()['fact']['result']
+        self.assertEqual(result['status'],'path_rejected')
+        self.assertFalse(result['bytes_returned'])
+        self.assertIsNone(result['preview']['text'])
+        self.assertTrue(response.json()['saved'])
+
+    def test_boundary_root_replacement_policy_exception_becomes_saved_rejection(self):
+        with patch.object(self.access.registry,'read_verified',side_effect=RegistryError('root replaced: C:/qa-private-root')):
+            response=self.read()
+        self.assertEqual(response.status_code,200,response.text)
+        result=response.json()['fact']['result']
+        self.assertEqual(result['status'],'path_rejected')
+        self.assertEqual(result['result_origin'],'adapter_exception_mapping')
+        self.assertIsNone(result['preview']['text'])
+        self.assertNotIn('qa-private-root',response.text)
+
+    def test_boundary_IO_exceptions_are_saved_unreadable_without_preview_or_paths(self):
+        self.client.close();self.client=TestClient(self.app,raise_server_exceptions=False)
+        for error in [PermissionError('C:/qa-private-root'),FileNotFoundError('/qa-private-root'),OSError('IO C:/qa-private-root')]:
+            with self.subTest(exception=type(error).__name__):
+                with patch.object(self.access.registry,'read_verified',side_effect=error):
+                    response=self.read()
+                self.assertEqual(response.status_code,200,response.text)
+                result=response.json()['fact']['result']
+                self.assertEqual(result['status'],'unreadable')
+                self.assertEqual(result['diagnostic_code'],'registry_read_io_error')
+                self.assertIsNone(result['preview']['text'])
+                self.assertFalse(result['bytes_returned'])
+                self.assertNotIn('qa-private-root',response.text)
+
+    def test_boundary_structured_unreadable_error_does_not_expose_execution_details(self):
+        with patch.object(self.access.registry,'read_verified',return_value=self.injected_failure('unreadable')):
+            response=self.read()
+        self.assertNotIn('qa-private-root',response.text)
+        self.assertEqual(response.json()['fact']['result']['status'],'unreadable')
+
+    def test_boundary_missing_helper_import_during_initialization_fails_closed(self):
+        def missing_helper():
+            raise ImportError('missing helper C:/qa-private-root')
+        access=EvidenceAccess(registry_factory=missing_helper)
+        self.assertFalse(access.metadata()['available'])
+        self.assertEqual(access.metadata()['availability_reason'],'registry_initialization_failed')
+        self.assertNotIn('qa-private-root',json.dumps(access.metadata()))
+
+    def test_boundary_hash_mismatch_keeps_old_pin_and_reports_unavailable(self):
+        with patch('evidence_access.Path.read_bytes',return_value=b'not the accepted module'):
+            access=EvidenceAccess()
+        self.assertFalse(access.metadata()['available'])
+        self.assertEqual(access.metadata()['availability_reason'],'accepted_module_hash_mismatch')
+        self.assertEqual(access.metadata()['accepted_module_sha256'],MODULE_SHA256)
+
+    def test_boundary_describe_service_error_is_not_read_history(self):
+        self.client.close();self.client=TestClient(self.app,raise_server_exceptions=False)
+        with patch.object(self.access.registry,'describe',side_effect=OSError('C:/qa-private-root')):
+            response=self.client.post(self.url+'/describe',json={'artifact_id':'qa-html'})
+        self.assertEqual(response.status_code,503,response.text)
+        self.assertEqual(response.json()['status'],'registry_unavailable')
+        self.assertNotIn('qa-private-root',response.text)
+        self.assertNotIn('artifact_reads',self.view()['records'][0])
+
+    def test_boundary_unexpected_service_exception_records_failure_not_success(self):
+        self.client.close();self.client=TestClient(self.app,raise_server_exceptions=False)
+        with patch.object(self.access.registry,'read_verified',side_effect=RuntimeError('C:/qa-private-root')):
+            response=self.read()
+        self.assertEqual(response.status_code,503,response.text)
+        self.assertTrue(response.json()['saved'])
+        self.assertEqual(response.json()['fact']['result']['status'],'registry_unavailable')
+        self.assertNotIn('qa-private-root',response.text)
+
+    def test_boundary_contradictory_verified_results_do_not_attest_or_preview(self):
+        for condition in ['missing_bytes','no_byte_match','wrong_artifact']:
+            with self.subTest(condition=condition):
+                value=self.access.registry.read_verified('qa-html')
+                if condition=='missing_bytes':value.bytes=None
+                elif condition=='no_byte_match':value.byte_match=False
+                else:value.artifact_id='different-artifact'
+                with patch.object(self.access.registry,'read_verified',return_value=value):
+                    response=self.read()
+                result=response.json()['fact']['result']
+                self.assertEqual(result['status'],'unreadable')
+                self.assertEqual(result['diagnostic_code'],'inconsistent_registry_result')
+                self.assertIsNone(result['preview']['text'])
+
+    def test_boundary_injection_is_not_production_module_acceptance(self):
+        metadata=self.access.metadata()
+        self.assertEqual(metadata['registry_source'],'trusted_in_process_injection')
+        self.assertFalse(metadata['production_module_accepted'])
+        self.assertEqual(metadata['accepted_module_sha256'],MODULE_SHA256)
+
+    def test_boundary_failure_preserves_history_context_and_single_whole_exports(self):
+        self.client.post(self.base+f"/checks/{self.r['id']}/reviews",json=self.opinion())
+        before=copy.deepcopy(self.app.state.store.get(self.p['id']))
+        with patch.object(self.access.registry,'read_verified',return_value=self.injected_failure('unreadable')):
+            response=self.read()
+        self.assertEqual(response.status_code,200,response.text)
+        after=self.app.state.store.get(self.p['id']);item=after['theory']['checking_records'][0]
+        facts=item.pop('artifact_reads');self.assertEqual(item,before['theory']['checking_records'][0])
+        self.assertEqual(theory.next_context(before)['messages'],theory.next_context(after)['messages'])
+        for path in [self.base+f"/checks/{self.r['id']}/export",self.base+'/export']:
+            for fmt in ['json','md']:
+                exported=self.client.get(path+'?format='+fmt)
+                self.assertEqual(exported.status_code,200)
+                self.assertNotIn('qa-private-root',exported.text)
+                self.assertIn('unreadable',exported.text)
+        self.assertEqual(facts[0]['result']['status'],'unreadable')
