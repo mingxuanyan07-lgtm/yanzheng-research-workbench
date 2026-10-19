@@ -56,6 +56,17 @@ class EvidenceRegistryIOTests(unittest.TestCase):
             self.assertTrue(p.absolute().is_relative_to(self.scope))
             self.assertTrue(p.resolve().is_relative_to(self.scope))
 
+    # Capability denial is a narrow, platform-specific signal. Ordinary path,
+    # existence, sharing, ACL, disk or command errors are test failures, never
+    # "the environment cannot create links" skips.
+    _SYMLINK_PRIVILEGE_WINERROR = 1314  # ERROR_PRIVILEGE_NOT_HELD
+    _JUNCTION_DENIAL_MARKERS = (
+        'you do not have sufficient privilege',
+        '客户端没有所需的特权',
+        'requires elevation',
+        '需要提升',
+    )
+
     def create_link(self, link, target, kind, is_dir=True):
         self.safe(link,target)
         if kind=='junction':
@@ -63,17 +74,21 @@ class EvidenceRegistryIOTests(unittest.TestCase):
             self.events.append({'link_creation':kind,'exit_code':proc.returncode,
                 'stdout_hex':proc.stdout.hex(),'stderr_hex':proc.stderr.hex()})
             if proc.returncode:
-                detail=proc.stderr.decode('mbcs',errors='replace').strip().splitlines()
-                # Capability denial is explicitly unverified, never a synthetic pass:
-                # reparse behaviour at this position remains untested in this environment.
-                self.skipTest('real junction creation denied (OS error): rc=%s %s; '
+                detail=proc.stderr.decode('mbcs',errors='replace').strip()
+                lowered=detail.casefold()
+                if not any(marker in lowered for marker in self._JUNCTION_DENIAL_MARKERS):
+                    self.fail('real junction creation failed with an ordinary error, not a capability denial: rc=%s %s'
+                              % (proc.returncode, detail or proc.stdout.decode('mbcs',errors='replace').strip()))
+                self.skipTest('real junction creation capability denied by this environment: rc=%s %s; '
                               'reparse coverage at this position remains unverified'
-                              % (proc.returncode,detail[-1] if detail else ''))
+                              % (proc.returncode,detail.splitlines()[-1] if detail else ''))
         else:
             try:os.symlink(target,link,target_is_directory=is_dir)
             except OSError as e:
                 self.events.append({'link_creation':kind,'winerror':getattr(e,'winerror',None)})
-                self.skipTest('real symlink creation denied (OS error): '+str(e)
+                if getattr(e,'winerror',None) != self._SYMLINK_PRIVILEGE_WINERROR:
+                    raise AssertionError('real symlink creation failed with an ordinary OSError, not a capability denial: %r' % (e,)) from e
+                self.skipTest('real symlink creation capability denied (WinError 1314): '+str(e)
                               +'; symlink coverage at this position remains unverified')
         self.links.append((link,target,is_dir))
 
@@ -217,9 +232,11 @@ class EvidenceRegistryIOTests(unittest.TestCase):
         except OSError as error:
             self.events.append({'hardlink_creation_denied':{'winerror':getattr(error,'winerror',None),
                 'strerror':error.strerror}})
-            # Capability denial is explicitly unverified, never a synthetic pass.
-            self.skipTest('real hardlink creation denied (OS error): '+repr(error)
-                          +'; outside same-bytes hardlink rejection remains unverified')
+            if getattr(error,'winerror',None) == self._SYMLINK_PRIVILEGE_WINERROR:
+                self.skipTest('real hardlink creation capability denied (WinError 1314): '+repr(error)
+                              +'; outside same-bytes hardlink rejection remains unverified')
+            raise AssertionError('real hardlink creation failed with an ordinary error, not a capability denial: %r'
+                                 % (error,)) from error
         r=self.checked_read();self.assertEqual(r.status,'path_rejected');self.assertEqual(self.events[-1]['reads'],[])
 
     def test_missing_directory_hash_and_size_limits(self):
@@ -275,6 +292,22 @@ class EvidenceRegistryIOTests(unittest.TestCase):
             'ntstatus_invalid_handle_oserror'],
             'other_oserror_rejected':['WinError5','WinError13','NTSTATUS0xC0000009'],
             'valid_open_handle_contrast':True})
+
+    def test_link_capability_denial_is_not_inferred_from_ordinary_errors(self):
+        """Only exact capability-denial signals may skip; ordinary errors fail."""
+        capability=ctypes.WinError(self._SYMLINK_PRIVILEGE_WINERROR)
+        with patch.object(os,'symlink',side_effect=capability):
+            with self.assertRaises(unittest.SkipTest):self.create_link(self.base/'cap-link',self.outside,'symlink')
+        with patch.object(os,'symlink',side_effect=OSError(5,'synthetic access denied')):
+            with self.assertRaises(AssertionError):self.create_link(self.base/'ordinary-link',self.outside,'symlink')
+        proc=subprocess.CompletedProcess(args=['mklink'],returncode=1,stdout=b'',stderr=b'Access is denied.')
+        with patch.object(subprocess,'run',return_value=proc):
+            with self.assertRaises(AssertionError):self.create_link(self.base/'ordinary-junction',self.outside,'junction')
+        proc=subprocess.CompletedProcess(args=['mklink'],returncode=1,stdout=b'',stderr=b'You do not have sufficient privilege to perform this operation.')
+        with patch.object(subprocess,'run',return_value=proc):
+            with self.assertRaises(unittest.SkipTest):self.create_link(self.base/'cap-junction',self.outside,'junction')
+        self.events.append({'link_error_classification':{'ordinary_symlink':'failed',
+            'ordinary_junction':'failed','capability_symlink':'skipped','capability_junction':'skipped'}})
 
     def test_identity_query_failure_closes_and_never_reads(self):
         with patch.object(er._WindowsFileGuard,'_identity',side_effect=er.RegistryError('SECURE_OPEN_NO_IDENTITY')):

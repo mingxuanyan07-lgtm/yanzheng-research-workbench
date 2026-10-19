@@ -2,6 +2,7 @@
 """Run offline web/skill tests with an isolated database set before app import."""
 import argparse
 import os
+import shutil
 import sys
 import tempfile
 import unittest
@@ -18,6 +19,7 @@ def main():
     if not scratch.is_relative_to(root):
         raise RuntimeError("Test scratch directory must remain in this checkout")
     scratch.mkdir(parents=True, exist_ok=True)
+    io_fixture_root = None
     with tempfile.TemporaryDirectory(prefix="runner-", dir=scratch) as folder:
         if not Path(folder).resolve().is_relative_to(scratch):
             raise RuntimeError("Unexpected test directory")
@@ -25,14 +27,30 @@ def main():
         # initialize the user's normal research database.
         os.environ["YANZHENG_DB_PATH"] = str(Path(folder) / "import-only.db")
         os.environ["YANZHENG_MODEL_PROVIDER"] = "demo"
+        # test_evidence_registry_io requires a fresh, explicitly provided
+        # fixture root under <project>/output/lean-reliability. The default
+        # entry point supplies it before discovery and removes it afterwards;
+        # without this, a normal --suite web/all run raises KeyError in setUp.
+        io_base = (root / "output" / "lean-reliability").resolve()
+        if not io_base.is_relative_to(root):
+            raise RuntimeError("Evidence IO fixture root must remain in this checkout")
+        io_base.mkdir(parents=True, exist_ok=True)
+        io_fixture_root = Path(tempfile.mkdtemp(prefix="test-io-", dir=io_base))
+        if not io_fixture_root.resolve().is_relative_to(io_base):
+            raise RuntimeError("Unexpected evidence IO fixture directory")
+        os.environ["EVIDENCE_IO_TEST_ROOT"] = str(io_fixture_root)
         sys.path.insert(0, str(root / "webapp"))
-        suite = unittest.TestSuite()
-        if args.suite in ("all", "web"):
-            suite.addTests(unittest.TestLoader().discover(str(root / "webapp" / "tests"), pattern=args.pattern))
-        if args.suite in ("all", "skills"):
-            suite.addTests(unittest.TestLoader().discover(str(root / "tests" / "skills"), pattern=args.pattern))
-        result = unittest.TextTestRunner(verbosity=2).run(suite)
-        return 0 if result.wasSuccessful() else 1
+        try:
+            suite = unittest.TestSuite()
+            if args.suite in ("all", "web"):
+                suite.addTests(unittest.TestLoader().discover(str(root / "webapp" / "tests"), pattern=args.pattern))
+            if args.suite in ("all", "skills"):
+                suite.addTests(unittest.TestLoader().discover(str(root / "tests" / "skills"), pattern=args.pattern))
+            result = unittest.TextTestRunner(verbosity=2).run(suite)
+            return 0 if result.wasSuccessful() else 1
+        finally:
+            if io_fixture_root is not None:
+                shutil.rmtree(io_fixture_root, ignore_errors=True)
 
 
 if __name__ == "__main__":
