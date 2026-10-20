@@ -7,6 +7,7 @@ Only the standard library is used; this script makes no network calls.
 """
 
 import json
+import re
 import sys
 from datetime import date, datetime
 from pathlib import Path
@@ -89,6 +90,12 @@ def validate(record):
                 raise ValueError()
         except ValueError:
             fail(path, "expected usable http(s) URL, not a placeholder")
+
+    def hex64(value, path):
+        if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value):
+            fail(path, "expected 64 lowercase hexadecimal characters")
+            return False
+        return True
 
     def known(value, path):
         if value is None or (isinstance(value, (str, list, dict)) and not value):
@@ -193,6 +200,11 @@ def validate(record):
         for j, evidence in enumerate(array(topic.get("evidence"), p + ".evidence")):
             ep = f"{p}.evidence[{j}]"
             evidence = obj(evidence, ep, "source_id relation claim")
+            evidence_fields = {"source_id", "relation", "claim", "note_id", "note_snapshot"}
+            if isinstance(evidence, dict):
+                unknown = set(evidence) - evidence_fields
+                if unknown:
+                    fail(ep, "unexpected evidence fields: " + ", ".join(sorted(unknown)))
             source_id = evidence.get("source_id")
             string(source_id, ep + ".source_id")
             source = source_ids.get(source_id) if isinstance(source_id, str) else None
@@ -205,6 +217,58 @@ def validate(record):
             if source and source.get("verification") == "metadata_checked" and relation in ("supports", "limits"):
                 fail(ep + ".relation", "metadata alone cannot support/limit a scientific claim")
             string(evidence.get("claim"), ep + ".claim")
+            note_id = evidence.get("note_id")
+            snapshot = evidence.get("note_snapshot")
+            if relation in ("supports", "limits"):
+                note_id_valid = string(note_id, ep + ".note_id")
+                if snapshot is None:
+                    fail(ep + ".note_snapshot", "supports/limits require a bound reading-note snapshot")
+                else:
+                    snapshot = obj(snapshot, ep + ".note_snapshot",
+                                   "note_id note_sha256 content_sha256 run_id source_id level locator checked_at origin confirmed caveat")
+                    snapshot_fields = {"note_id", "note_sha256", "content_sha256", "run_id", "source_id",
+                                       "level", "locator", "checked_at", "origin", "confirmed", "caveat",
+                                       "source_version", "source_sha256", "source_sha256_scope",
+                                       "source_fingerprint_caveat"}
+                    if isinstance(snapshot, dict):
+                        unknown = set(snapshot) - snapshot_fields
+                        if unknown:
+                            fail(ep + ".note_snapshot", "unexpected snapshot fields: " + ", ".join(sorted(unknown)))
+                    snapshot_note_id = snapshot.get("note_id")
+                    string(snapshot_note_id, ep + ".note_snapshot.note_id")
+                    if note_id_valid and isinstance(snapshot_note_id, str) and snapshot_note_id != note_id:
+                        fail(ep + ".note_snapshot.note_id", "must equal evidence.note_id")
+                    hex64(snapshot.get("note_sha256"), ep + ".note_snapshot.note_sha256")
+                    hex64(snapshot.get("content_sha256"), ep + ".note_snapshot.content_sha256")
+                    for key in ("run_id", "source_id", "locator", "caveat"):
+                        string(snapshot.get(key), ep + ".note_snapshot." + key)
+                    choice(snapshot.get("level"), ep + ".note_snapshot.level",
+                           ("abstract_checked", "fulltext_checked"))
+                    iso(snapshot.get("checked_at"), ep + ".note_snapshot.checked_at")
+                    if snapshot.get("confirmed") is not True:
+                        fail(ep + ".note_snapshot.confirmed", "must be true for a bound reading note")
+                    choice(snapshot.get("origin"), ep + ".note_snapshot.origin", ("user_attested",))
+                    declared = [snapshot.get("source_version"), snapshot.get("source_sha256"),
+                                snapshot.get("source_sha256_scope")]
+                    declared_present = [value is not None for value in declared]
+                    if any(declared_present):
+                        if not all(declared_present):
+                            fail(ep + ".note_snapshot",
+                                 "declared source version/hash/scope must be all present or all absent")
+                        string(snapshot.get("source_version"), ep + ".note_snapshot.source_version")
+                        hex64(snapshot.get("source_sha256"), ep + ".note_snapshot.source_sha256")
+                        choice(snapshot.get("source_sha256_scope"), ep + ".note_snapshot.source_sha256_scope",
+                               ("user_declared_fulltext_file", "user_declared_metadata"))
+                        string(snapshot.get("source_fingerprint_caveat"),
+                               ep + ".note_snapshot.source_fingerprint_caveat")
+                    elif snapshot.get("source_fingerprint_caveat") is not None:
+                        fail(ep + ".note_snapshot.source_fingerprint_caveat",
+                             "caveat requires the declared version/hash/scope triple")
+            else:
+                if note_id is not None:
+                    fail(ep + ".note_id", "background/unverified_lead must not bind a reading note")
+                if snapshot is not None:
+                    fail(ep + ".note_snapshot", "background/unverified_lead must not include a note snapshot")
         first = obj(topic.get("first_validation"), p + ".first_validation", "steps baseline metrics success_signal")
         strings(first.get("steps"), p + ".first_validation.steps")
         strings(first.get("metrics"), p + ".first_validation.metrics")

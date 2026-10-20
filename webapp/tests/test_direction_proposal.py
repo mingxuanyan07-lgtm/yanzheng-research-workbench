@@ -60,6 +60,7 @@ class DirectionProposalTest(unittest.TestCase):
         project = self.create()
         pending = project["workflow"]["pending_proposal"]
         self.assertIsNotNone(pending)
+        self.assertFalse(self.saved(project["id"])["workflow"]["pending_proposal_stale"])
         self.assertEqual(project["stage"], "clarifying")
         self.assertEqual(project["direction_map"]["topics"], [])
         self.assertIsNone(project["direction_map"]["selected_topic_id"])
@@ -143,15 +144,21 @@ class DirectionProposalTest(unittest.TestCase):
                                                             "locator": "Abstract", "checked_at": engine.now(),
                                                             "confirmed": True, "origin": "user_attested"})
         self.app.state.store.update(project["id"], append_note)
+        self.assertTrue(self.saved(project["id"])["workflow"]["pending_proposal_stale"])
+        persisted = self.app.state.store.get(project["id"])["workflow"]
+        self.assertNotIn("pending_proposal_stale", persisted)
+        self.assertTrue(self.saved(project["id"])["workflow"]["pending_proposal_stale"])
         response = self.accept(project["id"], pending_id)
         self.assertEqual(response.status_code, 409, response.text)
         self.assertEqual(response.json()["status"], "stale_proposal")
         saved = self.saved(project["id"])
+        self.assertTrue(saved["workflow"]["pending_proposal_stale"])
         self.assertIsNotNone(saved["workflow"]["pending_proposal"])
         self.assertEqual(saved["workflow"]["pending_proposal"]["id"], pending_id)
         self.assertEqual(saved["direction_map"]["topics"], [])
         # The stale preview can still be explicitly discarded.
         self.assertEqual(self.reject(project["id"], pending_id).status_code, 200)
+        self.assertFalse(self.saved(project["id"])["workflow"]["pending_proposal_stale"])
 
     def test_topic_selection_after_preview_invalidates_acceptance(self):
         project = self.create()

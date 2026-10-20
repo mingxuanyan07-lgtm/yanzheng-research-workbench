@@ -617,7 +617,24 @@ test("direction preview panel exposes accept/reject, hashes and bound note witho
   assert.match(html,/data-action="direction-reject"/);
   assert.match(html,/旧候选/);assert.match(html,/新候选一/);
   assert.match(html,/note-1/);assert.match(html,/笔记 SHA256/);
+  assert.match(html,/未登记原文版本\/指纹/);
   assert.match(html,new RegExp("c{64}"));assert.match(html,new RegExp("b{64}"));
   assert.equal(pending.status,"pending");assert.equal(project.direction_map,undefined);
   assert.equal(app.renderDirectionProposal({id:"alpha",workflow:{}}),"");
+});
+
+test("stale pending preview disables accept but keeps reject and labels the stale context",()=>{
+  const app=appHarness();
+  const pending={id:"proposal-stale",source:"model",status:"pending",context_sha256:"c".repeat(64),base_map_sha256:"b".repeat(64),input_sha256:"i".repeat(64),
+    diff:{stage:{before:"clarifying",after:"directions_ready"},questions:{before:[],after:[]},
+      topics:{before:[],after:[{id:"new-1",title:"新候选一"}]},recommendation:{before:{topic_id:null,reason:""},after:{topic_id:"new-1",reason:"理由。"}},
+      search_queries:[],revision_note:"",bound_notes:[{note_id:"note-fp",relation:"supports",level:"abstract_checked",locator:"Abstract",note_sha256:"a".repeat(64),
+        source_version:"arXiv v2",source_sha256:"d".repeat(64),source_sha256_scope:"user_declared_fulltext_file",source_fingerprint_caveat:"用户声明；程序未认证。"}]}};
+  const staleHtml=app.renderDirectionProposal({id:"alpha",workflow:{pending_proposal:pending,pending_proposal_stale:true}});
+  assert.match(staleHtml,/上下文已变化/);assert.match(staleHtml,/is-stale/);
+  assert.match(staleHtml,/data-action="direction-accept"[^>]*disabled/);
+  assert.match(staleHtml,/data-action="direction-reject"/);assert.doesNotMatch(staleHtml,/data-action="direction-reject"[^>]*disabled/);
+  assert.match(staleHtml,/用户声明原文版本：arXiv v2/);assert.match(staleHtml,new RegExp("d{64}"));
+  const freshHtml=app.renderDirectionProposal({id:"alpha",workflow:{pending_proposal:pending,pending_proposal_stale:false}});
+  assert.doesNotMatch(freshHtml,/上下文已变化/);assert.doesNotMatch(freshHtml,/data-action="direction-accept"[^>]*disabled/);
 });

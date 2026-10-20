@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import sqlite3
 import threading
 import uuid
@@ -14,7 +15,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 import engine
 import catalog
@@ -101,11 +102,32 @@ class ReadingNote(BaseModel):
     content: str = Field(min_length=1, max_length=6000)
     locator: str = Field(min_length=1, max_length=300)
     confirmed: Literal[True]
+    source_version: str | None = Field(default=None, max_length=300)
+    source_sha256: str | None = Field(default=None, max_length=64)
+    source_sha256_scope: Literal["user_declared_fulltext_file", "user_declared_metadata"] | None = None
 
     @field_validator("content", "locator", mode="before")
     @classmethod
     def clean(cls, value):
         return value.strip() if isinstance(value, str) else value
+
+    @field_validator("source_version", "source_sha256", mode="before")
+    @classmethod
+    def clean_declared_text(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+    @model_validator(mode="after")
+    def coherent_source_fingerprint(self):
+        values = (self.source_version, self.source_sha256, self.source_sha256_scope)
+        if all(value is None for value in values):
+            return self
+        if any(value is None for value in values):
+            raise ValueError("原文版本、文件哈希与声明范围必须同时提供或同时留空。")
+        if not self.source_version:
+            raise ValueError("声明的原文版本不能为空。")
+        if not re.fullmatch(r"[0-9a-f]{64}", self.source_sha256):
+            raise ValueError("声明的文件 SHA256 必须是 64 位小写十六进制。")
+        return self
 
 
 class TheoryCard(BaseModel):
@@ -390,9 +412,16 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
             return store.get(project["id"])
         return store.create(engine.create_project(form))
 
+    def project_with_pending_status(project):
+        """Read-only public view: transient staleness flag is never persisted."""
+        value = lean_api.project_view(project)
+        if isinstance(value.get("workflow"), dict):
+            value["workflow"]["pending_proposal_stale"] = workflow.pending_proposal_is_stale(project)
+        return value
+
     @application.get("/api/projects/{project_id}")
     def get_project(project_id: str):
-        return lean_api.project_view(store.get(project_id))
+        return project_with_pending_status(store.get(project_id))
 
     @application.post("/api/projects/{project_id}/answers")
     def answer_project(project_id: str, body: Answers):
@@ -492,9 +521,26 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
             source = next((item for item in run["sources"] if item["id"] == body.source_id), None) if run else None
             if source is None:
                 raise ValueError("来源不属于该项目的这轮检索，请刷新后重试。")
-            note = body.model_dump() | {"id": uuid.uuid4().hex, "checked_at": engine.now(), "origin": "user_attested"}
+            note_payload = body.model_dump()
+            if body.source_version is None:
+                for key in ("source_version", "source_sha256", "source_sha256_scope"):
+                    note_payload.pop(key, None)
+            note = note_payload | {"id": uuid.uuid4().hex, "checked_at": engine.now(), "origin": "user_attested"}
+            if body.source_version is not None:
+                # Declared only: the application never opens or authenticates the original file.
+                note["source_fingerprint"] = {
+                    "source_version": body.source_version,
+                    "source_sha256": body.source_sha256,
+                    "source_sha256_scope": body.source_sha256_scope,
+                    "declared_at": engine.now(),
+                    "origin": "user_declared",
+                    "caveat": workflow.SOURCE_FINGERPRINT_CAVEAT,
+                }
             current.setdefault("reading_notes", []).append(note)
-            engine.add_event(current, "reading_note_added", "用户确认阅读并保存摘录：" + source["title"] + "；位置：" + body.locator)
+            note_summary = "用户确认阅读并保存摘录：" + source["title"] + "；位置：" + body.locator
+            if body.source_version is not None:
+                note_summary += "；另保存用户声明的原文版本/文件哈希（未认证）"
+            engine.add_event(current, "reading_note_added", note_summary)
         return store.update(project_id, save)
 
     @application.post("/api/theory/examples", status_code=201)

@@ -81,7 +81,8 @@ def initialize_project(form):
     project["workflow"] = {"mode": "skill", "state": "awaiting_model", "pending_answers": {},
                            "pending_questions": {}, "provided_materials": [], "suggested_queries": [],
                            "revision_note": "", "last_error": None, "skill_versions": _skill_versions(),
-                           "prompt_version": PROMPT_VERSION, "pending_proposal": None, "proposals": []}
+                           "prompt_version": PROMPT_VERSION, "pending_proposal": None, "proposals": [],
+                           "proposals_pruned_count": 0}
     record = project["direction_map"]
     record["provenance"]["generator"] = "skill_workflow_pending"
     record["recommendation"]["reason"] = "等待模型依照研究方向与文献 Skill 判断是否需要澄清；模型不会替用户选题。"
@@ -176,6 +177,32 @@ def _confirmed_notes(project, run_id, source_id):
 
 NOTE_BINDING_CAVEAT = ("笔记绑定为用户确认阅读的自述快照；note_sha256 与内容哈希一致只表示保存的摘录未变，"
                        "不是程序核验，也不证明模型 claim 与摘录相符或已成为科学结论。")
+SOURCE_FINGERPRINT_CAVEAT = ("用户声明的版本/文件哈希；程序没有读取/认证原文，不证明内容真实性、"
+                             "版本正确性或科学结论。")
+PROPOSAL_HISTORY_LIMIT = 50
+
+
+def _declared_source_fingerprint(note):
+    """Return the coherent user-declared source version/hash triple, or None.
+
+    The program only persists and echoes this declaration. It never opens the
+    original, so a matching hash is not authentication or content verification.
+    """
+    fingerprint = note.get("source_fingerprint")
+    version, sha256, scope = note.get("source_version"), note.get("source_sha256"), note.get("source_sha256_scope")
+    caveat = SOURCE_FINGERPRINT_CAVEAT
+    if isinstance(fingerprint, dict):
+        version = version or fingerprint.get("source_version")
+        sha256 = sha256 or fingerprint.get("source_sha256")
+        scope = scope or fingerprint.get("source_sha256_scope")
+        if isinstance(fingerprint.get("caveat"), str) and fingerprint["caveat"].strip():
+            caveat = fingerprint["caveat"]
+    if not (isinstance(version, str) and version.strip() and isinstance(sha256, str)
+            and len(sha256) == 64 and all(character in "0123456789abcdef" for character in sha256)
+            and scope in ("user_declared_fulltext_file", "user_declared_metadata")):
+        return None
+    return {"source_version": version.strip(), "source_sha256": sha256,
+            "source_sha256_scope": scope, "source_fingerprint_caveat": caveat}
 
 
 def _note_snapshot(note, source):
@@ -183,11 +210,15 @@ def _note_snapshot(note, source):
     note_sha256 = hashlib.sha256(json.dumps(note, sort_keys=True, ensure_ascii=False,
                                             separators=(",", ":")).encode("utf-8")).hexdigest()
     content_sha256 = hashlib.sha256(note["content"].encode("utf-8")).hexdigest()
-    return {"note_id": note["id"], "note_sha256": note_sha256, "content_sha256": content_sha256,
-            "run_id": source["run_id"], "source_id": source["source_id"],
-            "level": note["level"], "locator": note["locator"], "checked_at": note["checked_at"],
-            "origin": note.get("origin", "user_attested"), "confirmed": True,
-            "caveat": NOTE_BINDING_CAVEAT}
+    snapshot = {"note_id": note["id"], "note_sha256": note_sha256, "content_sha256": content_sha256,
+                "run_id": source["run_id"], "source_id": source["source_id"],
+                "level": note["level"], "locator": note["locator"], "checked_at": note["checked_at"],
+                "origin": note.get("origin", "user_attested"), "confirmed": True,
+                "caveat": NOTE_BINDING_CAVEAT}
+    declared = _declared_source_fingerprint(note)
+    if declared:
+        snapshot.update(declared)
+    return snapshot
 
 
 def context_sources(project):
@@ -486,6 +517,21 @@ def _proposal_context_sha256(project):
                                      separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
+def pending_proposal_is_stale(project):
+    """Current, read-only staleness flag for the pending direction preview."""
+    pending = (project.get("workflow") or {}).get("pending_proposal")
+    if not isinstance(pending, dict):
+        return False
+    expected = pending.get("context_sha256")
+    if not isinstance(expected, str) or len(expected) != 64:
+        return True
+    try:
+        current = _proposal_context_sha256(project)
+    except (TypeError, ValueError):
+        return True
+    return current != expected
+
+
 def _proposal_diff(project, proposal):
     record = project["direction_map"]
     bound_notes = []
@@ -496,7 +542,11 @@ def _proposal_diff(project, proposal):
                 bound_notes.append({"topic_id": topic["id"], "source_id": entry["source_id"],
                                     "relation": entry["relation"], "note_id": snapshot["note_id"],
                                     "level": snapshot["level"], "locator": snapshot["locator"],
-                                    "note_sha256": snapshot["note_sha256"]})
+                                    "note_sha256": snapshot["note_sha256"],
+                                    "source_version": snapshot.get("source_version"),
+                                    "source_sha256": snapshot.get("source_sha256"),
+                                    "source_sha256_scope": snapshot.get("source_sha256_scope"),
+                                    "source_fingerprint_caveat": snapshot.get("source_fingerprint_caveat")})
     return {"stage": {"before": record["stage"], "after": proposal["stage"]},
             "questions": {"before": copy.deepcopy(record["questions"]), "after": copy.deepcopy(proposal["questions"])},
             "topics": {"before": [{"id": topic["id"], "title": topic["title"]} for topic in record["topics"]],
@@ -526,6 +576,24 @@ def _proposal_status(flow, proposal_id, status, stamp, reason):
             item.update(status=status, reviewed_at=stamp, review_reason=reason)
             return item
     raise ValueError("待确认修订历史缺失，请刷新后重试。")
+
+
+def _prune_proposal_history(flow):
+    """Keep proposal history bounded without ever dropping the active pending entry."""
+    proposals = flow.get("proposals")
+    if not isinstance(proposals, list) or len(proposals) <= PROPOSAL_HISTORY_LIMIT:
+        return 0
+    pending = flow.get("pending_proposal")
+    pending_id = pending.get("id") if isinstance(pending, dict) else None
+    keep = proposals[-PROPOSAL_HISTORY_LIMIT:]
+    if pending_id is not None and pending_id not in {item.get("id") for item in keep if isinstance(item, dict)}:
+        active = next((item for item in proposals if isinstance(item, dict) and item.get("id") == pending_id), None)
+        if active is not None:
+            keep = proposals[-(PROPOSAL_HISTORY_LIMIT - 1):] + [active]
+    pruned = len(proposals) - len(keep)
+    flow["proposals"] = keep
+    flow["proposals_pruned_count"] = int(flow.get("proposals_pruned_count", 0) or 0) + pruned
+    return pruned
 
 
 def _apply_direction_payload(updated, proposal, stamp, *, archive_reason, proposal_id=None, call_facts=None):
@@ -584,6 +652,7 @@ def store_proposal(project, payload, call_record):
              "diff": _proposal_diff(project, proposal), "reviewed_at": None, "review_reason": None}
     flow.setdefault("proposals", []).append(copy.deepcopy(entry))
     flow["pending_proposal"] = entry
+    _prune_proposal_history(flow)
     flow.update(state="proposal_ready", last_error=None, prompt_version=PROMPT_VERSION)
     facts["application_status"] = "pending_review"
     facts["summary"] = "模型结果已保存为待确认修订；当前方向地图、候选和用户选择尚未改变。"

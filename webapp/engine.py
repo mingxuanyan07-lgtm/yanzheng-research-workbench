@@ -213,6 +213,23 @@ def _markdown_text(value):
     return text
 
 
+def _declared_fingerprint_text(item):
+    """One read-only line about a user-declared source version/hash triple."""
+    fingerprint = item.get("source_fingerprint") if isinstance(item.get("source_fingerprint"), dict) else {}
+    version = item.get("source_version") or fingerprint.get("source_version")
+    sha256 = item.get("source_sha256") or fingerprint.get("source_sha256")
+    scope = item.get("source_sha256_scope") or fingerprint.get("source_sha256_scope")
+    caveat = item.get("source_fingerprint_caveat") or fingerprint.get("caveat")
+    if (isinstance(version, str) and version.strip() and isinstance(sha256, str)
+            and len(sha256) == 64 and all(character in "0123456789abcdef" for character in sha256)
+            and scope in ("user_declared_fulltext_file", "user_declared_metadata")):
+        label = {"user_declared_fulltext_file": "用户声明为全文文件",
+                 "user_declared_metadata": "用户声明为元数据"}[scope]
+        return ("；用户声明原文版本：" + _markdown_text(version.strip()) + "；声明文件 SHA256（" + label + "）："
+                + _markdown_text(sha256) + "；" + _markdown_text(caveat or "程序没有读取/认证原文，不证明内容真实性或科学结论。"))
+    return "；未登记原文版本/指纹（程序未读取/认证原文）"
+
+
 def add_literature_search(project, record):
     # Keep retrieval IDs, failures and reading scope in their own contract.
     # Metadata never silently becomes support for any candidate direction.
@@ -276,7 +293,8 @@ def render_plan(project):
                      + _markdown_text(snapshot.get("locator") or "未记录") + "；笔记 SHA256："
                      + _markdown_text(snapshot.get("note_sha256") or "未记录") + "；内容 SHA256："
                      + _markdown_text(snapshot.get("content_sha256") or "未记录") + "）。"
-                     + _markdown_text(snapshot.get("caveat") or "快照不是程序核验。"))
+                     + _markdown_text(snapshot.get("caveat") or "快照不是程序核验。")
+                     + _declared_fingerprint_text(snapshot))
         lines.append(line)
     if not topic["evidence"]:
         lines.append("尚未建立该方向的文献支持。")
@@ -303,7 +321,7 @@ def render_plan(project):
         lines.extend(["", "## 阅读记录与公开案例材料", ""])
         for note in project["reading_notes"]:
             origin_label = "公开案例整理（非用户阅读确认）" if note.get("origin") == "curated_example" else "用户确认"
-            lines.append("- " + origin_label + "；来源 " + _markdown_text(note["run_id"] + "/" + note["source_id"]) + "；等级：" + _markdown_text(note["level"]) + "；位置：" + _markdown_text(note["locator"]) + "；摘录/笔记：" + _markdown_text(note["content"]))
+            lines.append("- " + origin_label + "；来源 " + _markdown_text(note["run_id"] + "/" + note["source_id"]) + "；等级：" + _markdown_text(note["level"]) + "；位置：" + _markdown_text(note["locator"]) + "；摘录/笔记：" + _markdown_text(note["content"]) + _declared_fingerprint_text(note))
     if project.get("experiments"):
         lines.extend(["", "## 独立实验运行记录", "", "固定执行器的局部数值结果，不是数学证明；参数与选题以每轮快照为准。", ""])
         for run in project["experiments"]:

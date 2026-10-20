@@ -266,12 +266,14 @@
     const pending = project?.workflow?.pending_proposal;
     if (!pending || typeof pending !== "object") return "";
     const diff = pending.diff || {};
+    const stale = project?.workflow?.pending_proposal_stale === true;
     const stageLabel = value => ({ clarifying: "待澄清", directions_ready: "待选择方向", topic_selected: "已选题" }[value] || value || "未知");
     const titles = items => list(items).map(item => `${item.title || item.id || "未命名"}`).join("、") || "无";
     const questions = list(diff.questions?.after);
     const bound = list(diff.bound_notes);
-    return `<section class="panel direction-proposal" data-direction-proposal="${escape(pending.id)}">
-      <div class="theory-section-head"><div><span class="section-kicker">REVIEW BEFORE APPLYING</span><h2>待确认的方向修订</h2></div><span class="stage-pill purple">${pending.source === "model" ? "模型建议" : "建议"} · 尚未应用</span></div>
+    return `<section class="panel direction-proposal${stale ? " is-stale" : ""}" data-direction-proposal="${escape(pending.id)}">
+      <div class="theory-section-head"><div><span class="section-kicker">REVIEW BEFORE APPLYING</span><h2>待确认的方向修订</h2></div><span class="stage-pill ${stale ? "purple" : "purple"}">${stale ? "上下文已变化 · 需重新生成" : (pending.source === "model" ? "模型建议" : "建议") + " · 尚未应用"}</span></div>
+      ${stale ? '<div class="message is-error" role="alert"><strong>上下文已变化，需重新生成。</strong><p>本修订基于旧输入或旧证据；接受已禁用，可放弃本次修订后重新请求。旧地图和你的选择保持不变。</p></div>' : ""}
       <p class="theory-notice">接受前，当前方向地图、候选和你的选择都不会改变。若期间修改简报、补充资料、阅读笔记、方向选择或已有方向，本修订会过期，需要重新请求。</p>
       <div class="proposal-diff">
         <section><h3>阶段</h3><p>${escape(stageLabel(diff.stage?.before))} → <strong>${escape(stageLabel(diff.stage?.after))}</strong></p></section>
@@ -280,9 +282,9 @@
         ${diff.recommendation?.after?.reason ? `<section><h3>推荐（仅建议，不会自动选择）</h3><p>${escape(diff.recommendation.after.reason)}</p></section>` : ""}
         ${list(diff.search_queries).length ? `<section><h3>检索建议 · 尚未执行</h3>${stringList(diff.search_queries)}</section>` : ""}
         ${diff.revision_note ? `<section><h3>修订说明</h3><p>${escape(diff.revision_note)}</p></section>` : ""}
-        ${bound.length ? `<section><h3>绑定阅读笔记（${bound.length}）</h3>${bound.map(note => `<p><strong>${escape(note.note_id)}</strong> · ${escape(note.relation)} · ${sourceVerification(note.level)} · 定位：${escape(note.locator || "未记录")} · 笔记 SHA256：${escape(String(note.note_sha256 || "").slice(0, 20))}…</p>`).join("")}</section>` : ""}
+        ${bound.length ? `<section><h3>绑定阅读笔记（${bound.length}）</h3>${bound.map(note => `<p><strong>${escape(note.note_id)}</strong> · ${escape(note.relation)} · ${sourceVerification(note.level)} · 定位：${escape(note.locator || "未记录")} · 笔记 SHA256：${escape(String(note.note_sha256 || "").slice(0, 20))}…<br>${escape(declaredFingerprintText(note))}</p>`).join("")}</section>` : ""}
       </div>
-      <div class="theory-actions"><button type="button" class="button button-primary" data-action="direction-accept" data-proposal-id="${escape(pending.id)}">${icon("check")}接受并应用修订</button><button type="button" class="button button-secondary" data-action="direction-reject" data-proposal-id="${escape(pending.id)}">放弃本次修订</button></div>
+      <div class="theory-actions"><button type="button" class="button button-primary" data-action="direction-accept" data-proposal-id="${escape(pending.id)}" ${stale ? "disabled" : ""}>${icon("check")}接受并应用修订</button><button type="button" class="button button-secondary" data-action="direction-reject" data-proposal-id="${escape(pending.id)}">放弃本次修订</button></div>
       <details class="theory-history"><summary>查看本次修订的输入与旧地图身份 ${icon("chevron")}</summary><p>上下文 SHA256：${escape(pending.context_sha256 || "未记录")}</p><p>旧方向地图 SHA256：${escape(pending.base_map_sha256 || "未记录")}</p><p>模型输入 SHA256：${escape(pending.input_sha256 || "未记录")}</p><p>提醒：接受会归档旧方向地图；推荐仍不是你的选择，字节/哈希一致也不构成科学核验。</p></details>
     </section>`;
   }
@@ -291,6 +293,7 @@
     const projectId = state.project.id, proposalId = button.dataset.proposalId;
     const pending = state.project.workflow?.pending_proposal;
     if (!pending || pending.id !== proposalId) { toast("待确认修订已变化，请刷新后重试。", true); return; }
+    if (action === "accept" && state.project.workflow?.pending_proposal_stale === true) { toast("上下文已变化，需重新生成；接受已禁用，可放弃本次修订。", true); return; }
     state.mutating = true;
     const done = busy(button, action === "accept" ? "正在应用修订" : "正在放弃修订");
     syncMutationControls();
@@ -332,6 +335,23 @@
     return `<${tag}>${items.map(value => `<li>${escape(value)}</li>`).join("")}</${tag}>`;
   }
   function sourceVerification(value) { return { unverified: "待核实", metadata_checked: "已核对书目信息", abstract_checked: "已核对摘要", fulltext_checked: "已核对相关正文" }[value] || "待核实"; }
+  function declaredScopeLabel(value) { return { user_declared_fulltext_file: "用户声明为全文文件", user_declared_metadata: "用户声明为元数据" }[value] || "未声明范围"; }
+  function declaredFingerprint(item) {
+    if (!item || typeof item !== "object") return null;
+    const nested = item.source_fingerprint && typeof item.source_fingerprint === "object" ? item.source_fingerprint : {};
+    const version = item.source_version || nested.source_version;
+    const sha256 = item.source_sha256 || nested.source_sha256;
+    const scope = item.source_sha256_scope || nested.source_sha256_scope;
+    const caveat = item.source_fingerprint_caveat || nested.caveat;
+    if (!(typeof version === "string" && version.trim() && typeof sha256 === "string" && /^[0-9a-f]{64}$/.test(sha256))) return null;
+    if (!["user_declared_fulltext_file", "user_declared_metadata"].includes(scope)) return null;
+    return { version: version.trim(), sha256, scope, caveat: typeof caveat === "string" && caveat.trim() ? caveat : "用户声明的版本/文件哈希；程序没有读取/认证原文，不证明内容真实性、版本正确性或科学结论。" };
+  }
+  function declaredFingerprintText(item) {
+    const fingerprint = declaredFingerprint(item);
+    if (!fingerprint) return "未登记原文版本/指纹（程序未读取/认证原文）";
+    return `用户声明原文版本：${fingerprint.version}；声明文件 SHA256（${declaredScopeLabel(fingerprint.scope)}）：${fingerprint.sha256}；${fingerprint.caveat}`;
+  }
   function renderSource(source) {
     const url = safeUrl(source.url);
     const title = url ? `<a href="${url}" class="source-title" target="_blank" rel="noopener noreferrer">${escape(source.title)}</a>` : `<span class="source-title">${escape(source.title)}</span>`;
@@ -352,7 +372,7 @@
       const snapshot = entry.note_snapshot && typeof entry.note_snapshot === "object" ? entry.note_snapshot : null;
       const liveNote = snapshot ? list(state.project?.reading_notes).find(note => note && note.id === snapshot.note_id) : null;
       const excerpt = liveNote && typeof liveNote.content === "string" ? liveNote.content : "";
-      const noteBlock = snapshot ? `<div class="evidence-note"><p><strong>已绑定用户确认阅读笔记</strong> · ${sourceVerification(snapshot.level)} · 阅读定位：${escape(snapshot.locator || "未记录")}</p>${excerpt ? `<p class="evidence-excerpt">${escape(excerpt.slice(0, 600))}${excerpt.length > 600 ? "…" : ""}</p>` : '<p class="evidence-excerpt">当前项目阅读记录中未找到该笔记原文；快照仍保留哈希与定位。</p>'}<small>note_id：${escape(snapshot.note_id || "未记录")} · 笔记 SHA256：${escape(snapshot.note_sha256 || "未记录")} · 内容 SHA256：${escape(snapshot.content_sha256 || "未记录")}${snapshot.checked_at ? ` · 核对时间：${escape(date(snapshot.checked_at, true))}` : ""}</small><p class="evidence-caution">${escape(snapshot.caveat || "笔记快照不是程序核验，也不证明论断与摘录相符。")}</p></div>` : "";
+      const noteBlock = snapshot ? `<div class="evidence-note"><p><strong>已绑定用户确认阅读笔记</strong> · ${sourceVerification(snapshot.level)} · 阅读定位：${escape(snapshot.locator || "未记录")}</p>${excerpt ? `<p class="evidence-excerpt">${escape(excerpt.slice(0, 600))}${excerpt.length > 600 ? "…" : ""}</p>` : '<p class="evidence-excerpt">当前项目阅读记录中未找到该笔记原文；快照仍保留哈希与定位。</p>'}<small>note_id：${escape(snapshot.note_id || "未记录")} · 笔记 SHA256：${escape(snapshot.note_sha256 || "未记录")} · 内容 SHA256：${escape(snapshot.content_sha256 || "未记录")}${snapshot.checked_at ? ` · 核对时间：${escape(date(snapshot.checked_at, true))}` : ""}</small><p class="evidence-fingerprint">${escape(declaredFingerprintText(snapshot))}</p><p class="evidence-caution">${escape(snapshot.caveat || "笔记快照不是程序核验，也不证明论断与摘录相符。")}</p></div>` : "";
       const scope = snapshot ? `阅读定位：${escape(snapshot.locator || "未记录")}` : `位置：${escape(entry.locator || source.locator || "尚未记录")}`;
       return `<div class="evidence-entry"><p class="evidence-line"><strong>${escape(relation)}</strong> · ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ↗</a>` : escape(source?.title || entry.source_id)}<br>${escape(entry.claim)}</p>${source ? `<p class="evidence-scope">${sourceVerification(source.verification)} · ${scope} · 核对：${escape(source.checked_at ? date(source.checked_at, true) : "尚未核对")}</p>` : '<p class="evidence-scope">关联来源暂不可用，请核查原始记录。</p>'}${noteBlock}</div>`;
     }).join("");
@@ -402,7 +422,7 @@
     const key = `${projectId}:${record.id}:${source.id}`;
     const notes = list(state.project?.reading_notes).filter(note => note.run_id === record.id && note.source_id === source.id);
     const draft = state.readingDrafts[key] || {};
-    return `<div class="reading-records">${notes.map(note => `<article class="reading-note"><div><span class="source-verification">${sourceVerification(note.level)}</span><span>${note.origin === "curated_example" ? "公开案例整理 · 非你的阅读确认" : "用户确认"} · ${escape(date(note.checked_at, true))}</span></div><p class="reading-locator">阅读位置：${escape(note.locator)}</p><p class="reading-content">${escape(note.content)}</p></article>`).join("")}<details class="reading-note-editor"><summary>记录我读过的内容 ${icon("chevron")}</summary><form class="reading-note-form" data-run-id="${escape(record.id)}" data-source-id="${escape(source.id)}" data-draft-key="${escape(key)}"><label>实际阅读范围<select name="level"><option value="abstract_checked" ${draft.level === "abstract_checked" ? "selected" : ""}>已阅读并核对摘要</option><option value="fulltext_checked" ${draft.level === "fulltext_checked" ? "selected" : ""}>已阅读相关正文</option></select></label><label>阅读位置<input name="locator" required maxlength="300" value="${escape(draft.locator || "")}" placeholder="例如：摘要；v2 第 3.1 节 / 第 6 页"></label><label>原文摘录或阅读笔记<textarea name="content" required maxlength="6000" placeholder="记录实际读到的内容，以及它能支持或限制什么。">${escape(draft.content || "")}</textarea></label><label class="reading-confirmation"><input name="confirmed" type="checkbox" required ${draft.confirmed ? "checked" : ""}><span>我确认已阅读上述范围，位置与笔记由我填写。</span></label><p>只保存你的阅读声明与笔记；程序不会自动下载全文或把题录升级为已读。</p><button type="submit" class="button button-secondary">保存阅读记录</button></form></details></div>`;
+    return `<div class="reading-records">${notes.map(note => `<article class="reading-note"><div><span class="source-verification">${sourceVerification(note.level)}</span><span>${note.origin === "curated_example" ? "公开案例整理 · 非你的阅读确认" : "用户确认"} · ${escape(date(note.checked_at, true))}</span></div><p class="reading-locator">阅读位置：${escape(note.locator)}</p><p class="reading-content">${escape(note.content)}</p><p class="reading-fingerprint">${escape(declaredFingerprintText(note))}</p></article>`).join("")}<details class="reading-note-editor"><summary>记录我读过的内容 ${icon("chevron")}</summary><form class="reading-note-form" data-run-id="${escape(record.id)}" data-source-id="${escape(source.id)}" data-draft-key="${escape(key)}"><label>实际阅读范围<select name="level"><option value="abstract_checked" ${draft.level === "abstract_checked" ? "selected" : ""}>已阅读并核对摘要</option><option value="fulltext_checked" ${draft.level === "fulltext_checked" ? "selected" : ""}>已阅读相关正文</option></select></label><label>阅读位置<input name="locator" required maxlength="300" value="${escape(draft.locator || "")}" placeholder="例如：摘要；v2 第 3.1 节 / 第 6 页"></label><label>原文摘录或阅读笔记<textarea name="content" required maxlength="6000" placeholder="记录实际读到的内容，以及它能支持或限制什么。">${escape(draft.content || "")}</textarea></label><fieldset class="reading-fingerprint-fields"><legend>原文版本与文件指纹（可选 · 用户声明，程序不认证）</legend><label>原文版本<input name="source_version" maxlength="300" value="${escape(draft.source_version || "")}" placeholder="例如：v2 / arXiv:2001.00001v3"></label><label>声明文件 SHA256<input name="source_sha256" maxlength="64" value="${escape(draft.source_sha256 || "")}" placeholder="64 位小写十六进制"></label><label>哈希范围<select name="source_sha256_scope"><option value="" ${!draft.source_sha256_scope ? "selected" : ""}>不声明</option><option value="user_declared_fulltext_file" ${draft.source_sha256_scope === "user_declared_fulltext_file" ? "selected" : ""}>用户声明：全文文件</option><option value="user_declared_metadata" ${draft.source_sha256_scope === "user_declared_metadata" ? "selected" : ""}>用户声明：元数据</option></select></label><p>三项须同时填写或同时留空；程序只保存你的声明，不读取/认证原文，也不证明内容真实性或版本正确性。</p></fieldset><label class="reading-confirmation"><input name="confirmed" type="checkbox" required ${draft.confirmed ? "checked" : ""}><span>我确认已阅读上述范围，位置与笔记由我填写。</span></label><p>只保存你的阅读声明与笔记；程序不会自动下载全文或把题录升级为已读。</p><button type="submit" class="button button-secondary">保存阅读记录</button></form></details></div>`;
   }
   function captureLiteratureDraft() {
     const query = $("#literature-query");
@@ -1062,6 +1082,12 @@
       const result = await api(`/api/projects/${encodeURIComponent(previous.id)}/${action}`, { method: "POST", ...(body ? { body: JSON.stringify(body) } : {}) });
       if (token !== state.opening || state.project?.id !== previous.id) { await refreshProjects(false); return; }
       state.project = result.project || result;
+      if (state.project.workflow?.pending_proposal) {
+        try {
+          const latest = await api(`/api/projects/${encodeURIComponent(previous.id)}`);
+          if (token === state.opening && state.project?.id === previous.id) state.project = latest.project || latest;
+        } catch { /* Keep the just-saved project if the read-only staleness refresh fails. */ }
+      }
       if (["reopen", "generate", "advance"].includes(action)) delete state.reasonDrafts[previous.id];
       delete state.experimentWorkspaces[previous.id];
       if (state.project.workflow?.state !== "failed") { delete state.answerDrafts[previous.id]; if (body?.material) delete state.materialDrafts[previous.id]; if (action === "reading-notes") delete state.readingDrafts[`${previous.id}:${body.run_id}:${body.source_id}`]; }
@@ -1220,7 +1246,12 @@
       event.preventDefault();
       if (!event.target.reportValidity()) return;
       const fields = Object.fromEntries(new FormData(event.target));
-      await mutateProject("reading-notes", { run_id: event.target.dataset.runId, source_id: event.target.dataset.sourceId, level: fields.level, locator: fields.locator.trim(), content: fields.content.trim(), confirmed: fields.confirmed === "on" }, $("button[type=submit]", event.target), "保存阅读记录"); return;
+      const declared = { source_version: String(fields.source_version || "").trim(), source_sha256: String(fields.source_sha256 || "").trim(), source_sha256_scope: fields.source_sha256_scope || "" };
+      const declaredCount = [declared.source_version, declared.source_sha256, declared.source_sha256_scope].filter(Boolean).length;
+      if (declaredCount !== 0 && declaredCount !== 3) { toast("原文版本、声明文件 SHA256 与哈希范围须同时填写或同时留空。", true); return; }
+      const body = { run_id: event.target.dataset.runId, source_id: event.target.dataset.sourceId, level: fields.level, locator: fields.locator.trim(), content: fields.content.trim(), confirmed: fields.confirmed === "on" };
+      if (declaredCount === 3) Object.assign(body, { source_version: declared.source_version, source_sha256: declared.source_sha256, source_sha256_scope: declared.source_sha256_scope });
+      await mutateProject("reading-notes", body, $("button[type=submit]", event.target), "保存阅读记录"); return;
     }
     if (event.target.id === "idea-form") {
       event.preventDefault();
