@@ -2,7 +2,7 @@
 
 - 分支：`feature/direction-provenance-preview`
 - 工作树：`D:\天猫AI-feature-direction`（独立 worktree，基于候选提交 `31c787a2fea847dd107fa613052debd814ed6bcc`）
-- 状态：Gap A（精确阅读笔记绑定）与 Gap B（方向修订预览/接受）均已实现，离线相关测试通过；**未启动服务、未调用模型/Lean、未使用真实 DB/.env、未修改主/候选工作树、未 push**。
+- 状态：Gap A（精确阅读笔记绑定）与 Gap B（方向修订预览/接受）均已实现；相关测试、完整 web 套件和前端测试已由 Lead 独立复核；文档已同步，feature 分支已推送远端。**未启动服务、未调用模型/Lean、未使用真实 DB/.env、未修改主/候选工作树、未合并 main**。
 - 证据副本：`D:\天猫AI\output\lead-review\20261020-direction-gaps\`（diff、测试日志、源码 SHA、git status）。
 
 ## 1. Gap A — 方向证据绑定精确阅读笔记
@@ -72,9 +72,9 @@
 | test_literature_api.py | Ran 7 · OK |
 | test_theory_api.py | Ran 8 · OK |
 
-合计 **59 个 Python 测试通过、0 失败/错误**。前端 VM 测试：`node --test webapp/tests/frontend/test_app_ui.cjs` → **44/44 通过**（含新增 1 项 pending 预览面板渲染）。`py_compile` 8 个改动 Python 文件通过。
+相关目标文件合计 **59 个 Python 测试通过、0 失败/错误**。Lead 独立复核完整 `--suite web`：**260 tests，1 failure，4 skipped**；唯一失败是 Lean `nat_add_zero` wall timeout，方向/非 Lean 测试全部通过。前端三文件：**89/89 通过**（`test_app_ui` 新增 pending 面板断言；另两文件通过）。`py_compile` 通过。
 
-未运行：完整 `--suite web`/`all`（会启动 Lean 集成用例，任务明确禁止 full Lean）、skills 套件、A/B evidence registry 套件、任何服务/浏览器/模型调用。
+未执行：真实浏览器 accept/reject 端到端、skills 套件、A/B evidence registry 套件、任何服务/模型调用；完整 `--suite all`（A IO 等）未在本分支重跑。
 
 ## 4. 变更与 diff
 
@@ -89,18 +89,18 @@
  webapp/tests/frontend/test_app_ui.cjs | 25 +++-
  + 2 new test files (test_direction_note_binding.py, test_direction_proposal.py)
 ```
-完整 diff：`D:\天猫AI\output\lead-review\20261020-direction-gaps\direction-gaps.diff`；源码 SHA：同目录 `source-sha.json`。
+完整 diff：`D:\天猫AI\output\lead-review\20261020-direction-gaps\direction-gaps-v2.diff`；源码 SHA/待评审 READY：同目录 `READY-V2.json`、`REPORT-V2.md`。
 
 ## 5. 残余缺口与风险
 
-1. **文档未同步**：根 `README.md`、`webapp/README.md`、`docs/研证技术架构.md` 仍描述“方向修订校验后直接应用、差异预览尚待实现”“每次 /advance 直接应用”。实现已改变该语义，文档应随分支评审单独更新，避免把本候选误当正式发布口径。
-2. **API 语义变化**：`/advance` 对已有 API 消费者从“应用”改为“保存待确认”；新端点 accept/reject 为增量。UI 已更新，但外部脚本/旧文档需同步。
-3. **契约层**：note 绑定与 pending 状态只在 `workflow.py` 业务层校验；`skills/research-direction-guide/scripts/validate_direction_map.py` 未扩展校验 note_snapshot（额外字段被容忍）。直接手改 JSON 仍可绕过，需要后续把不变量下沉到方向契约或服务端写入口。
-4. **过期 pending 的清理**：上下文变化后不会自动标记 stale/移除 pending，只在 accept 时返回 409；页面仍显示 pending（可显式拒绝）。如需自动提示，可在工作区视图计算 stale 标记（下一步）。
-5. **UI diff 粒度**：预览为字段级摘要（阶段/候选标题/问题/推荐/检索建议/绑定笔记/hash），非逐候选字段全文 diff；拒绝理由输入框未加入 UI（API 支持 reason，默认空）。
-6. **历史增长**：`workflow.proposals` 保留完整 base_map/payload/submitted_payload 供审计，没有数量上限；长时间高频修订会增大项目 JSON。
-7. **前端覆盖**：新增预览面板有 1 项 VM 渲染测试；accept/reject 的真实浏览器/服务链路未在本任务执行（任务禁止服务操作），需在允许环境的端到端验收中补跑。
-8. **快照语义**：绑定笔记仍是用户自述 + 程序保存；caveat 明确内容 hash 一致不等于科学核验，claim 与摘录是否相符仍需人工审查；Gap A 不改变这一边界。
+1. **文档已同步**：根 `README.md`、`webapp/README.md`、`docs/ROADMAP.md`、`docs/研证技术架构.md`、`docs/项目复盘与产品优化.md` 已更新为“待确认预览 + 精确笔记绑定”，不再宣称直接应用。
+2. **API 语义变化（仍存在）**：`/advance` 对已有 API 消费者从“应用”改为“保存待确认”；新端点 accept/reject 为增量。UI 已更新，但外部脚本/旧文档需同步。
+3. **契约层（仍存在）**：note 绑定与 pending 状态只在 `workflow.py` 业务层校验；`skills/research-direction-guide/scripts/validate_direction_map.py` 未扩展校验 note_snapshot（额外字段被容忍）。直接手改 JSON 仍可绕过，需要后续把不变量下沉到方向契约或服务端写入口。
+4. **过期 pending 的清理（仍存在）**：上下文变化后不会自动标记 stale/移除 pending，只在 accept 时返回 409；页面仍显示 pending（可显式拒绝）。如需自动提示，可在工作区视图计算 stale 标记（下一步）。
+5. **UI diff 粒度（仍存在）**：预览为字段级摘要（阶段/候选标题/问题/推荐/检索建议/绑定笔记/hash），非逐候选字段全文 diff；拒绝理由输入框未加入 UI（API 支持 reason，默认空）。
+6. **历史增长（仍存在）**：`workflow.proposals` 保留完整 base_map/payload/submitted_payload 供审计，没有数量上限；长时间高频修订会增大项目 JSON。
+7. **前端覆盖（仍存在）**：新增预览面板有 1 项 VM 渲染测试；accept/reject 的真实浏览器/服务链路未在本任务执行（任务禁止服务操作），需在允许环境的端到端验收中补跑。
+8. **快照语义（仍存在）**：绑定笔记仍是用户自述 + 程序保存；caveat 明确内容 hash 一致不等于科学核验，claim 与摘录是否相符仍需人工审查；Gap A 不改变这一边界。
 
 ## 6. 复核方式
 
