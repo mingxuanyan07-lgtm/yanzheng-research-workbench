@@ -267,7 +267,17 @@ def render_plan(project):
     if not source_ids:
         lines.append("该方向尚未关联核实来源；题录或检索计划不能替代文献支持。")
     lines.extend(["", "## 课题与来源的关联", ""])
-    lines.extend("- " + _markdown_text(evidence["source_id"]) + " · " + _markdown_text(evidence["relation"]) + "：" + _markdown_text(evidence["claim"]) for evidence in topic["evidence"])
+    for evidence in topic["evidence"]:
+        line = "- " + _markdown_text(evidence["source_id"]) + " · " + _markdown_text(evidence["relation"]) + "：" + _markdown_text(evidence["claim"])
+        snapshot = evidence.get("note_snapshot")
+        if isinstance(snapshot, dict):
+            line += ("；绑定阅读笔记 " + _markdown_text(snapshot.get("note_id") or "未记录")
+                     + "（" + _markdown_text(snapshot.get("level") or "等级未记录") + "；定位："
+                     + _markdown_text(snapshot.get("locator") or "未记录") + "；笔记 SHA256："
+                     + _markdown_text(snapshot.get("note_sha256") or "未记录") + "；内容 SHA256："
+                     + _markdown_text(snapshot.get("content_sha256") or "未记录") + "）。"
+                     + _markdown_text(snapshot.get("caveat") or "快照不是程序核验。"))
+        lines.append(line)
     if not topic["evidence"]:
         lines.append("尚未建立该方向的文献支持。")
     lines.extend(["", "## 网页检索记录", ""])

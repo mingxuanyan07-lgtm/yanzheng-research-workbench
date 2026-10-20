@@ -15,9 +15,15 @@ from urllib.parse import quote, urlsplit
 import engine
 import planner
 
-PROMPT_VERSION = "skill-workflow-v1.1"
+PROMPT_VERSION = "skill-workflow-v1.2"
 PAYLOAD_FIELDS = {"stage", "questions", "topics", "recommendation", "assumptions", "search_queries", "revision_note"}
 QUESTION_FIELDS = {"id", "question", "why_it_matters"}
+
+
+class ProposalConflict(ValueError):
+    """A pending direction proposal cannot be accepted because its input context changed."""
+
+
 SKILL_PATHS = (
     engine.ROOT / "skills/research-direction-guide/SKILL.md",
     engine.ROOT / "skills/literature-search/SKILL.md",
@@ -29,7 +35,8 @@ def _schema():
     texts = lambda maximum, count=6, minimum=1: {"type": "array", "minItems": minimum, "maxItems": count, "items": text(maximum)}
     obj = lambda fields: {"type": "object", "additionalProperties": False, "required": list(fields), "properties": fields}
     first = obj({"steps": texts(600), "baseline": text(600), "metrics": texts(250), "success_signal": text(600)})
-    evidence = obj({"source_id": text(256), "relation": {"enum": ["background", "unverified_lead", "supports", "limits"]}, "claim": text(1200)})
+    evidence = obj({"source_id": text(256), "relation": {"enum": ["background", "unverified_lead", "supports", "limits"]},
+                    "claim": text(1200), "note_id": {"type": ["string", "null"]}})
     topic = obj({
         "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,39}$"},
         "title": text(120), "question": text(800), "known_work": text(1200),
@@ -74,7 +81,7 @@ def initialize_project(form):
     project["workflow"] = {"mode": "skill", "state": "awaiting_model", "pending_answers": {},
                            "pending_questions": {}, "provided_materials": [], "suggested_queries": [],
                            "revision_note": "", "last_error": None, "skill_versions": _skill_versions(),
-                           "prompt_version": PROMPT_VERSION}
+                           "prompt_version": PROMPT_VERSION, "pending_proposal": None, "proposals": []}
     record = project["direction_map"]
     record["provenance"]["generator"] = "skill_workflow_pending"
     record["recommendation"]["reason"] = "等待模型依照研究方向与文献 Skill 判断是否需要澄清；模型不会替用户选题。"
@@ -110,6 +117,7 @@ def prepare_input(project, answers=None, material=""):
         raise ValueError("补充资料含无效控制字符。")
     updated = copy.deepcopy(project)
     flow = updated["workflow"]
+    _invalidate_pending(flow, "保存了新的输入，旧待确认修订失效。")
     flow.setdefault("pending_answers", {}).update(cleaned)
     questions = flow.setdefault("pending_questions", {})
     for key in cleaned:
@@ -164,6 +172,22 @@ def _confirmed_notes(project, run_id, source_id):
             and note.get("confirmed") is True and note.get("level") in ("abstract_checked", "fulltext_checked")
             and isinstance(note.get("content"), str) and note["content"].strip()
             and isinstance(note.get("locator"), str) and note["locator"].strip() and _date(note.get("checked_at"))]
+
+
+NOTE_BINDING_CAVEAT = ("笔记绑定为用户确认阅读的自述快照；note_sha256 与内容哈希一致只表示保存的摘录未变，"
+                       "不是程序核验，也不证明模型 claim 与摘录相符或已成为科学结论。")
+
+
+def _note_snapshot(note, source):
+    """Persist a bounded snapshot of the exact confirmed reading note used as evidence."""
+    note_sha256 = hashlib.sha256(json.dumps(note, sort_keys=True, ensure_ascii=False,
+                                            separators=(",", ":")).encode("utf-8")).hexdigest()
+    content_sha256 = hashlib.sha256(note["content"].encode("utf-8")).hexdigest()
+    return {"note_id": note["id"], "note_sha256": note_sha256, "content_sha256": content_sha256,
+            "run_id": source["run_id"], "source_id": source["source_id"],
+            "level": note["level"], "locator": note["locator"], "checked_at": note["checked_at"],
+            "origin": note.get("origin", "user_attested"), "confirmed": True,
+            "caveat": NOTE_BINDING_CAVEAT}
 
 
 def context_sources(project):
@@ -280,9 +304,11 @@ previous_experiments 是程序记录的此前实际实验摘要，失败不改�
 sources 中的 id 是程序提供的唯一可引用 ID，不得创造论文、作者、DOI、网址、引用编号、页码或其他来源。
 元数据和接口返回摘要不代表读过摘要。unverified 来源 evidence 仅允许 unverified_lead；
 metadata_checked 仅允许 background/unverified_lead，不能推断方法或科研结论。
-supports/limits 仅可引用 user_confirmed_reading=true 的已读摘要/正文，范围必须限于 reading_notes 中
-用户确认读过的内容与 locator；不能因题名、检索排名或 API 摘要而升级证据。来源不充分可以 evidence=[]。
-题录级 background 的 claim 在保存时会收窄为程序生成的题录线索说明。
+supports/limits 必须同时给出 note_id：只能引用同一轮次、同一来源、user_confirmed_reading=true 的
+reading_notes 精确笔记 id，范围限于该笔记的 locator；题名、检索排名、API 摘要或其它来源的笔记都不能升级证据。
+background/unverified_lead 不绑定阅读笔记，note_id=null；题录级 background 的 claim 在保存时会收窄为程序生成的题录线索说明。
+程序会为 supports/limits 保存笔记快照（note_id、笔记与内容哈希、run_id/source_id、阅读等级、locator）并提示：
+快照只表示用户确认阅读的自述摘录未变，不是程序核验，也不证明你的 claim 与摘录相符。来源或笔记不充分时 evidence=[]。
 已有工作和建议写待验证的范围，不能宣称创新已确认、实验已执行、定理已证明。数学需明确前提和定义域，
 数值比较需公平基线与预算。search_queries 只是下一步查询建议，不代表已执行或查询成功。
 recommendation.reason 必须非空，would_change_if 为 1–6 条非空文本；澄清阶段也遵守此规则。
@@ -379,12 +405,22 @@ def validate_payload(payload, project):
             if not isinstance(entries, list) or len(entries) > 8:
                 raise ValueError("每个候选的来源关联最多 8 条。")
             found = set()
+            evidence_fields = {"source_id", "relation", "claim", "note_id"}
             for raw in entries:
-                planner._object(raw, "evidence", {"source_id", "relation", "claim"})
+                if (not isinstance(raw, dict) or not {"source_id", "relation", "claim"} <= set(raw)
+                        or set(raw) - evidence_fields):
+                    raise ValueError("来源关联字段不符合合同；模型不能写入来源记录或笔记快照。")
                 source_id = planner._text(raw["source_id"], "evidence.source_id", 256)
                 source = source_lookup.get(source_id)
                 relation = raw["relation"]
                 claim = planner._text(raw["claim"], "evidence.claim", 1200, references=True)
+                note_id = raw.get("note_id")
+                if note_id is not None and not isinstance(note_id, str):
+                    raise ValueError("note_id 必须为空或本项目阅读笔记 id。")
+                if isinstance(note_id, str):
+                    note_id = note_id.strip() or None
+                if note_id is not None and (len(note_id) > 128 or not re.fullmatch(r"[A-Za-z0-9_.:-]+", note_id)):
+                    raise ValueError("note_id 必须为空或本项目阅读笔记 id。")
                 if source is None or relation not in ("background", "unverified_lead", "supports", "limits"):
                     raise ValueError("候选只能关联本项目真实提供的来源及允许关系。")
                 if (source_id, relation) in found:
@@ -395,12 +431,24 @@ def validate_payload(payload, project):
                 if relation in ("supports", "limits"):
                     if source["verification"] not in ("abstract_checked", "fulltext_checked") or not source["user_confirmed_reading"] or not source.get("locator"):
                         raise ValueError("科研支撑或限制必须引用用户确认读过且有定位的摘要或正文。")
-                    claim += "（模型依据用户确认阅读的摘录提出，支撑范围仍须复核。）"
+                    if not note_id:
+                        raise ValueError("supports/limits 必须绑定 note_id：只能引用同一轮次、同一来源的用户确认阅读笔记。")
+                    confirmed = {note["id"]: note for note in _confirmed_notes(project, source["run_id"], source["source_id"])
+                                 if isinstance(note.get("id"), str)}
+                    note = confirmed.get(note_id)
+                    if note is None:
+                        raise ValueError("note_id 必须是同一轮次、同一来源、已确认且有 locator 的阅读笔记；"
+                                         "不能借用其它来源、未确认、无定位或仅有题录的笔记。")
+                    claim += "（模型依据用户确认阅读的笔记 " + note["id"] + " 提出；支撑范围限于该笔记 locator，仍须复核。）"
+                    topic["evidence"].append({"source_id": source_id, "relation": relation, "claim": claim,
+                                              "note_id": note["id"], "note_snapshot": _note_snapshot(note, source)})
                 else:
+                    if note_id is not None:
+                        raise ValueError("只有 supports/limits 可以绑定阅读笔记；background/unverified_lead 的 note_id 必须为空。")
                     # Prevent even a syntactically legal background label from
                     # laundering an unread abstract into a scientific assertion.
                     claim = "题录线索：《" + source["title"] + "》；本关联仅表示待核查的书目信息，不构成科研结论的支持。"
-                topic["evidence"].append({"source_id": source_id, "relation": relation, "claim": claim})
+                    topic["evidence"].append({"source_id": source_id, "relation": relation, "claim": claim})
         result.update(normalized)
     return result
 
@@ -416,15 +464,76 @@ def _commit_answers(project, stamp):
     flow["pending_answers"], flow["pending_questions"] = {}, {}
 
 
-def apply_result(project, payload, call_record):
-    proposal = validate_payload(payload, project)
-    facts = planner._call_facts(call_record)
-    if facts["status"] != "success":
-        raise ValueError("只有成功的模型调用可以更新科研流程。")
-    updated = copy.deepcopy(project)
+def _proposal_context_snapshot(project):
+    """The user/program facts a direction preview was generated from.
+
+    Transient audit fields (updated_at, history, model_calls and the proposal
+    itself) are excluded so that saving a preview does not invalidate it.
+    """
+    flow = project.get("workflow") or {}
+    return {"direction_map": copy.deepcopy(project.get("direction_map")),
+            "intake_form": copy.deepcopy(project.get("intake_form")),
+            "reading_notes": copy.deepcopy(project.get("reading_notes", [])),
+            "literature_searches": copy.deepcopy(project.get("literature_searches", [])),
+            "experiments": copy.deepcopy(project.get("experiments", [])),
+            "pending_answers": copy.deepcopy(flow.get("pending_answers", {})),
+            "pending_questions": copy.deepcopy(flow.get("pending_questions", {})),
+            "provided_materials": copy.deepcopy(flow.get("provided_materials", []))}
+
+
+def _proposal_context_sha256(project):
+    return hashlib.sha256(json.dumps(_proposal_context_snapshot(project), sort_keys=True, ensure_ascii=False,
+                                     separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def _proposal_diff(project, proposal):
+    record = project["direction_map"]
+    bound_notes = []
+    for topic in proposal["topics"]:
+        for entry in topic["evidence"]:
+            snapshot = entry.get("note_snapshot")
+            if snapshot:
+                bound_notes.append({"topic_id": topic["id"], "source_id": entry["source_id"],
+                                    "relation": entry["relation"], "note_id": snapshot["note_id"],
+                                    "level": snapshot["level"], "locator": snapshot["locator"],
+                                    "note_sha256": snapshot["note_sha256"]})
+    return {"stage": {"before": record["stage"], "after": proposal["stage"]},
+            "questions": {"before": copy.deepcopy(record["questions"]), "after": copy.deepcopy(proposal["questions"])},
+            "topics": {"before": [{"id": topic["id"], "title": topic["title"]} for topic in record["topics"]],
+                       "after": [{"id": topic["id"], "title": topic["title"]} for topic in proposal["topics"]]},
+            "recommendation": {"before": copy.deepcopy(record["recommendation"]),
+                               "after": copy.deepcopy(proposal["recommendation"])},
+            "assumptions": {"before": copy.deepcopy(record["intake"]["assumptions"]),
+                            "after": copy.deepcopy(proposal["assumptions"])},
+            "search_queries": copy.deepcopy(proposal["search_queries"]),
+            "revision_note": proposal["revision_note"], "bound_notes": bound_notes}
+
+
+def _invalidate_pending(flow, reason):
+    pending = flow.get("pending_proposal")
+    if not pending:
+        return
     stamp = engine.now()
-    updated.setdefault("direction_versions", []).append({"id": uuid.uuid4().hex, "archived_at": stamp,
-        "reason": "skill_workflow_revision", "direction_map": copy.deepcopy(updated["direction_map"])})
+    for item in flow.setdefault("proposals", []):
+        if isinstance(item, dict) and item.get("id") == pending.get("id") and item.get("status") == "pending":
+            item.update(status="superseded", reviewed_at=stamp, review_reason=reason)
+    flow["pending_proposal"] = None
+
+
+def _proposal_status(flow, proposal_id, status, stamp, reason):
+    for item in flow.setdefault("proposals", []):
+        if isinstance(item, dict) and item.get("id") == proposal_id:
+            item.update(status=status, reviewed_at=stamp, review_reason=reason)
+            return item
+    raise ValueError("待确认修订历史缺失，请刷新后重试。")
+
+
+def _apply_direction_payload(updated, proposal, stamp, *, archive_reason, proposal_id=None, call_facts=None):
+    archive = {"id": uuid.uuid4().hex, "archived_at": stamp, "reason": archive_reason,
+               "direction_map": copy.deepcopy(updated["direction_map"])}
+    if proposal_id:
+        archive["proposal_id"] = proposal_id
+    updated.setdefault("direction_versions", []).append(archive)
     _commit_answers(updated, stamp)
     record, flow = updated["direction_map"], updated["workflow"]
     record.update({key: copy.deepcopy(proposal[key]) for key in ("stage", "questions", "topics", "recommendation")})
@@ -436,19 +545,130 @@ def apply_result(project, payload, call_record):
     record["sources"] = context_sources(updated)
     record["search_log"] = _search_logs(updated, proposal["search_queries"])
     versions = _skill_versions()
+    facts = call_facts or {}
     record["provenance"].update({"generator": "qwen_skill_workflow", "external_model_api_called": True,
         "live_search_performed": any(entry["outcome"] == "executed" for entry in record["search_log"]),
         "new_experiments_executed": False, "generated_at": stamp, "generation_id": uuid.uuid4().hex,
-        "model_call_id": facts["id"], "model": facts["model"], "provider": facts["provider"],
+        "model_call_id": facts.get("id"), "model": facts.get("model"), "provider": facts.get("provider"),
         "prompt_version": PROMPT_VERSION, "skills": versions})
     record["next_action"] = ("回答这些会影响研究方向的问题，再继续科研流程。" if proposal["stage"] == "clarifying"
                              else "核查候选与文献依据，再由你选择课题；推荐不会自动成为选择。")
-    flow.update(state=proposal["stage"], suggested_queries=proposal["search_queries"], revision_note=proposal["revision_note"],
-                last_error=None, skill_versions=versions, prompt_version=PROMPT_VERSION)
+    flow.update(state=proposal["stage"], suggested_queries=proposal["search_queries"],
+                revision_note=proposal["revision_note"], last_error=None,
+                skill_versions=versions, prompt_version=PROMPT_VERSION)
+    if proposal_id:
+        flow["accepted_proposal_id"] = proposal_id
+    flow["pending_proposal"] = None
+
+
+def store_proposal(project, payload, call_record):
+    """Save a validated model result as a pending preview; never mutate the map."""
+    _available(project)
+    proposal = validate_payload(payload, project)
+    facts = planner._call_facts(call_record)
+    if facts["status"] != "success":
+        raise ValueError("只有成功的模型调用可以保存为待确认修订。")
+    updated = copy.deepcopy(project)
+    flow = updated["workflow"]
+    stamp = engine.now()
+    _invalidate_pending(flow, "新的模型结果替代了此前待确认修订；旧提议保留在历史中。")
+    record = updated["direction_map"]
+    entry = {"id": uuid.uuid4().hex, "source": "model", "created_at": stamp, "status": "pending",
+             "model_call_id": facts["id"], "prompt_version": facts.get("prompt_version"),
+             "input_revision": facts.get("input_revision"), "input_sha256": facts.get("input_sha256"),
+             "context_sha256": _proposal_context_sha256(project),
+             "base_map": copy.deepcopy(record),
+             "base_map_sha256": hashlib.sha256(json.dumps(record, sort_keys=True, ensure_ascii=False,
+                                                          separators=(",", ":")).encode("utf-8")).hexdigest(),
+             "payload": copy.deepcopy(proposal), "submitted_payload": copy.deepcopy(payload),
+             "diff": _proposal_diff(project, proposal), "reviewed_at": None, "review_reason": None}
+    flow.setdefault("proposals", []).append(copy.deepcopy(entry))
+    flow["pending_proposal"] = entry
+    flow.update(state="proposal_ready", last_error=None, prompt_version=PROMPT_VERSION)
+    facts["application_status"] = "pending_review"
+    facts["summary"] = "模型结果已保存为待确认修订；当前方向地图、候选和用户选择尚未改变。"
+    planner._append_call(updated, facts)
+    engine.add_event(updated, "skill_workflow_proposal_saved",
+                     "模型结果已保存为待确认修订；当前方向地图和用户选择未改变，接受后才应用。")
+    project.clear()
+    project.update(updated)
+    return project
+
+
+def accept_proposal(project, proposal_id):
+    if project.get("workflow", {}).get("mode") != "skill":
+        raise ValueError("当前记录未启用 Skill 科研流程。")
+    record = project["direction_map"]
+    if record["stage"] == "topic_selected" or record["selected_topic_id"] is not None:
+        raise ProposalConflict("研究已进入选题或后续阶段，旧的待确认修订不能接受；请先返回候选比较并重新请求。")
+    pending = project["workflow"].get("pending_proposal")
+    if not isinstance(proposal_id, str) or not pending or pending.get("id") != proposal_id:
+        raise ValueError("待确认修订不存在或已处理，请刷新后重试。")
+    if pending.get("context_sha256") != _proposal_context_sha256(project):
+        raise ProposalConflict("研究上下文已变化，此待确认修订不能接受；请重新请求并审阅。")
+    updated = copy.deepcopy(project)
+    stamp = engine.now()
+    facts = next((copy.deepcopy(call) for call in updated.get("model_calls", [])
+                  if isinstance(call, dict) and call.get("id") == pending.get("model_call_id")), {})
+    _apply_direction_payload(updated, copy.deepcopy(pending["payload"]), stamp,
+                             archive_reason="skill_workflow_proposal_accepted",
+                             proposal_id=pending["id"], call_facts=facts)
+    flow = updated["workflow"]
+    _proposal_status(flow, pending["id"], "accepted", stamp,
+                     "用户明确接受；旧方向地图已归档，推荐仍不是用户选择。")
+    flow["pending_proposal"] = None
+    for call in updated.get("model_calls", []):
+        if isinstance(call, dict) and call.get("id") == pending.get("model_call_id"):
+            call.update(application_status="applied",
+                        summary="用户接受待确认修订；模型结果已应用，旧方向已归档。")
+    engine.add_event(updated, "skill_workflow_proposal_accepted",
+                     "用户接受待确认修订并应用；旧方向已归档，推荐仍不是用户选择。")
+    engine.assert_valid(updated["direction_map"])
+    project.clear()
+    project.update(updated)
+    return project
+
+
+def reject_proposal(project, proposal_id, reason=""):
+    pending = project["workflow"].get("pending_proposal")
+    if not isinstance(proposal_id, str) or not pending or pending.get("id") != proposal_id:
+        raise ValueError("待确认修订不存在或已处理，请刷新后重试。")
+    if not isinstance(reason, str) or len(reason) > 2000:
+        raise ValueError("放弃理由应为最多 2000 字的文本。")
+    reason = reason.strip()
+    updated = copy.deepcopy(project)
+    stamp = engine.now()
+    flow = updated["workflow"]
+    archived = _proposal_status(flow, pending["id"], "rejected", stamp,
+                                reason or "用户放弃待确认修订；当前方向地图与选择保持不变。")
+    archived["researcher_reason"] = reason
+    flow["pending_proposal"] = None
+    flow.update(state=updated["direction_map"]["stage"], last_error=None)
+    for call in updated.get("model_calls", []):
+        if isinstance(call, dict) and call.get("id") == pending.get("model_call_id"):
+            call.update(application_status="rejected_by_user",
+                        summary="用户放弃待确认修订；当前方向地图和选择保持不变。")
+    summary = "用户放弃待确认修订；当前方向地图和选择保持不变。" + ("理由：" + reason if reason else "")
+    engine.add_event(updated, "skill_workflow_proposal_rejected", summary)
+    project.clear()
+    project.update(updated)
+    return project
+
+
+def apply_result(project, payload, call_record):
+    """Direct internal application. The model-facing API uses store_proposal/accept_proposal."""
+    proposal = validate_payload(payload, project)
+    facts = planner._call_facts(call_record)
+    if facts["status"] != "success":
+        raise ValueError("只有成功的模型调用可以更新科研流程。")
+    updated = copy.deepcopy(project)
+    stamp = engine.now()
+    _invalidate_pending(updated["workflow"], "直接应用了新结果，待确认修订失效。")
     facts.setdefault("application_status", "applied")
     planner._append_call(updated, facts)
+    _apply_direction_payload(updated, proposal, stamp, archive_reason="skill_workflow_revision", call_facts=facts)
     engine.add_event(updated, "skill_workflow_applied", "Skill 科研流程已校验并保存：" + ("提出澄清问题。" if proposal["stage"] == "clarifying" else "生成或修订 3 个待核查候选，等待用户选择。"))
-    engine.assert_valid(record)
+    engine.assert_valid(updated["direction_map"])
     project.clear()
     project.update(updated)
     return project

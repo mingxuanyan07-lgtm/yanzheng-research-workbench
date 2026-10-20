@@ -48,7 +48,7 @@ def add_search(item, run_id="run1", source_id="S001", verification="metadata_che
               "url": "https://arxiv.org/abs/2001.00001", "origin": "this_run", "verification": verification,
               "locator": "API metadata", "checked_at": "2026-10-16T02:00:00+00:00", "abstract": "API abstract is not confirmed reading."} | source_extra
     item["literature_searches"].append({"id": run_id, "sources": [source], "search_log": [
-        {"id": "Q001", "provider": "crossref", "query": "recorded query", "attempts": 1,
+        {"id": "Q001", "provider": "crossref", "query": "recorded query", "attempts": 1, "result_count": 1,
          "status": "success", "searched_at": "2026-10-16T02:00:00+00:00", "error": None}]})
     return "lit_" + run_id + "_" + source_id
 
@@ -155,7 +155,8 @@ class WorkflowTest(unittest.TestCase):
         item = project()
         source_id = add_search(item)
         proposal = directions()
-        proposal["topics"][0]["evidence"] = [{"source_id": source_id, "relation": "supports", "claim": "摘录中仅给出特定设置下的观测。"}]
+        proposal["topics"][0]["evidence"] = [{"source_id": source_id, "relation": "supports",
+                                              "claim": "摘录中仅给出特定设置下的观测。", "note_id": "note1"}]
         with self.assertRaises(ValueError):
             workflow.validate_payload(proposal, item)
         note = {"id": "note1", "run_id": "run1", "source_id": "S001", "level": "abstract_checked", "content": "仅在特定设置下观察到差异。",
@@ -164,21 +165,31 @@ class WorkflowTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             workflow.validate_payload(proposal, item)
         note["confirmed"] = True
+        normalized = workflow.validate_payload(proposal, item)
+        snapshot = normalized["topics"][0]["evidence"][0]["note_snapshot"]
+        self.assertEqual(snapshot["note_id"], "note1")
+        self.assertEqual(snapshot["locator"], "Abstract")
+        self.assertEqual(snapshot["content_sha256"], hashlib.sha256(note["content"].encode("utf-8")).hexdigest())
+        self.assertIn("不是程序核验", snapshot["caveat"])
         workflow.apply_result(item, proposal, call())
         self.assertEqual(item["direction_map"]["sources"][0]["verification"], "abstract_checked")
         self.assertEqual(item["direction_map"]["sources"][0]["locator"], "Abstract")
         self.assertEqual(item["literature_searches"][0]["sources"][0]["verification"], "metadata_checked")
-        self.assertIn("范围仍须复核", item["direction_map"]["topics"][0]["evidence"][0]["claim"])
+        self.assertEqual(item["direction_map"]["topics"][0]["evidence"][0]["note_id"], "note1")
+        self.assertIn("仍须复核", item["direction_map"]["topics"][0]["evidence"][0]["claim"])
+        self.assertIn("note1", item["direction_map"]["topics"][0]["evidence"][0]["claim"])
         self.assert_map(item)
 
     def test_metadata_background_claim_is_limited_and_missing_authors_not_invented(self):
         item = project()
         source_id = add_search(item)
         proposal = directions()
-        proposal["topics"][0]["evidence"] = [{"source_id": source_id, "relation": "background", "claim": "接口摘要已经证明所有条件下效果更好。"}]
+        proposal["topics"][0]["evidence"] = [{"source_id": source_id, "relation": "background", "note_id": None,
+                                              "claim": "接口摘要已经证明所有条件下效果更好。"}]
         normalized = workflow.validate_payload(proposal, item)
         self.assertIn("仅表示待核查的书目信息", normalized["topics"][0]["evidence"][0]["claim"])
         self.assertNotIn("证明所有", normalized["topics"][0]["evidence"][0]["claim"])
+        self.assertNotIn("note_snapshot", normalized["topics"][0]["evidence"][0])
         add_search(item, "run2", authors=[], year_or_version=None)
         source = workflow.context_sources(item)[1]
         self.assertEqual(source["verification"], "unverified")

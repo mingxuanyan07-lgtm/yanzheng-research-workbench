@@ -127,6 +127,10 @@ class TheoryPropose(TheoryRequest):
     context_token: str | None = Field(default=None, min_length=64, max_length=64)
 
 
+class DirectionProposalDecision(TheoryRequest):
+    reason: str = Field(default="", max_length=2000)
+
+
 class FailureReview(BaseModel):
     model_config = ConfigDict(extra="forbid")
     reason: str = Field(min_length=1, max_length=2000)
@@ -275,8 +279,9 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
                     workflow.apply_failure(current, call)
                     conflict.append(True)
                 else:
-                    call.update({"application_status": "applied", "summary": "科研流程结果已校验并保存，推荐仍等待用户选择。"})
-                    workflow.apply_result(current, payload, call)
+                    call.update({"application_status": "pending_review",
+                                 "summary": "模型结果已保存为待确认修订；当前方向地图、候选和用户选择尚未改变。"})
+                    workflow.store_proposal(current, payload, call)
 
             result = store.update(project_id, apply)
             model.record_result(call)
@@ -398,6 +403,20 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
     @application.post("/api/projects/{project_id}/advance")
     def advance_project(project_id: str, body: Advance):
         return advance_skill(project_id, body.answers, body.material)
+
+    @application.post("/api/projects/{project_id}/direction/proposals/{proposal_id}/accept")
+    def accept_direction_proposal(project_id: str, proposal_id: str, body: TheoryRequest):
+        try:
+            return store.update(project_id, lambda current: workflow.accept_proposal(current, proposal_id))
+        except workflow.ProposalConflict as error:
+            return JSONResponse({"detail": str(error), "status": "stale_proposal"}, status_code=409)
+
+    @application.post("/api/projects/{project_id}/direction/proposals/{proposal_id}/reject")
+    def reject_direction_proposal(project_id: str, proposal_id: str, body: DirectionProposalDecision):
+        try:
+            return store.update(project_id, lambda current: workflow.reject_proposal(current, proposal_id, body.reason))
+        except workflow.ProposalConflict as error:
+            return JSONResponse({"detail": str(error), "status": "stale_proposal"}, status_code=409)
 
     @application.post("/api/projects/{project_id}/select")
     def select_project(project_id: str, body: Selection):

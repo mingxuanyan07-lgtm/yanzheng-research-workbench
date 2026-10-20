@@ -56,7 +56,7 @@ function appHarness() {
   let source = fs.readFileSync(path.join(root, "webapp/static/app.js"), "utf8").replace(/\r\n/g, "\n");
   const cut = source.lastIndexOf("\n  paintIcons();\n  restoreIntakeDraft();");
   assert.ok(cut > 0, "Find actual bootstrap before replacing it for isolated tests");
-  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace};\n})();`;
+  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace,renderDirectionProposal};\n})();`;
   vm.runInNewContext(source, sandbox, { filename: "webapp/static/app.js" });
   return { ...sandbox.window.appTest, targets, document, calls, events, controllerOptions, downloads, requests, store,
     setFetchResponse: value => { fetchResponse = value; }, setUnsavedEntry: value => { unsavedEntry = value; },
@@ -600,4 +600,24 @@ test("read conflict preserves draft and never automatically repeats the request"
   assert.equal(app.requests.length,1);assert.equal(app.checkDrafts["alpha:record-qa"].opinion,"409 draft retained");
   assert.doesNotMatch(app.artifactViews["alpha:record-qa:qa-html"].message,/字节核对通过/);
   assert.equal(item.artifact_reads,undefined);
+});
+
+test("direction preview panel exposes accept/reject, hashes and bound note without mutating the pending proposal",()=>{
+  const app=appHarness();
+  const pending={id:"proposal-1",source:"model",status:"pending",context_sha256:"c".repeat(64),base_map_sha256:"b".repeat(64),input_sha256:"i".repeat(64),
+    diff:{stage:{before:"clarifying",after:"directions_ready"},questions:{before:[],after:[]},
+      topics:{before:[{id:"old",title:"旧候选"}],after:[{id:"new-1",title:"新候选一"},{id:"new-2",title:"新候选二"}]},
+      recommendation:{before:{topic_id:null,reason:""},after:{topic_id:"new-1",reason:"先复现基线。"}},
+      search_queries:["randomized svd"],revision_note:"依据已确认阅读收窄。",
+      bound_notes:[{topic_id:"new-1",source_id:"lit_run_S001",relation:"supports",note_id:"note-1",level:"abstract_checked",locator:"Abstract",note_sha256:"a".repeat(64)}]}};
+  const project={id:"alpha",workflow:{pending_proposal:pending}};
+  const html=app.renderDirectionProposal(project);
+  assert.match(html,/待确认的方向修订/);
+  assert.match(html,/data-action="direction-accept"/);
+  assert.match(html,/data-action="direction-reject"/);
+  assert.match(html,/旧候选/);assert.match(html,/新候选一/);
+  assert.match(html,/note-1/);assert.match(html,/笔记 SHA256/);
+  assert.match(html,new RegExp("c{64}"));assert.match(html,new RegExp("b{64}"));
+  assert.equal(pending.status,"pending");assert.equal(project.direction_map,undefined);
+  assert.equal(app.renderDirectionProposal({id:"alpha",workflow:{}}),"");
 });

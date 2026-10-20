@@ -231,11 +231,16 @@
     if (!project) { $("#project-content").innerHTML = ""; updateSteps("clarifying"); refreshStats(); return; }
     const map = mapOf(project);
     const stage = project.stage || map.stage;
+    const hasPending = !!project.workflow?.pending_proposal;
     let content = projectHeader(project) + renderBrief(project);
-    if (stage !== "topic_selected") content += renderGenerationPanel(map);
-    if (stage === "clarifying") content += renderQuestions(map);
-    else if (stage === "topic_selected") content += renderPlan(map);
-    else content += renderDirections(map);
+    if (hasPending) {
+      content += renderDirectionProposal(project);
+    } else {
+      if (stage !== "topic_selected") content += renderGenerationPanel(map);
+      if (stage === "clarifying") content += renderQuestions(map);
+      else if (stage === "topic_selected") content += renderPlan(map);
+      else content += renderDirections(map);
+    }
     $("#project-content").innerHTML = content;
     syncMutationControls();
     updateSteps(stage);
@@ -256,6 +261,69 @@
     const answers = { ...(state.project?.workflow?.pending_answers || {}), ...(state.answerDrafts[state.project?.id] || {}) };
     if (!questions.length) return '<section class="panel clarification-panel"><h2>你的想法已保存。</h2><p class="panel-subtitle">请重试上方流程，或补充资料后再请千问判断下一步。</p></section>';
     return `<section class="panel clarification-panel" aria-labelledby="clarify-title"><div class="panel-head"><div><span class="section-kicker">LET'S MAKE IT CLEAR</span><h2 id="clarify-title">先把问题问清楚。</h2></div><span class="panel-corner">?</span></div><p class="panel-subtitle">补充这 ${questions.length} 个问题，我们会判断是否已能形成候选。${skillMode ? "提交后会把简报与回答发送至百炼，消耗 API 额度。" : "本次采用本地演示规则，不调用模型。"}</p><form id="answers-form">${questions.map((question, index) => `<div class="question-field"><label for="answer-${index}"><span>${String(index + 1).padStart(2, "0")}</span>${escape(question.question)}</label><p>${escape(question.why_it_matters)}</p><textarea id="answer-${index}" name="${escape(question.id)}" required maxlength="2000" placeholder="说说你的情况；暂不确定也可以直接说明。">${escape(answers[question.id] || "")}</textarea></div>`).join("")}<div class="message" id="answers-message" role="alert" hidden></div><div class="form-actions"><span class="save-note">${icon("shield")}回答先保存，失败后可重试</span><button type="submit" class="button button-primary">${skillMode ? "提交回答并继续" : "整理演示候选"} ${icon("arrow-right")}</button></div></form></section>${map.next_action ? `<div class="next-action">${icon("compass")}<span>${escape(map.next_action)}</span></div>` : ""}`;
+  }
+  function renderDirectionProposal(project) {
+    const pending = project?.workflow?.pending_proposal;
+    if (!pending || typeof pending !== "object") return "";
+    const diff = pending.diff || {};
+    const stageLabel = value => ({ clarifying: "待澄清", directions_ready: "待选择方向", topic_selected: "已选题" }[value] || value || "未知");
+    const titles = items => list(items).map(item => `${item.title || item.id || "未命名"}`).join("、") || "无";
+    const questions = list(diff.questions?.after);
+    const bound = list(diff.bound_notes);
+    return `<section class="panel direction-proposal" data-direction-proposal="${escape(pending.id)}">
+      <div class="theory-section-head"><div><span class="section-kicker">REVIEW BEFORE APPLYING</span><h2>待确认的方向修订</h2></div><span class="stage-pill purple">${pending.source === "model" ? "模型建议" : "建议"} · 尚未应用</span></div>
+      <p class="theory-notice">接受前，当前方向地图、候选和你的选择都不会改变。若期间修改简报、补充资料、阅读笔记、方向选择或已有方向，本修订会过期，需要重新请求。</p>
+      <div class="proposal-diff">
+        <section><h3>阶段</h3><p>${escape(stageLabel(diff.stage?.before))} → <strong>${escape(stageLabel(diff.stage?.after))}</strong></p></section>
+        <section><h3>候选（建议 ${list(diff.topics?.after).length}）</h3><p>当前：${escape(titles(diff.topics?.before))}</p><p>建议：${escape(titles(diff.topics?.after))}</p></section>
+        ${questions.length ? `<section><h3>澄清问题</h3><ol>${questions.map(question => `<li>${escape(question.question || "")}</li>`).join("")}</ol></section>` : ""}
+        ${diff.recommendation?.after?.reason ? `<section><h3>推荐（仅建议，不会自动选择）</h3><p>${escape(diff.recommendation.after.reason)}</p></section>` : ""}
+        ${list(diff.search_queries).length ? `<section><h3>检索建议 · 尚未执行</h3>${stringList(diff.search_queries)}</section>` : ""}
+        ${diff.revision_note ? `<section><h3>修订说明</h3><p>${escape(diff.revision_note)}</p></section>` : ""}
+        ${bound.length ? `<section><h3>绑定阅读笔记（${bound.length}）</h3>${bound.map(note => `<p><strong>${escape(note.note_id)}</strong> · ${escape(note.relation)} · ${sourceVerification(note.level)} · 定位：${escape(note.locator || "未记录")} · 笔记 SHA256：${escape(String(note.note_sha256 || "").slice(0, 20))}…</p>`).join("")}</section>` : ""}
+      </div>
+      <div class="theory-actions"><button type="button" class="button button-primary" data-action="direction-accept" data-proposal-id="${escape(pending.id)}">${icon("check")}接受并应用修订</button><button type="button" class="button button-secondary" data-action="direction-reject" data-proposal-id="${escape(pending.id)}">放弃本次修订</button></div>
+      <details class="theory-history"><summary>查看本次修订的输入与旧地图身份 ${icon("chevron")}</summary><p>上下文 SHA256：${escape(pending.context_sha256 || "未记录")}</p><p>旧方向地图 SHA256：${escape(pending.base_map_sha256 || "未记录")}</p><p>模型输入 SHA256：${escape(pending.input_sha256 || "未记录")}</p><p>提醒：接受会归档旧方向地图；推荐仍不是你的选择，字节/哈希一致也不构成科学核验。</p></details>
+    </section>`;
+  }
+  async function performDirectionProposal(action, button) {
+    if (!state.project || state.mutating || state.literatureBusy || state.experimentBusy || leanBusy()) return;
+    const projectId = state.project.id, proposalId = button.dataset.proposalId;
+    const pending = state.project.workflow?.pending_proposal;
+    if (!pending || pending.id !== proposalId) { toast("待确认修订已变化，请刷新后重试。", true); return; }
+    state.mutating = true;
+    const done = busy(button, action === "accept" ? "正在应用修订" : "正在放弃修订");
+    syncMutationControls();
+    try {
+      const endpoint = action === "accept"
+        ? `/api/projects/${encodeURIComponent(projectId)}/direction/proposals/${encodeURIComponent(proposalId)}/accept`
+        : `/api/projects/${encodeURIComponent(projectId)}/direction/proposals/${encodeURIComponent(proposalId)}/reject`;
+      const body = action === "accept" ? {} : { reason: "" };
+      const result = await api(endpoint, { method: "POST", body: JSON.stringify(body) });
+      if (state.project?.id !== projectId) return;
+      state.project = result.project || result;
+      delete state.answerDrafts[projectId];
+      delete state.materialDrafts[projectId];
+      delete state.reasonDrafts[projectId];
+      renderProject();
+      await refreshProjects(false);
+      message($("#global-message"), "");
+      toast(action === "accept"
+        ? "已接受并应用修订；旧方向已归档，推荐仍不是你的选择。"
+        : "已放弃本次修订；当前方向地图和你的选择保持不变。", false);
+    } catch (error) {
+      try {
+        const latest = await api(`/api/projects/${encodeURIComponent(projectId)}`);
+        if (state.project?.id === projectId) { state.project = latest.project || latest; renderProject(); }
+      } catch { /* Keep the last saved project. */ }
+      message($("#global-message"), error.message);
+      toast(error.message, true);
+    } finally {
+      state.mutating = false;
+      done();
+      syncMutationControls();
+      await refreshModelStatus();
+    }
   }
   function stringList(values, ordered = false) {
     const items = list(values).filter(value => value !== null && value !== "");
@@ -281,7 +349,12 @@
       const source = list(map.sources).find(item => item.id === entry.source_id);
       const relation = { supports: "支持", limits: "限制", background: "背景", unverified_lead: "待核实线索" }[entry.relation] || "待审查";
       const url = source && safeUrl(source.url);
-      return `<div class="evidence-entry"><p class="evidence-line"><strong>${escape(relation)}</strong> · ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ↗</a>` : escape(source?.title || entry.source_id)}<br>${escape(entry.claim)}</p>${source ? `<p class="evidence-scope">${sourceVerification(source.verification)} · 位置：${escape(entry.locator || source.locator || "尚未记录")} · 核对：${escape(source.checked_at ? date(source.checked_at, true) : "尚未核对")}</p>` : '<p class="evidence-scope">关联来源暂不可用，请核查原始记录。</p>'}</div>`;
+      const snapshot = entry.note_snapshot && typeof entry.note_snapshot === "object" ? entry.note_snapshot : null;
+      const liveNote = snapshot ? list(state.project?.reading_notes).find(note => note && note.id === snapshot.note_id) : null;
+      const excerpt = liveNote && typeof liveNote.content === "string" ? liveNote.content : "";
+      const noteBlock = snapshot ? `<div class="evidence-note"><p><strong>已绑定用户确认阅读笔记</strong> · ${sourceVerification(snapshot.level)} · 阅读定位：${escape(snapshot.locator || "未记录")}</p>${excerpt ? `<p class="evidence-excerpt">${escape(excerpt.slice(0, 600))}${excerpt.length > 600 ? "…" : ""}</p>` : '<p class="evidence-excerpt">当前项目阅读记录中未找到该笔记原文；快照仍保留哈希与定位。</p>'}<small>note_id：${escape(snapshot.note_id || "未记录")} · 笔记 SHA256：${escape(snapshot.note_sha256 || "未记录")} · 内容 SHA256：${escape(snapshot.content_sha256 || "未记录")}${snapshot.checked_at ? ` · 核对时间：${escape(date(snapshot.checked_at, true))}` : ""}</small><p class="evidence-caution">${escape(snapshot.caveat || "笔记快照不是程序核验，也不证明论断与摘录相符。")}</p></div>` : "";
+      const scope = snapshot ? `阅读定位：${escape(snapshot.locator || "未记录")}` : `位置：${escape(entry.locator || source.locator || "尚未记录")}`;
+      return `<div class="evidence-entry"><p class="evidence-line"><strong>${escape(relation)}</strong> · ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ↗</a>` : escape(source?.title || entry.source_id)}<br>${escape(entry.claim)}</p>${source ? `<p class="evidence-scope">${sourceVerification(source.verification)} · ${scope} · 核对：${escape(source.checked_at ? date(source.checked_at, true) : "尚未核对")}</p>` : '<p class="evidence-scope">关联来源暂不可用，请核查原始记录。</p>'}${noteBlock}</div>`;
     }).join("");
   }
   function renderDirections(map) {
@@ -996,6 +1069,7 @@
       await refreshProjects();
       message($("#global-message"), "");
       if (state.project.workflow?.state === "failed") toast("输入已保存，这一步尚未完成，可重试。", true);
+      else if (["generate", "advance"].includes(action) && state.project.workflow?.pending_proposal) toast("模型结果已保存为待确认修订，尚未应用；请在预览中接受或放弃。");
       else toast(action === "reading-notes" ? "你的阅读范围、位置与笔记已保存。" : ["generate", "advance"].includes(action) ? (state.project.stage === "clarifying" ? "需要再确认少量问题，已保存当前进展。" : "候选已保存，推荐供比较，请由你选择方向。") : action === "select" ? "已保存你的选择与理由，首轮计划草案准备好了。" : action === "reopen" ? "已回到方向比较，先前选择保留在研究记录中。" : "回答与当前进展已保存。");
     } catch (error) {
       if (token !== state.opening || state.project?.id !== previous.id) return;
@@ -1102,6 +1176,7 @@
     if (action === "failure-rebase") await saveFailureReview(button, true);
     if (action === "theory-propose") await performTheory("propose", button);
     if (action === "theory-accept" || action === "theory-reject") await performTheory(action === "theory-accept" ? "accept" : "reject", button, button.dataset.proposalId);
+    if (action === "direction-accept" || action === "direction-reject") { await performDirectionProposal(action === "direction-accept" ? "accept" : "reject", button); return; }
     if (action === "theory-example") await createTheoryExample(button);
     if (action === "theory-discard-draft" && state.project) { clearTheoryDraft(state.project.id); renderExperiments(); }
     if (action === "reload-experiments") await loadExperiments(true);
@@ -1169,7 +1244,7 @@
         await refreshProjects();
         message($("#global-message"), "");
         try { localStorage.removeItem(draftKey); } catch { /* Saved on the server. */ }
-        toast(state.project.workflow?.state === "failed" ? "研究和输入已保存，模型这一步未完成，可重试。" : "研究已创建，当前进展已保存。", state.project.workflow?.state === "failed");
+        toast(state.project.workflow?.state === "failed" ? "研究和输入已保存，模型这一步未完成，可重试。" : state.project.workflow?.pending_proposal ? "研究已创建；模型结果已保存为待确认修订，尚未应用，请接受或放弃。" : "研究已创建，当前进展已保存。", state.project.workflow?.state === "failed");
         $("#project-content").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
       } catch (error) { if (token === state.opening) message($("#form-message"), error.message); }
       finally { state.mutating = false; done(); syncMutationControls(); await refreshModelStatus(); }
