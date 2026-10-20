@@ -56,6 +56,7 @@
 - `webapp/README.md`：阅读步骤、证据边界、项目字段、API 列表更新（待确认预览、accept/reject、声明指纹、50 条提议上限）。
 - `docs/研证技术架构.md`：阅读笔记/方向证据/待确认预览/有界历史说明；数据与接口表；复核日期更新为 2026-10-20。
 - `docs/ROADMAP.md`：当前证据与修订审阅状态改为“声明指纹 + stale 预览 + 有界历史”；下一阶段保留“经独立核验/认证的版本与内容指纹”；更新日期 2026-10-20。
+- `skills/research-direction-guide/references/output-contract.md`：evidence 契约补充 `note_id`/`note_snapshot`、哈希/定位/等级/来源要求与“用户声明指纹不是认证”的说明；background/unverified_lead 不得绑定笔记。
 - 未声称：独立论文版本锁定、全文内容认证、程序读取原文、正式发布接受。
 
 ## 5. 测试执行

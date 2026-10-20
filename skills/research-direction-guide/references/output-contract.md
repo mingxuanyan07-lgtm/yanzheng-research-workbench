@@ -27,7 +27,7 @@
 
 课题格式：`id`、`title`、`question`、`known_work`、`potential_difference`、`novelty_status`（固定 `needs_review`）、`evidence`、`first_validation`、`resources`、`stop_conditions`、`risks`、`open_questions`、`readiness`（`provisional` / `ready_to_plan`）。前三项与 `potential_difference` 为非空字符串；`known_work` 为非空字符串或非空字符串列表；`resources`、`stop_conditions`、`risks`、`open_questions` 为字符串列表。
 
-`evidence` 每项为 `source_id`、`relation`（`supports` / `limits` / `background` / `unverified_lead`）、`claim`。未核实来源只可作为 `unverified_lead`；只核过元数据的来源不能标记 `supports` / `limits`，用作 `background` 时仅描述书目信息，不推断科研内容。已读内容的实际支持范围仍须人工审阅。
+`evidence` 每项为 `source_id`、`relation`（`supports` / `limits` / `background` / `unverified_lead`）、`claim`，可选 `note_id` 与 `note_snapshot`。未核实来源只可作为 `unverified_lead`；只核过元数据的来源不能标记 `supports` / `limits`，用作 `background` 时仅描述书目信息，不推断科研内容。`supports` / `limits` 必须绑定同一轮次、同一来源、用户确认且有 locator 的阅读笔记 `note_id`，并提供结构完整的 `note_snapshot`：`note_id` 与 evidence.note_id 一致；`note_sha256`、`content_sha256` 为 64 位小写十六进制；另有 `run_id`、`source_id`、`level`、`locator`、`checked_at`、`origin=user_attested`、`confirmed=true`、`caveat`；`background` / `unverified_lead` 不得绑定阅读笔记。若阅读笔记带有用户声明的原文版本/文件哈希/范围三元组，`note_snapshot` 可附带 `source_version`、`source_sha256`、`source_sha256_scope`、`source_fingerprint_caveat`，但这只是用户声明，程序不读取/认证原文，不证明内容真实性、版本正确性或科学结论。已读内容的实际支持范围仍须人工审阅。
 
 `first_validation` 为 `steps`（列表）、`baseline`（字符串）、`metrics`（列表）、`success_signal`（字符串）。理论课题的 baseline 可说明对照命题或已知定理，metrics 可为证明目标与未闭合依赖，不强行套用数值指标。`resources` 是字符串列表；时间与成本可写估计，注明依赖。`ready_to_plan` 的步骤、指标、资源与停止条件列表均不能留空。
 
