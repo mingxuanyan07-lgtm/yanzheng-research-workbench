@@ -47,6 +47,17 @@ def assert_valid(direction_map):
         raise RuntimeError("课题地图未通过契约校验：" + "; ".join(errors[:4]))
 
 
+def assert_saved_direction_map(direction_map):
+    """Validate an existing map for export or selection without rewriting evidence.
+
+    This is not a model/import validation entry point. New generated maps use
+    assert_valid, which continues requiring exact reading-note bindings.
+    """
+    errors = validate(direction_map, allow_saved_unbound_evidence=True)
+    if errors:
+        raise RuntimeError("已保存课题地图未通过契约校验：" + "; ".join(errors[:4]))
+
+
 def is_low_rank(project):
     known = project["direction_map"]["intake"]["known"]
     text = " ".join([project["intake_form"]["initial_idea"], project["intake_form"].get("context", ""), *[str(value) for key, value in known.items() if key in QUESTION_FIELDS.values()]])
@@ -174,6 +185,7 @@ def generate_directions(project):
 
 def select_topic(project, topic_id, reason=""):
     record = project["direction_map"]
+    assert_saved_direction_map(record)
     topic = next((topic for topic in record["topics"] if topic["id"] == topic_id), None)
     if topic is None:
         raise ValueError("课题不存在或尚未生成，请刷新候选列表。")
@@ -188,11 +200,12 @@ def select_topic(project, topic_id, reason=""):
         record["intake"]["known"].pop("selection_reason", None)
     record["next_action"] = "查看并导出研究计划草案；资料核查与实验执行仍需后续完成。"
     add_event(project, "topic_selected", "用户选择：" + topic["title"] + ("；理由：" + reason if reason else "；未填写额外选择理由。"))
-    assert_valid(record)
+    assert_saved_direction_map(record)
 
 
 def reopen_project(project):
     record = project["direction_map"]
+    assert_saved_direction_map(record)
     if not record["topics"]:
         raise ValueError("请先完成澄清，生成候选后再返回比较。")
     record["stage"] = "directions_ready"
@@ -201,7 +214,7 @@ def reopen_project(project):
     record["intake"]["known"].pop("selection_reason", None)
     record["next_action"] = "重新比较候选并选择方向；此前选择记录保存在历史中。"
     add_event(project, "reopened", "返回候选比较，清除当前选择并保留历史。")
-    assert_valid(record)
+    assert_saved_direction_map(record)
 
 
 def _markdown_text(value):
@@ -255,6 +268,7 @@ def literature_status(project):
 
 def render_plan(project):
     record = project["direction_map"]
+    assert_saved_direction_map(record)
     topic = next((topic for topic in record["topics"] if topic["id"] == record["selected_topic_id"]), None)
     if topic is None:
         raise ValueError("请先选择课题，再导出研究计划。")
@@ -295,6 +309,8 @@ def render_plan(project):
                      + _markdown_text(snapshot.get("content_sha256") or "未记录") + "）。"
                      + _markdown_text(snapshot.get("caveat") or "快照不是程序核验。")
                      + _declared_fingerprint_text(snapshot))
+        elif evidence.get("relation") in ("supports", "limits"):
+            line += "；历史关联：未绑定阅读笔记。原始声明予以保留，不等于已核验证据；重新生成时必须绑定已确认阅读笔记。"
         lines.append(line)
     if not topic["evidence"]:
         lines.append("尚未建立该方向的文献支持。")

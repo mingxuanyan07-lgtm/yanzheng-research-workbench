@@ -370,11 +370,13 @@
       const relation = { supports: "支持", limits: "限制", background: "背景", unverified_lead: "待核实线索" }[entry.relation] || "待审查";
       const url = source && safeUrl(source.url);
       const snapshot = entry.note_snapshot && typeof entry.note_snapshot === "object" ? entry.note_snapshot : null;
+      const unbound = !snapshot && ["supports", "limits"].includes(entry.relation);
+      const unboundNotice = unbound ? '<p class="evidence-caution"><strong>历史关联 · 未绑定阅读笔记</strong>。原始声明予以保留，不等于已核验证据；重新生成时必须绑定已确认阅读笔记。</p>' : "";
       const liveNote = snapshot ? list(state.project?.reading_notes).find(note => note && note.id === snapshot.note_id) : null;
       const excerpt = liveNote && typeof liveNote.content === "string" ? liveNote.content : "";
       const noteBlock = snapshot ? `<div class="evidence-note"><p><strong>已绑定用户确认阅读笔记</strong> · ${sourceVerification(snapshot.level)} · 阅读定位：${escape(snapshot.locator || "未记录")}</p>${excerpt ? `<p class="evidence-excerpt">${escape(excerpt.slice(0, 600))}${excerpt.length > 600 ? "…" : ""}</p>` : '<p class="evidence-excerpt">当前项目阅读记录中未找到该笔记原文；快照仍保留哈希与定位。</p>'}<small>note_id：${escape(snapshot.note_id || "未记录")} · 笔记 SHA256：${escape(snapshot.note_sha256 || "未记录")} · 内容 SHA256：${escape(snapshot.content_sha256 || "未记录")}${snapshot.checked_at ? ` · 核对时间：${escape(date(snapshot.checked_at, true))}` : ""}</small><p class="evidence-fingerprint">${escape(declaredFingerprintText(snapshot))}</p><p class="evidence-caution">${escape(snapshot.caveat || "笔记快照不是程序核验，也不证明论断与摘录相符。")}</p></div>` : "";
       const scope = snapshot ? `阅读定位：${escape(snapshot.locator || "未记录")}` : `位置：${escape(entry.locator || source.locator || "尚未记录")}`;
-      return `<div class="evidence-entry"><p class="evidence-line"><strong>${escape(relation)}</strong> · ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ↗</a>` : escape(source?.title || entry.source_id)}<br>${escape(entry.claim)}</p>${source ? `<p class="evidence-scope">${sourceVerification(source.verification)} · ${scope} · 核对：${escape(source.checked_at ? date(source.checked_at, true) : "尚未核对")}</p>` : '<p class="evidence-scope">关联来源暂不可用，请核查原始记录。</p>'}${noteBlock}</div>`;
+      return `<div class="evidence-entry"><p class="evidence-line"><strong>${escape(relation)}</strong> · ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ↗</a>` : escape(source?.title || entry.source_id)}<br>${escape(entry.claim)}</p>${unboundNotice}${source ? `<p class="evidence-scope">${sourceVerification(source.verification)} · ${scope} · 核对：${escape(source.checked_at ? date(source.checked_at, true) : "尚未核对")}</p>` : '<p class="evidence-scope">关联来源暂不可用，请核查原始记录。</p>'}${noteBlock}</div>`;
     }).join("");
   }
   function renderDirections(map) {

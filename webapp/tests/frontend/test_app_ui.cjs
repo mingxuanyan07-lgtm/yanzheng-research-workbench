@@ -56,7 +56,7 @@ function appHarness() {
   let source = fs.readFileSync(path.join(root, "webapp/static/app.js"), "utf8").replace(/\r\n/g, "\n");
   const cut = source.lastIndexOf("\n  paintIcons();\n  restoreIntakeDraft();");
   assert.ok(cut > 0, "Find actual bootstrap before replacing it for isolated tests");
-  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace,renderDirectionProposal};\n})();`;
+  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace,renderDirectionProposal,renderEvidence};\n})();`;
   vm.runInNewContext(source, sandbox, { filename: "webapp/static/app.js" });
   return { ...sandbox.window.appTest, targets, document, calls, events, controllerOptions, downloads, requests, store,
     setFetchResponse: value => { fetchResponse = value; }, setUnsavedEntry: value => { unsavedEntry = value; },
@@ -65,6 +65,28 @@ function appHarness() {
 
 const route = { title: "公开路线", steps: ["核对量词"], obligations: [{ id: "review", statement: "独立检查", depends_on: [] }], gaps: [], evidence: [] };
 const card = { title: "正确命题", domain: "[0,1]", statement: "连续函数列一致极限连续。", definitions: [], assumptions: ["一致收敛"], target: "审阅与解释" };
+
+test("saved unbound support remains visible without being relabeled as bound evidence",()=>{
+  const app=appHarness();
+  const source={id:"old-source",title:"旧来源",url:"https://example.org/source",verification:"abstract_checked",locator:"Abstract"};
+  const entry={source_id:source.id,relation:"supports",claim:"历史声明 <script>bad</script>"};
+  const topic={evidence:[entry]};
+  const before=JSON.stringify(topic);
+  const html=app.renderEvidence(topic,{sources:[source]});
+  assert.match(html,/历史关联 · 未绑定阅读笔记/);
+  assert.match(html,/不等于已核验证据/);
+  assert.match(html,/&lt;script&gt;bad&lt;\/script&gt;/);
+  assert.doesNotMatch(html,/已绑定用户确认阅读笔记/);
+  assert.equal(JSON.stringify(topic),before);
+  entry.relation="background";
+  assert.doesNotMatch(app.renderEvidence(topic,{sources:[source]}),/历史关联 · 未绑定阅读笔记/);
+  entry.relation="supports";
+  entry.note_id="note-1";
+  entry.note_snapshot={note_id:"note-1",level:"abstract_checked",locator:"Abstract",note_sha256:"a".repeat(64),content_sha256:"b".repeat(64),caveat:"快照不是程序核验。"};
+  const bound=app.renderEvidence(topic,{sources:[source]});
+  assert.match(bound,/已绑定用户确认阅读笔记/);
+  assert.doesNotMatch(bound,/历史关联 · 未绑定阅读笔记/);
+});
 
 function checkingHarness() {
   const app=appHarness();

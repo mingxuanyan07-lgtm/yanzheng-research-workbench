@@ -14,7 +14,13 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 
-def validate(record):
+def validate(record, *, allow_saved_unbound_evidence=False):
+    """Validate new maps strictly; explicit saved-record callers may retain old evidence.
+
+    The compatibility option is never inferred from fields in a map and is not
+    exposed by the CLI. It permits only the old shape with both binding keys
+    absent; incomplete or malformed bindings still fail.
+    """
     errors = []
 
     def fail(path, message):
@@ -219,6 +225,13 @@ def validate(record):
             string(evidence.get("claim"), ep + ".claim")
             note_id = evidence.get("note_id")
             snapshot = evidence.get("note_snapshot")
+            saved_unbound = (allow_saved_unbound_evidence
+                             and relation in ("supports", "limits")
+                             and "note_id" not in evidence and "note_snapshot" not in evidence)
+            if saved_unbound:
+                # Source, relation, claim and unknown-field checks above still
+                # apply. Do not manufacture a note or upgrade the old claim.
+                continue
             if relation in ("supports", "limits"):
                 note_id_valid = string(note_id, ep + ".note_id")
                 if snapshot is None:

@@ -798,7 +798,7 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
     @application.get("/api/projects/{project_id}/export")
     def export_project(project_id: str):
         project = lean_api.project_view(store.get(project_id))
-        engine.assert_valid(project["direction_map"])
+        engine.assert_saved_direction_map(project["direction_map"])
         return Response(json.dumps(project, ensure_ascii=False, indent=2) + "\n", media_type="application/json", headers={"Content-Disposition": f'attachment; filename="yanzheng-{project["id"]}.json"'})
 
     @application.get("/api/projects/{project_id}/plan")
