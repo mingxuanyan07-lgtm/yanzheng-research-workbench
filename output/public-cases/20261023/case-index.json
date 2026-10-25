@@ -1,0 +1,22 @@
+{
+  "A": {
+    "project_id": "864bfd6b74de468882d7a155c329eaee",
+    "run_id": "6ccd9c098b654a3095b05e146533e2ac",
+    "source_id": "S001",
+    "document_id": "f941b4432396407f8e6455054a94ee1a",
+    "initial_call_done": true,
+    "initial_call_http_status": 502,
+    "confirmed_note_id": "92af2814e62d4afcafecb0e7c0d827d8",
+    "confirmed_call_done": true,
+    "confirmed_call_http_status": 200
+  },
+  "B": {
+    "project_id": "82ec2d6f868247ee960ee06d9acb1c56",
+    "run_id": "3ba9402ea7b244e3a6f0d5fd25e045c0",
+    "source_id": "S001",
+    "document_id": "4176035090c342de83979d044d84765a",
+    "confirmed_note_id": "73228f29f9cd45b0911bc30504d99c19",
+    "confirmed_call_done": true,
+    "confirmed_call_http_status": 200
+  }
+}

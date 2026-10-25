@@ -1,0 +1,20 @@
+{
+  "raw": "D:\\天猫AI\\output\\public-cases\\20261023\\video\\raw\\page@fd2f6c0402b2d477b188f70606a01c53.webm",
+  "actions": [
+    {
+      "action": "record_start",
+      "at": "2026-10-23T15:19:07.069Z",
+      "scope": "Saved real-call replay; actual delegated acceptance/selection where pending; no new model calls in recording"
+    },
+    {
+      "action": "record_end",
+      "at": "2026-10-23T15:22:09.073Z"
+    }
+  ],
+  "errors": [],
+  "fixture": false,
+  "model_network_calls_during_recording": 0,
+  "captioned": true,
+  "audio": false,
+  "elapsed_ms": 184467
+}

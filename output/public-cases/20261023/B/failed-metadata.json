@@ -1,0 +1,318 @@
+{
+  "project": {
+    "id": "82ec2d6f868247ee960ee06d9acb1c56",
+    "title": "公开案例 B：能否只凭随机 SVD 的谱范数重构误差接近最优，就",
+    "created_at": "2026-10-23T14:34:46.715160+00:00",
+    "updated_at": "2026-10-23T14:34:59.022436+00:00",
+    "stage": "directions_ready",
+    "intake_form": {
+      "initial_idea": "公开案例 B：能否只凭随机 SVD 的谱范数重构误差接近最优，就确认 PCA 特征提取质量可靠？若证据不够，应收窄或放弃原判断。",
+      "goal": "comparison",
+      "resources": "laptop",
+      "time_horizon": "week",
+      "context": "这是公开论文驱动的反向案例，不预设算法失败，也不宣称新发现。资源：CPU 笔记本，一周，无私有数据。希望研究的是 PCA 的质量验收；现有初始判断只看谱范数残差，没有逐分量方差或谱间隙条件，证据缺口必须显式保留。建议暂停“残差近优推出 PCA 质量”的原目标，候选一改成指标/反例复现协议，候选二在补充分量方差和谱间隙前仅保留低秩重构质量验收。不要说论文没有 PCA 保证，作者恰好另外给出 per-vector 保证；我们的原判断缺少这些条件。不得声称已验证所有数据集或否定该算法；新颖性待核对。"
+    },
+    "direction_map": {
+      "schema_version": "1.0",
+      "record_type": "research_direction_map",
+      "created_at": "2026-10-23T14:34:46.715160+00:00",
+      "stage": "directions_ready",
+      "initial_idea": "公开案例 B：能否只凭随机 SVD 的谱范数重构误差接近最优，就确认 PCA 特征提取质量可靠？若证据不够，应收窄或放弃原判断。",
+      "intake": {
+        "known": {
+          "goal": "方法比较",
+          "resources": "普通笔记本",
+          "time_horizon": "一周起步",
+          "provided_context": "这是公开论文驱动的反向案例，不预设算法失败，也不宣称新发现。资源：CPU 笔记本，一周，无私有数据。希望研究的是 PCA 的质量验收；现有初始判断只看谱范数残差，没有逐分量方差或谱间隙条件，证据缺口必须显式保留。建议暂停“残差近优推出 PCA 质量”的原目标，候选一改成指标/反例复现协议，候选二在补充分量方差和谱间隙前仅保留低秩重构质量验收。不要说论文没有 PCA 保证，作者恰好另外给出 per-vector 保证；我们的原判断缺少这些条件。不得声称已验证所有数据集或否定该算法；新颖性待核对。"
+        },
+        "assumptions": [],
+        "unknowns": [
+          "具体数据规模、背景与每日可投入时间仍需在计划阶段确认。"
+        ]
+      },
+      "questions": [],
+      "provenance": {
+        "generator": "local_demo_rules",
+        "live_search_performed": false,
+        "external_model_api_called": false,
+        "new_experiments_executed": false
+      },
+      "search_log": [
+        {
+          "query": "randomized low-rank approximation oversampling power iteration",
+          "searched_at": null,
+          "outcome": "planned"
+        }
+      ],
+      "sources": [
+        {
+          "id": "prior_1",
+          "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+          "authors": "Halko / Martinsson / Tropp",
+          "year_or_version": "2009 预印本 · 2011 SIAM Review",
+          "url": "https://arxiv.org/abs/0909.4061",
+          "origin": "prior_project",
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-13",
+          "locator": "旧项目种子参考资料；旧记录未保存正文核查位置，本轮未重新检索或阅读。"
+        },
+        {
+          "id": "prior_2",
+          "title": "Randomized Numerical Linear Algebra: Foundations & Algorithms",
+          "authors": "Martinsson / Tropp",
+          "year_or_version": "2020",
+          "url": "https://arxiv.org/abs/2002.01387",
+          "origin": "prior_project",
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-13",
+          "locator": "旧项目种子参考资料；旧记录未保存正文核查位置，本轮未重新检索或阅读。"
+        },
+        {
+          "id": "prior_3",
+          "title": "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+          "authors": "Cameron Musco / Christopher Musco",
+          "year_or_version": "2015",
+          "url": "https://arxiv.org/abs/1504.05477",
+          "origin": "prior_project",
+          "verification": "metadata_checked",
+          "checked_at": "2026-10-13",
+          "locator": "旧项目种子参考资料；旧记录未保存正文核查位置，本轮未重新检索或阅读。"
+        }
+      ],
+      "topics": [
+        {
+          "id": "krylov",
+          "title": "同等资源下，Block Krylov 值得吗？",
+          "question": "在相同矩阵访问或时间预算下，随机 Block Krylov 与随机 SVD 幂迭代的误差和计算代价如何取舍？",
+          "known_work": "此前项目的概括（待正文复核）：Block Krylov 与 simultaneous power iteration 的比较已发表。方法本身是已有工作。",
+          "potential_difference": "在特定应用规模、谱形态与资源约束下做公平复现；先确认实现，再判断有无值得发展的新策略。",
+          "novelty_status": "needs_review",
+          "evidence": [
+            {
+              "source_id": "prior_3",
+              "relation": "background",
+              "claim": "此前项目保存的相关题录，作为后续正文核查入口；本轮未读取内容，不能据此确认算法或误差界。"
+            },
+            {
+              "source_id": "prior_2",
+              "relation": "background",
+              "claim": "此前项目保存的相关题录，作为后续正文核查入口；本轮未读取内容，不能据此确认算法或误差界。"
+            }
+          ],
+          "first_validation": {
+            "steps": [
+              "核对种子论文正文中的方法、假设与评价指标；本轮未核对正文。",
+              "复现并单独核对 Block Krylov 的实现与重正交化。",
+              "预先选择同时间或同矩阵访问预算，记录内存与访问次数。",
+              "在多谱形态、独立矩阵和采样种子下比较，分别解释低秩误差与 PCA 指标。"
+            ],
+            "baseline": "同一矩阵与目标秩下的精确截断 SVD；效率比较另列同时间或同访问预算。",
+            "metrics": [
+              "同指标误差",
+              "耗时",
+              "内存",
+              "矩阵访问次数"
+            ],
+            "success_signal": "首先复现可信基线，再观察跨独立种子、可比预算下稳定的条件性现象。"
+          },
+          "resources": [
+            "普通笔记本；先用小规模合成矩阵进行正确性检查。",
+            "计划时间：一周起步；实际实验未启动。"
+          ],
+          "stop_conditions": [
+            "若优势来自更多矩阵访问、额外内存或不同质量指标，撤回同等资源优势结论。",
+            "若文献已解释该现象，记录为复现或修订问题，先不宣称创新。"
+          ],
+          "risks": [
+            "预先整理的样例不能替代当前文献检索；需核实适用条件。",
+            "有限数值观察不能推出一般数学结论。"
+          ],
+          "open_questions": [
+            "你的数据分布与任务目标，是否提供了不同于已有比较的研究价值？"
+          ],
+          "readiness": "provisional"
+        },
+        {
+          "id": "budget",
+          "title": "固定预算下，如何选择随机 SVD 参数？",
+          "question": "在给定耗时预算下，过采样量 p 与幂迭代次数 q 的哪些组合能更接近同矩阵的最优秩 k 误差？",
+          "known_work": "此前项目的概括（待正文复核）：过采样和幂迭代已有成熟方法与误差分析；先复现，再研究特定预算下的配置策略。",
+          "potential_difference": "从现有 p/q 网格起步，检验预算达标次数与误差的取舍；后续再考虑基于谱诊断的自适应选参。",
+          "novelty_status": "needs_review",
+          "evidence": [
+            {
+              "source_id": "prior_1",
+              "relation": "background",
+              "claim": "此前项目保存的相关题录，作为后续正文核查入口；本轮未读取内容，不能据此确认算法或误差界。"
+            }
+          ],
+          "first_validation": {
+            "steps": [
+              "核对种子论文正文中的方法、假设与评价指标；本轮未核对正文。",
+              "复用 3 类固定矩阵和精确截断 SVD 基线。",
+              "比较 p∈{4,8,16}、q∈{0,1,2}；新增独立矩阵种子。",
+              "设定相同时间预算，同时报告误差分布与逐次达标率。"
+            ],
+            "baseline": "同一矩阵与目标秩下的精确截断 SVD；效率比较另列同时间或同访问预算。",
+            "metrics": [
+              "归一化 Frobenius 误差",
+              "耗时分布",
+              "预算达标率"
+            ],
+            "success_signal": "首先复现可信基线，再观察跨独立种子、可比预算下稳定的条件性现象。"
+          },
+          "resources": [
+            "普通笔记本；先用小规模合成矩阵进行正确性检查。",
+            "计划时间：一周起步；实际实验未启动。"
+          ],
+          "stop_conditions": [
+            "若所谓优势只来自更多计算、少数种子或不一致计时范围，淘汰该优势解释并重做对照。",
+            "若文献已解释该现象，记录为复现或修订问题，先不宣称创新。"
+          ],
+          "risks": [
+            "预先整理的样例不能替代当前文献检索；需核实适用条件。",
+            "有限数值观察不能推出一般数学结论。"
+          ],
+          "open_questions": [
+            "能否形成可迁移的选参依据，而不仅是这 3 个矩阵上的规则？"
+          ],
+          "readiness": "provisional"
+        },
+        {
+          "id": "spectrum",
+          "title": "哪些谱形态，会让低秩近似变难？",
+          "question": "快速衰减、缓慢衰减、聚簇谱与带噪低秩矩阵，怎样改变随机近似的误差、波动及幂迭代收益？",
+          "known_work": "此前项目的概括（待正文复核）：谱衰减、误差估计和数值稳定性已有系统分析。困难谱形态是已有研究的重要条件。",
+          "potential_difference": "建立有限测试条件下的失效画像，找出什么时候增加迭代仍不值得；为后续停止规则提供候选证据。",
+          "novelty_status": "needs_review",
+          "evidence": [
+            {
+              "source_id": "prior_2",
+              "relation": "background",
+              "claim": "此前项目保存的相关题录，作为后续正文核查入口；本轮未读取内容，不能据此确认算法或误差界。"
+            },
+            {
+              "source_id": "prior_1",
+              "relation": "background",
+              "claim": "此前项目保存的相关题录，作为后续正文核查入口；本轮未读取内容，不能据此确认算法或误差界。"
+            }
+          ],
+          "first_validation": {
+            "steps": [
+              "核对种子论文正文中的方法、假设与评价指标；本轮未核对正文。",
+              "以现有快速/缓慢衰减与带噪矩阵作为参照。",
+              "增加聚簇谱、多个噪声强度和独立数据种子。",
+              "固定秩与预算，对照近似误差和双侧 QR 重正交后的表现。"
+            ],
+            "baseline": "同一矩阵与目标秩下的精确截断 SVD；效率比较另列同时间或同访问预算。",
+            "metrics": [
+              "重构误差",
+              "随机波动",
+              "距精确基线差距",
+              "耗时"
+            ],
+            "success_signal": "首先复现可信基线，再观察跨独立种子、可比预算下稳定的条件性现象。"
+          },
+          "resources": [
+            "普通笔记本；先用小规模合成矩阵进行正确性检查。",
+            "计划时间：一周起步；实际实验未启动。"
+          ],
+          "stop_conditions": [
+            "若现象只在一个固定数据种子出现，不能将它报告为稳定边界；增加独立矩阵后再判断。",
+            "若文献已解释该现象，记录为复现或修订问题，先不宣称创新。"
+          ],
+          "risks": [
+            "预先整理的样例不能替代当前文献检索；需核实适用条件。",
+            "有限数值观察不能推出一般数学结论。"
+          ],
+          "open_questions": [
+            "观察到的失效能否被已有理论解释？还需要证明哪些范围？"
+          ],
+          "readiness": "provisional"
+        }
+      ],
+      "recommendation": {
+        "topic_id": "krylov",
+        "reason": "按你选择的“方法比较”目标排序。本地规则给出起步建议，等待真实文献与千问进一步核查。",
+        "would_change_if": [
+          "可用材料、研究目标或资源发生变化。",
+          "真实文献表明已有工作覆盖该问题，或首轮验证无法成立。"
+        ]
+      },
+      "selected_topic_id": null,
+      "next_action": "比较候选并由你选择；选题只保存计划，不自动执行实验。"
+    },
+    "history": [
+      {
+        "id": "cc43a75dffea49909495940981199118",
+        "action": "created",
+        "summary": "创建研究记录；本地规则模式，未调用外部模型。",
+        "created_at": "2026-10-23T14:34:46.715160+00:00"
+      },
+      {
+        "id": "6c4e6843027e45308ac95cdb6e10e3b6",
+        "action": "directions_generated",
+        "summary": "生成 3 个暂定候选；使用此前随机低秩种子材料。",
+        "created_at": "2026-10-23T14:34:46.715160+00:00"
+      },
+      {
+        "id": "768a96b60ea94cd99319e736a2548088",
+        "action": "literature_searched",
+        "summary": "文献检索：arxiv:1504.05477v4；成功 0、未命中 0、失败 1；保存 0 条题录，未自动提升阅读等级或改写候选依据。",
+        "created_at": "2026-10-23T14:34:59.022436+00:00"
+      }
+    ],
+    "literature_searches": [
+      {
+        "schema_version": "1.0",
+        "record_type": "research_literature_search",
+        "created_at": "2026-10-23T14:34:46+00:00",
+        "request": {
+          "idea": "公开案例 B：能否只凭随机 SVD 的谱范数重构误差接近最优，就确认 PCA 特征提取质量可靠？若证据不够，应收窄或放弃原判断。",
+          "queries": [
+            "arxiv:1504.05477v4"
+          ],
+          "providers": [
+            "arxiv"
+          ],
+          "year_from": null,
+          "year_to": null,
+          "max_results_per_query": 1
+        },
+        "provenance": {
+          "generator": "workbench/literature_service.py",
+          "live_search_performed": true,
+          "external_model_api_called": false,
+          "new_experiments_executed": false
+        },
+        "search_log": [
+          {
+            "id": "Q001",
+            "provider": "arxiv",
+            "query": "arxiv:1504.05477v4",
+            "status": "failed",
+            "searched_at": "2026-10-23T14:34:46+00:00",
+            "attempts": 1,
+            "result_count": 0,
+            "error": "官方元数据服务请求失败，请核对网络或编号后手动重试。"
+          }
+        ],
+        "sources": [],
+        "evidence": [],
+        "limitations": [
+          "官方元数据服务请求失败，请核对网络或编号后手动重试。"
+        ],
+        "next_action": "已有资料保留，请核对后手动重试。",
+        "id": "ff4b5c782104480996303e301626f7ac",
+        "import_reference": {
+          "provider": "arxiv",
+          "identifier": "1504.05477v4",
+          "key": "arxiv:1504.05477v4"
+        }
+      }
+    ]
+  },
+  "import_status": "failed",
+  "run_id": "ff4b5c782104480996303e301626f7ac",
+  "duplicate": false
+}

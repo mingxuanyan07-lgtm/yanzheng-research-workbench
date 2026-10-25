@@ -1,0 +1,46 @@
+26 HALKO, MARTINSSON, AND TROPP
+Algorithm 4.3: Randomized Power Iteration
+Given an m × n matrix A and integers ℓ and q, this algorithm computes an
+m × ℓ orthonormal matrix Q whose range approximates the range of A.
+1 Draw an n × ℓ Gaussian random matrix Ω.
+2 Form the m × ℓ matrix Y = (AA∗)qAΩ via alternating application
+of A and A∗.
+3 Construct an m × ℓ matrix Q whose columns form an orthonormal
+basis for the range of Y , e.g., via the QR factorization Y = QR.
+Note: This procedure is vulnerable to round-oﬀ errors; see Remark 4.3. T he
+recommended implementation appears as Algorithm 4.4.
+vectors as the input matrix A, but its singular values decay much more quickly:
+σj(B) = σj(A)2q+1, j = 1, 2, 3, . . . . (4.5)
+We modify Algorithm 4.1 by replacing the formula Y = AΩ in Step 2 by the formula
+Y = BΩ =
+(
+AA∗)qAΩ, and we obtain Algorithm 4.3.
+Algorithm 4.3 requires 2 q + 1 times as many matrix–vector multiplies as Algo-
+rithm 4.1, but is far more accurate in situations where the singular va lues of A decay
+slowly. A good heuristic is that when the original scheme produces a b asis whose
+approximation error is within a factor C of the optimum, the power scheme produces
+an approximation error within C1/(2q+1) of the optimum. In other words, the power
+iteration drives the approximation gap to one exponentially fast. Se e Theorem 9.2
+and §10.4 for the details.
+Algorithm 4.3 targets the ﬁxed-rank problem. To address the ﬁxed -precision prob-
+lem, we can incorporate the error estimators described in §4.3 to obtain an adaptive
+scheme analogous with Algorithm 4.2. In situations where it is critical t o achieve near-
+optimal approximation errors, one can increase the oversampling b eyond our standard
+recommendation ℓ = k + 5 all the way to ℓ = 2 k without changing the scaling of the
+asymptotic computational cost. A supporting analysis appears in C orollary 10.10.
+Remark 4.3. Unfortunately, when Algorithm 4.3 is executed in ﬂoating point
+arithmetic, rounding errors will extinguish all information pertaining to singular
+modes associated with singular values that are small compared with ‖A‖. (Roughly,
+if machine precision is µ, then all information associated with singular values smaller
+than µ1/(2q+1) ‖A‖ is lost.) This problem can easily be remedied by orthonormaliz-
+ing the columns of the sample matrix between each application of A and A∗. The
+resulting scheme, summarized as Algorithm 4.4, is algebraically equivale nt to Algo-
+rithm 4.3 when executed in exact arithmetic [92, 124]. We recommend A lgorithm 4.4
+because its computational costs are similar to Algorithm 4.3, even th ough the former
+is substantially more accurate in ﬂoating-point arithmetic.
+4.6. An accelerated technique for general dense matrices. This section
+describes a set of techniques that allow us to compute an approxima te rank- ℓ factor-
+ization of a general dense m × n matrix in roughly O( mn log(ℓ)) ﬂops, in contrast to
+the asymptotic cost O( mnℓ) required by earlier methods. We can tailor this scheme
+for the real or complex case, but we focus on the conceptually simp ler complex case.
+These algorithms were introduced in [137]; similar techniques were pro posed in [118].

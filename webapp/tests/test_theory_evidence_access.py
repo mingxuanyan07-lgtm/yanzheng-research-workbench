@@ -25,21 +25,17 @@ class EvidenceIntegrationTest(unittest.TestCase):
     opinion = fixture.CheckingTest.opinion
 
     def setUp(self):
-        fixture.CheckingTest.setUp(self)
-        root = Path(self.tmp.name)
+        # Real Win32 reads lock every namespace ancestor. A system TEMP under a
+        # protected user profile can deny an ancestor handle in sandboxed runs,
+        # even when SQLite and ordinary file I/O there are allowed. Keep these
+        # genuine handle fixtures in the explicitly writable checkout instead.
+        scratch = Path(__file__).resolve().parent / '.tmp'
+        scratch.mkdir(parents=True, exist_ok=True)
+        fixture.CheckingTest.setUp(self, temp_dir=scratch)
+        self.assertTrue(Path(self.tmp.name).resolve().is_relative_to(scratch.resolve()))
         self.payload = b'<html><script>window.qaExecuted=true</script><p>test_fixture</p></html>'
-        self.file = root / 'sample.html'
-        self.file.write_bytes(self.payload)
         self.sha = hashlib.sha256(self.payload).hexdigest()
-        entry = {"artifact_id":"qa-html", "expected_byte_sha256":self.sha, "expected_bytes":len(self.payload),
-            "hash_scope":"exact_saved_file_bytes", "acquired_at":None,
-            "acquired_at_status":"unknown_not_inferred_from_mtime", "identity_kind":"test_fixture",
-            "provenance":{"source":"test_fixture, not original model input"},
-            "locations":[{"path":"sample.html", "expected_byte_sha256":self.sha, "expected_bytes":len(self.payload)}]}
-        manifest = {"schema_version":"evidence-registry-manifest-v1", "created_at":"2026-10-18T18:00:00+08:00",
-            "read_limit_bytes":1048576, "artifacts":[entry]}
-        path=root/'registry.json';path.write_text(json.dumps(manifest),encoding='utf-8')
-        self.access=EvidenceAccess(Registry.from_manifest(path,allowed_root=str(root)))
+        self.access = EvidenceAccess(self.registry_for_payload(self.payload))
         self.client.close()
         self.app=create_app(self.db,model_client=self.model,lean_client=lambda *_: self.fail('no Lean'),evidence_client=self.access)
         self.client=TestClient(self.app)
@@ -47,6 +43,21 @@ class EvidenceIntegrationTest(unittest.TestCase):
             "artifact_id":"qa-html","original_bytes_sha256":self.sha,"acquired_at":None,
             "label":"QA HTML","source_version":"v1","locator":"paragraph","support_scope":"no math certification","origin":"test_fixture"}]))
         self.url=self.base+f"/checks/{self.r['id']}/artifacts"
+
+    def registry_for_payload(self, payload):
+        root = Path(self.tmp.name)
+        self.file = root / 'sample.html'
+        self.file.write_bytes(payload)
+        digest = hashlib.sha256(payload).hexdigest()
+        entry = {"artifact_id":"qa-html", "expected_byte_sha256":digest, "expected_bytes":len(payload),
+            "hash_scope":"exact_saved_file_bytes", "acquired_at":None,
+            "acquired_at_status":"unknown_not_inferred_from_mtime", "identity_kind":"test_fixture",
+            "provenance":{"source":"test_fixture, not original model input"},
+            "locations":[{"path":"sample.html", "expected_byte_sha256":digest, "expected_bytes":len(payload)}]}
+        manifest = {"schema_version":"evidence-registry-manifest-v1", "created_at":"2026-10-18T18:00:00+08:00",
+            "read_limit_bytes":1048576, "artifacts":[entry]}
+        path=root/'registry.json';path.write_text(json.dumps(manifest),encoding='utf-8')
+        return Registry.from_manifest(path,allowed_root=str(root))
 
     def read(self,artifact_id='qa-html'):
         return self.client.post(self.url+'/read',json={"artifact_id":artifact_id})
@@ -154,15 +165,15 @@ class EvidenceIntegrationTest(unittest.TestCase):
             self.assertNotIn('<script>',md)
 
     def test_preview_bounds_binary_and_production_pin_gate(self):
-        from evidence_registry import ReadResult
-        source=self.access.registry.read_verified('qa-html')
-        source.bytes=('中'*12001).encode()
-        with patch.object(self.access.registry,'read_verified',return_value=source):
-            result=self.access.read('qa-html',[])['preview']
+        # These are real registered bytes, not a result with a mutated payload
+        # whose expected hash still describes a different original file.
+        self.access.registry = self.registry_for_payload(('中'*12001).encode())
+        result=self.access.read('qa-html',[])['preview']
         self.assertEqual(len(result['text']),12000);self.assertTrue(result['truncated'])
-        source.bytes=b'\x00binary'
-        with patch.object(self.access.registry,'read_verified',return_value=source):
-            self.assertEqual(self.access.read('qa-html',[])['preview']['status'],'binary_or_non_utf8')
+        self.access.registry = self.registry_for_payload(b'\x00binary')
+        self.assertEqual(self.access.read('qa-html',[])['preview']['status'],'binary_or_non_utf8')
+        self.access.registry = self.registry_for_payload(b'')
+        self.assertEqual(self.access.read('qa-html',[])['preview']['text'],'')
         base=Path(__file__).resolve().parents[1]
         self.assertEqual(hashlib.sha256((base/'evidence_registry_manifest.json').read_bytes()).hexdigest(),MANIFEST_SHA256)
         current=hashlib.sha256((base/'evidence_registry.py').read_bytes()).hexdigest()
@@ -273,6 +284,31 @@ class EvidenceIntegrationTest(unittest.TestCase):
                 self.assertEqual(result['status'],'unreadable')
                 self.assertEqual(result['diagnostic_code'],'inconsistent_registry_result')
                 self.assertIsNone(result['preview']['text'])
+
+    def test_boundary_verified_payload_and_both_hash_size_facts_must_agree(self):
+        for condition in ('payload_same_size', 'actual_hash', 'actual_size', 'expected_hash',
+                          'expected_size', 'boolean_size', 'bytes_not_returned'):
+            with self.subTest(condition=condition):
+                value = self.access.registry.read_verified('qa-html')
+                self.assertEqual(value.status, 'verified', value.as_dict())
+                if condition == 'payload_same_size': value.bytes = b'X' * len(value.bytes)
+                elif condition == 'actual_hash': value.actual['byte_sha256'] = 'f' * 64
+                elif condition == 'actual_size': value.actual['bytes'] += 1
+                elif condition == 'expected_hash': value.expected['byte_sha256'] = 'f' * 64
+                elif condition == 'expected_size': value.expected['bytes'] += 1
+                elif condition == 'boolean_size': value.actual['bytes'] = True
+                else:
+                    as_dict = value.as_dict
+                    value.as_dict = lambda: {**as_dict(), 'bytes_returned': False}
+                with patch.object(self.access.registry, 'read_verified', return_value=value):
+                    response = self.read()
+                self.assertEqual(response.status_code, 200, response.text)
+                result = response.json()['fact']['result']
+                self.assertEqual(result['status'], 'unreadable')
+                self.assertEqual(result['diagnostic_code'], 'inconsistent_registry_result')
+                self.assertIsNone(result['preview']['text'])
+                self.assertFalse(result['bytes_returned'])
+                self.assertIsNone(result['byte_match'])
 
     def test_boundary_injection_is_not_production_module_acceptance(self):
         metadata=self.access.metadata()

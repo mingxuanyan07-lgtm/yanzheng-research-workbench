@@ -3,11 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1220">
+  <meta name="theme-color" content="#f7f8fa">
   <meta name="description" content="研证科研工作台：澄清想法、比较研究方向，连接研究简报、文献阅读与首轮实验。">
-  <title>研证 · 研究方向工作台</title>
+  <title>研证 · 从研究问题到验证计划</title>
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
   <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/workbench-polish.css?v=20261021-light">
+  <meta name="yanzheng-ui-version" content="workbench-light-20261021">
   <script src="/static/lean-ui.js" defer></script>
   <script src="/static/app.js" defer></script>
   <script src="/static/companion.js" defer></script>
@@ -21,7 +23,7 @@
       <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
       <span><strong>研证<span class="brand-en">YANZHENG</span></strong><small>RESEARCH STUDIO</small></span>
     </a>
-    <div class="nav-label">工作空间 <span>01</span></div>
+    <div class="nav-label">研究工作区 <span>WORKSPACE</span></div>
     <nav id="navigation">
       <button class="nav-item is-active" type="button" data-view="explore" aria-current="page"><span data-icon="compass"></span><span>方向探索</span><i class="nav-dot"></i></button>
       <button class="nav-item" type="button" data-view="literature"><span data-icon="book"></span><span>文献工作台</span></button>
@@ -31,7 +33,7 @@
       <button class="nav-item" type="button" data-view="library"><span data-icon="cpu"></span><span>案例与证据</span></button>
       <button class="nav-item" type="button" data-view="about"><span data-icon="orbit"></span><span>关于研证</span></button>
     </nav>
-    <div class="sidebar-note"><span class="tiny-cross" aria-hidden="true">✦</span><p>每个好问题，<br>都值得认真走一步。</p></div>
+    <div class="sidebar-note"><span class="tiny-cross" aria-hidden="true">↗</span><p>提出问题。核对依据。<br>留下每一次判断。</p></div>
     <div class="sidebar-bottom"><span class="connection-dot"></span><span>本地工作空间</span><span class="version">v0.5.0</span></div>
   </aside>
   <div class="mobile-header"><a class="mobile-brand" href="#explore">研证 <span>YANZHENG</span></a><button class="icon-button" id="mobile-menu" type="button" aria-label="展开导航" aria-expanded="false"><span data-icon="menu"></span></button></div>
@@ -39,16 +41,17 @@
     <header class="topbar"><div class="breadcrumb"><span>RESEARCH STUDIO</span><span class="breadcrumb-divider">/</span><span id="view-label">方向探索</span></div><div class="topbar-actions"><span id="top-project-count" class="project-count">0 个研究项目</span><button class="button button-small button-quiet" type="button" data-action="new"><span data-icon="plus"></span>新建研究</button></div></header>
     <main id="main" tabindex="-1">
       <div id="global-message" class="message global-message" role="status" hidden></div>
+      <div id="workspace-recovery" class="workspace-recovery" hidden><p>当前页面的输入草稿会保留。服务恢复后，可以重新读取工作空间。</p><button type="button" class="button button-secondary button-small" data-action="reload-workspace">重新读取工作空间</button></div>
       <section id="screen-explore" class="screen">
         <div class="hero">
-          <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-dot"></span>FROM IDEA TO EVIDENCE</div><h1>让一个想法，<br>生长为<span>可验证的课题。</span></h1><p>面向数理与 AI 研究起步：整理简报、核查文献，再由你选择方向。</p></div>
+          <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-dot"></span>RESEARCH, WITH REASONS.</div><h1><span class="hero-welcome">把研究问题，<br><em>变成下一步计划。</em></span><span class="hero-resume">继续你的研究。</span></h1><p>为科研起步与课题组讨论准备：理清问题、核对论文、比较方向，带走一份有依据和待办的研究决策包。</p><div class="hero-workflow" aria-label="工作台用途"><span>写下问题</span><i aria-hidden="true">→</i><span>补充依据</span><i aria-hidden="true">→</i><span>比较选择</span><i aria-hidden="true">→</i><span>形成计划</span></div></div>
           <details class="mode-info"><summary><span class="status-dot"></span><span id="mode-label">正在读取模型状态</span><span data-icon="info"></span></summary><div class="mode-popover"><strong id="mode-title">本地流程与千问生成</strong><p id="mode-description">能力状态正在读取。项目保存在本地；实际检索、阅读和实验状态以对应记录为准。</p><button type="button" class="text-button" data-action="about">查看能力说明 <span aria-hidden="true">↗</span></button></div></details>
         </div>
-        <ol class="stepper" aria-label="研究流程" id="stepper"><li class="is-current" data-step="1"><span class="step-number">01</span><div><strong>澄清想法</strong><small>整理研究简报</small></div></li><li data-step="2"><span class="step-number">02</span><div><strong>比较方向</strong><small>检索、核查与人工选择</small></div></li><li data-step="3"><span class="step-number">03</span><div><strong>计划草案</strong><small>留存依据，准备首轮验证</small></div></li></ol>
+        <ol class="stepper" aria-label="研究流程" id="stepper"><li class="is-current" data-step="1"><span class="step-number">01</span><div><strong>澄清问题</strong><small>明确目标与资源</small></div></li><li class="" data-step="2"><span class="step-number">02</span><div><strong>阅读证据</strong><small>记录位置与摘录</small></div></li><li class="" data-step="3"><span class="step-number">03</span><div><strong>比较方向</strong><small>核对依据与限制</small></div></li><li class="" data-step="4"><span class="step-number">04</span><div><strong>形成计划</strong><small>导出研究决策包</small></div></li><li class="" data-step="5"><span class="step-number">05</span><div><strong>反馈修订</strong><small>根据新证据调整</small></div></li></ol>
         <div class="workspace-grid">
           <div class="task-column">
             <section class="panel intake-panel" id="intake-panel" aria-labelledby="intake-title">
-              <div class="panel-head"><div><span class="section-kicker">START YOUR RESEARCH</span><h2 id="intake-title">你想探索什么？</h2></div><span class="panel-corner" aria-hidden="true">↗</span></div>
+              <div class="panel-head"><div><span class="section-kicker">01 / RESEARCH BRIEF</span><h2 id="intake-title">先说说你想解决什么</h2><p class="intake-intro">写下一个问题，选择时间与资源。创建后会引导你补充条件、寻找论文并比较方向。</p></div><span class="panel-corner" aria-hidden="true">↗</span></div>
               <form id="idea-form">
                 <label for="initial-idea" class="field-label">研究想法 <span>从一句话开始也可以</span></label>
                 <textarea id="initial-idea" name="initial_idea" minlength="5" maxlength="3000" required placeholder="例如：随机低秩逼近中的误差，能否更稳定地控制？"></textarea>
@@ -57,17 +60,23 @@
                 <div class="form-divider"></div>
                 <div class="preferences"><label class="select-field" for="goal"><span><span data-icon="target"></span>研究偏好</span><select id="goal" name="goal"><option value="experimental">动手做实验</option><option value="theory">理论与证明</option><option value="comparison">比较与评估</option></select></label><label class="select-field" for="resources"><span><span data-icon="cpu"></span>可用资源</span><select id="resources" name="resources"><option value="laptop">个人电脑</option><option value="gpu">有 GPU / 云算力</option></select></label><label class="select-field" for="time-horizon"><span><span data-icon="clock"></span>首轮时间</span><select id="time-horizon" name="time_horizon"><option value="week">一周以内</option><option value="month">一个月左右</option><option value="flexible">暂不设限</option></select></label></div>
                 <details class="context-field"><summary><span data-icon="plus"></span>补充背景与约束 <span class="optional">选填</span><span class="details-chevron" data-icon="chevron"></span></summary><label class="sr-only" for="context">背景与约束</label><textarea id="context" name="context" maxlength="5000" placeholder="你的研究基础、已读论文、已有数据，以及暂时做不了的事……"></textarea></details>
-                <div class="planning-choice"><label for="planning-mode">研究流程<select id="planning-mode" name="planning_mode"><option value="skill">千问 + Skill 规则</option><option value="demo" selected>本地演示</option></select></label><p id="intake-model-notice">正在读取模型状态；未配置时可使用本地演示。</p></div>
+                <div class="planning-choice"><label for="planning-mode">开始方式<select id="planning-mode" name="planning_mode"><option value="skill">模型辅助 · 千问</option><option value="demo" selected>本地体验 · 固定规则</option></select></label><p id="intake-model-notice" aria-live="polite">正在读取模型状态；未配置时可使用本地体验。</p></div>
                 <div id="form-message" class="message" role="alert" hidden></div>
-                <div class="form-actions"><span class="save-note"><span data-icon="shield"></span>研究记录保存在本地工作空间</span><button class="button button-primary" id="create-button" type="submit">开始探索 <span data-icon="arrow-right"></span></button></div>
+                <div class="form-actions intake-actions"><span class="save-note"><span data-icon="shield"></span>创建后自动保存到本机</span><button class="button button-primary" id="create-button" type="submit">创建研究并继续 <span data-icon="arrow-right"></span></button></div><div class="sample-start"><span>想先了解完整流程？</span><button class="text-button" type="button" data-action="create-public-sample">载入公开样例 <span aria-hidden="true">↗</span></button><span>固定示例，不调用模型</span></div>
               </form>
             </section>
             <div id="project-content" hidden></div>
             <div class="workspace-stats" aria-label="工作空间统计"><div><span class="stat-icon" data-icon="folder"></span><span><strong id="stat-projects">0</strong><small>研究项目</small></span></div><div><span class="stat-icon purple" data-icon="check"></span><span><strong id="stat-selected">0</strong><small>已选方向</small></span></div><div><span class="stat-icon amber" data-icon="book"></span><span><strong id="stat-sources">0</strong><small>候选引用来源</small></span></div></div>
           </div>
           <aside class="companion-column" aria-label="研究伙伴">
+            <section class="research-tools" aria-labelledby="research-tools-title">
+              <div class="tools-heading"><span class="section-kicker">YOUR TOOLKIT</span><h2 id="research-tools-title">让判断有依据</h2></div>
+              <a href="#literature"><span class="tool-icon" data-icon="book"></span><span><strong>阅读与证据</strong><small>整理文献，标注实际阅读范围</small></span><span aria-hidden="true">↗</span></a>
+              <a href="#experiments"><span class="tool-icon" data-icon="cpu"></span><span><strong>实验与论证</strong><small>查看可用验证，保留结果与缺口</small></span><span aria-hidden="true">↗</span></a>
+              <a href="#records"><span class="tool-icon" data-icon="history"></span><span><strong>记录与导出</strong><small>回看研究选择，带走计划与记录</small></span><span aria-hidden="true">↗</span></a>
+            </section>
             <section class="companion-card">
-              <div class="companion-header"><span class="section-kicker">RESEARCH COMPANION</span><span class="companion-presence"><i></i>准备好了</span></div>
+              <div class="companion-header"><span class="section-kicker">RESEARCH GUIDE</span><span class="companion-presence">本地预设提示</span></div>
               <div class="dragon-stage">
                 <div class="dragon-orbit orbit-one" aria-hidden="true"></div><div class="dragon-orbit orbit-two" aria-hidden="true"></div><span class="orbit-spark spark-one" aria-hidden="true">✦</span><span class="orbit-spark spark-two" aria-hidden="true">+</span>
                 <button type="button" class="dragon-greeting" id="dragon-greeting" aria-label="向小研打招呼" aria-describedby="companion-interaction-note">
@@ -75,17 +84,16 @@
                   <span class="dragon-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
                 </button>
               </div>
-              <div class="companion-identity"><h2>小研 <span>你的研究伙伴</span></h2><p>先问清楚，再向前一步。</p></div>
+              <div class="companion-identity"><h2>小研 <span>研究向导</span></h2><p>陪你理清下一步。</p></div>
               <div class="companion-bubble"><span data-icon="quote"></span><p id="companion-tip" aria-live="polite" aria-atomic="true">“我还没想清楚”也没关系。把你最在意的那个问题告诉我。</p></div>
               <div class="companion-actions" aria-label="小研互动"><button type="button" id="companion-next">下一步怎么做 <span aria-hidden="true">↗</span></button><button type="button" id="companion-cheer">给我打气 <span aria-hidden="true">✧</span></button></div>
               <p class="companion-interaction-note" id="companion-interaction-note">点小研打个招呼 · 预设提示，方向由你决定</p>
               <div class="companion-foot"><span aria-hidden="true">✧</span>好奇心，是研究的第一步。</div>
             </section>
-            <section class="path-card"><span class="section-kicker">A SMALL, REAL STEP</span><h3>我们会一起做什么</h3><ul><li><span>01</span><div>整理研究简报<small>分清输入、假设与待确认条件</small></div></li><li><span>02</span><div>检索与比较候选方向<small>题录、已读内容和证据分别留存</small></div></li><li><span>03</span><div>计划与首轮实验<small>由你选择，运行后再修订</small></div></li></ul></section>
           </aside>
         </div>
       </section>
-      <section id="screen-projects" class="screen" hidden><div class="page-heading"><div class="eyebrow">YOUR RESEARCH SPACE</div><h1>研究项目</h1><p>每一个问题，都有自己的生长轨迹。</p></div><div id="project-list"></div></section>
+      <section id="screen-projects" class="screen" hidden><div class="page-heading"><div class="eyebrow">YOUR RESEARCH SPACE</div><h1>研究项目</h1><p>接着上次的进度研究，也可以备份记录后带到另一台工作站。</p></div><div id="project-list"></div></section>
       <section id="screen-records" class="screen" hidden><div class="page-heading"><div class="eyebrow">FOLLOW THE EVIDENCE</div><h1>研究记录</h1><p>保留想法、选择和修改的来路。</p></div><div id="records-content"></div></section>
       <section id="screen-literature" class="screen" hidden><div class="page-heading"><div class="eyebrow">LOOK UP, THEN READ</div><h1>文献工作台</h1><p>从公开题录找到阅读入口，把实际查询与阅读范围留在记录里。</p></div><div id="literature-content"></div></section>
       <section id="screen-experiments" class="screen" hidden><div class="page-heading"><div class="eyebrow">PUT YOUR IDEA TO THE TEST</div><h1>实验与论证工作台</h1><p>用数值实验或理论论证推进研究，保存依据与缺口，由你确认每一次修订。</p></div><div id="experiments-content"></div></section>

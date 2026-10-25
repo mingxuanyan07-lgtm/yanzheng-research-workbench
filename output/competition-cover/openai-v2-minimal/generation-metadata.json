@@ -1,0 +1,20 @@
+{
+  "product": "研证",
+  "style": "Minimal premium product launch",
+  "generation_mode": "built-in image_gen",
+  "specific_model": "Not exposed by the built-in tool",
+  "generated_original_size": [
+    941,
+    1672
+  ],
+  "delivery_size": [
+    1080,
+    1920
+  ],
+  "export": "High-quality resampling to requested dimensions; no content retouching",
+  "bytes": 2527324,
+  "original_file": "yanzheng-minimal-original.png",
+  "delivery_file": "yanzheng-minimal-cover-1080x1920.png",
+  "prompt_file": "prompt.txt",
+  "edit_prompt_file": "edit-prompt.txt"
+}

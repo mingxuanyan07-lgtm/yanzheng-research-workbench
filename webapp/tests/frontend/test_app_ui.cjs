@@ -20,6 +20,8 @@ function appHarness() {
   targets.set("#experiments-content", {innerHTML:""});
   targets.set("#initial-idea", { addEventListener() {} });
   targets.set("#mobile-menu", { addEventListener() {} });
+  targets.set("#global-message", { textContent: "", hidden: true, classList: { toggle() {} } });
+  targets.set("#toast", { textContent: "", hidden: true, classList: { toggle() {} } });
   const events = {};
   const controller = {
     isBusy: () => busy,
@@ -45,7 +47,7 @@ function appHarness() {
     document,
     window: { YanzhengLean: { create: options => { controllerOptions = options; return controller; } }, addEventListener() {} },
     localStorage: { getItem: key => store.get(key) || null, setItem: (key, value) => store.set(key, value), removeItem: key => store.delete(key) },
-    crypto: require("node:crypto").webcrypto, console, URL: class extends URL {
+    crypto: require("node:crypto").webcrypto, console, URLSearchParams, URL: class extends URL {
       static createObjectURL(blob) { downloads.push({ blob }); return "blob:ui-qa"; }
       static revokeObjectURL() {}
     }, Blob, Intl, Date, setTimeout, clearTimeout,
@@ -56,7 +58,7 @@ function appHarness() {
   let source = fs.readFileSync(path.join(root, "webapp/static/app.js"), "utf8").replace(/\r\n/g, "\n");
   const cut = source.lastIndexOf("\n  paintIcons();\n  restoreIntakeDraft();");
   assert.ok(cut > 0, "Find actual bootstrap before replacing it for isolated tests");
-  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace,renderDirectionProposal,renderEvidence};\n})();`;
+  source = source.slice(0, cut) + `\nwindow.appTest = {renderArtifactFact,inspectArtifact,renderArtifactAccess,artifactViews,unsavedArtifactFacts,changeCheckReferences,renderChecking,checkDraft,checkDrafts,checkMessages,captureCheckDraft,saveCheck,rebaseCheck,state,api,downloadLeanUnsaved,renderProofRoutes,renderTheory,renderTheoryProposalHistory,renderTheoryFeedback,renderNextContext,theoryContextPreviews,inspectNextContext,saveFailureReview,failureDrafts,failureDraft,renderTheoryFailures,theoryProposalVersion,theoryProposalSource,captureTheoryDraft,syncMutationControls,performLean,patchLeanWorkspace,renderDirectionProposal,renderEvidence,renderDecisionTrajectory,createPublicSample,renderSource,renderSources,download,validAttachmentName,researchProgress,renderResearchJourney,renderResearchActions,renderReferenceImport,renderImportedMetadata,projectFilters,filteredProjects,renderProjectCards,renderProjectResults,renderBackupControls,restoreBackup,backupFeedback,renderLiteratureOverview,documentKey,documentContext,documentViews,documentDraftBackups,inspectDocumentAnchor,sameDocumentAnchor,documentOriginalStatus,renderDocumentText,renderPaperDocuments,renderReadingNotes,selectedDocumentAnchor,putDocumentExcerpt,openDocumentAnchor,uploadPaperDocument,captureReadingDraft,renderNoteCandidateLinks,renderDocumentAnchorLink,declaredFingerprintText,uploadedDocumentSelection};\n})();`;
   vm.runInNewContext(source, sandbox, { filename: "webapp/static/app.js" });
   return { ...sandbox.window.appTest, targets, document, calls, events, controllerOptions, downloads, requests, store,
     setFetchResponse: value => { fetchResponse = value; }, setUnsavedEntry: value => { unsavedEntry = value; },
@@ -659,4 +661,303 @@ test("stale pending preview disables accept but keeps reject and labels the stal
   assert.match(staleHtml,/用户声明原文版本：arXiv v2/);assert.match(staleHtml,new RegExp("d{64}"));
   const freshHtml=app.renderDirectionProposal({id:"alpha",workflow:{pending_proposal:pending,pending_proposal_stale:false}});
   assert.doesNotMatch(freshHtml,/上下文已变化/);assert.doesNotMatch(freshHtml,/data-action="direction-accept"[^>]*disabled/);
+});
+
+
+test("decision trajectory keeps the full trail and escapes user supplied HTML", () => {
+  const app = appHarness();
+  const html = app.renderDecisionTrajectory({id:"alpha", stage:"topic_selected", direction_map:{
+    selected_topic_id:"a", recommendation:{topic_id:"b"},
+    intake:{known:{selection_reason:"<script>bad()</script>"}},
+    topics:[{id:"a",title:"<img src=x>方向甲",question:"问题甲"}, {id:"b",title:"方向乙",question:"问题乙"}]
+  }});
+  assert.match(html,/候选 01/); assert.match(html,/候选 02/);
+  assert.match(html,/推荐/); assert.match(html,/已选择/);
+  assert.match(html,/最终选择/); assert.match(html,/&lt;script&gt;bad\(\)&lt;\/script&gt;/);
+  assert.match(html,/&lt;img src=x&gt;方向甲/);
+  assert.doesNotMatch(html,/<script>|<img src=x>/);
+});
+
+test("source rendering puts excerpts before bibliography and marks unbound relations", () => {
+  const app = appHarness();
+  const source = {id:"s1",title:"公开论文",authors:"研究者",year_or_version:"2026",relation:"supports",verification:"metadata_checked",origin:"curated_example"};
+  const note = {source_id:"s1",content:"<b>摘录</b>",level:"abstract_checked",origin:"curated_example",locator:"Abstract"};
+  const bound = app.renderSource(source,[note]);
+  assert.ok(bound.indexOf("已记录阅读摘录") < bound.indexOf("研究者"));
+  assert.match(bound,/&lt;b&gt;摘录&lt;\/b&gt;/); assert.doesNotMatch(bound,/<b>摘录<\/b>/);
+  assert.doesNotMatch(bound,/未绑定阅读笔记/);
+  const unbound = app.renderSource(source,[]);
+  assert.match(unbound,/未绑定阅读笔记/); assert.match(unbound,/尚无已记录阅读摘录/);
+});
+
+test("direction sources bind local note IDs within their exact literature run", () => {
+  const app = appHarness();
+  const source = {id:"lit_run-a_S001",source_id:"S001",run_id:"run-a",title:"真实来源",verification:"fulltext_checked"};
+  app.state.project = {reading_notes:[
+    {source_id:"S001",run_id:"run-a",content:"当前检索摘录",level:"fulltext_checked",locator:"PDF p26"},
+    {source_id:"S001",run_id:"run-b",content:"其他检索摘录"},
+    {source_id:"S001",content:"未限定检索摘录"}
+  ]};
+  const html = app.renderSources({sources:[source]});
+  assert.match(html,/当前检索摘录/);
+  assert.doesNotMatch(html,/尚无已记录阅读摘录|其他检索摘录|未限定检索摘录/);
+  assert.doesNotMatch(app.renderSource({...source,run_id:"run-c"},app.state.project.reading_notes),/当前检索摘录|其他检索摘录|未限定检索摘录/);
+});
+
+test("decision package download uses the dedicated route and sanitizes server filenames", async () => {
+  const app = appHarness();
+  app.state.project = {id:"alpha"};
+  app.setFetchResponse({ok:true, headers:{get:()=>'attachment; filename="../../unsafe.md"'}, blob:async()=>new Blob(["# package"],{type:"text/markdown"})});
+  const button = {innerHTML:"导出",disabled:false,isConnected:false};
+  await app.download("decision-package", button);
+  assert.equal(app.requests.length,1);
+  assert.equal(app.requests[0].url,"/api/projects/alpha/decision-package");
+  const anchor = app.downloads.find(item=>item.filename);
+  assert.equal(anchor.filename,"yanzheng-decision-package-alpha.md");
+  assert.equal(await app.downloads.find(item=>item.blob).blob.text(),"# package");
+  assert.equal(app.validAttachmentName("safe.md"),"safe.md");
+  assert.equal(app.validAttachmentName("../bad.md"),null);
+  assert.equal(app.targets.get("#toast").textContent,"研究决策包已导出。");
+});
+
+
+test("research journey counts only confirmed located notes owned by the project",()=>{
+  const app=appHarness();
+  const project={id:"alpha",stage:"directions_ready",direction_map:{topics:[]},literature_searches:[{id:"run",sources:[{id:"S001"}]}],reading_notes:[
+    {run_id:"run",source_id:"S001",origin:"curated_example",confirmed:true,level:"abstract_checked",locator:"Abstract",content:"fixture"},
+    {run_id:"other",source_id:"S001",confirmed:true,level:"abstract_checked",locator:"Abstract",content:"wrong project"}]};
+  assert.equal(app.researchProgress(project).notes.length,0);
+  assert.equal(app.researchProgress(project).current,2);
+  project.reading_notes.push({run_id:"run",source_id:"S001",origin:"synthetic",confirmed:true,level:"abstract_checked",locator:"Abstract",content:"synthetic",checked_at:"2026-10-23T10:00:00Z"});
+  assert.equal(app.researchProgress(project).notes.length,0);
+  project.reading_notes.push({run_id:"run",source_id:"S001",origin:"user_attested",confirmed:true,level:"abstract_checked",locator:"Abstract",content:"confirmed",checked_at:"2026-10-23T10:00:00Z"});
+  assert.equal(app.researchProgress(project).notes.length,1);
+  assert.equal(app.researchProgress(project).current,3);
+  project.workflow={pending_proposal:{id:"p"}};
+  assert.equal(app.researchProgress(project).current,5);
+});
+
+test("action plan rendering stops stale paused and unreviewed actions and escapes queries",()=>{
+  const app=appHarness();app.state.status={model:{configured:true}};
+  const project={id:"alpha",stage:"directions_ready",direction_map:{topics:[]},research_plan:{id:"p",status:"paused",context_stale:true,
+    used:{search_operations:1,model_operations:0},limits:{search_operations:3,model_operations:1},actions:[
+      {id:"search-1",kind:"literature_search",title:"query",query:"<script>bad</script>",provider:"crossref",limit:3,status:"planned"},
+      {id:"revise",kind:"direction_revision",title:"revise",status:"planned"}]}};
+  const before=JSON.stringify(project),html=app.renderResearchActions(project);
+  assert.match(html,/已暂停/);assert.match(html,/旧计划已停止/);assert.match(html,/&lt;script&gt;bad&lt;\/script&gt;/);
+  assert.doesNotMatch(html,/<script>bad/);
+  assert.equal((html.match(/data-action="research-action-run"[^>]*disabled/g)||[]).length,2);
+  assert.equal(JSON.stringify(project),before);
+});
+
+test("reference import presents metadata hash without implying fulltext review",()=>{
+  const app=appHarness();
+  const html=app.renderImportedMetadata({id:"S001",versions:["0909.4061v2"],abstract:"<untrusted>",import_metadata:{response_sha256:"a".repeat(64),retrieved_at:"2026-10-23T10:00:00Z",caveat:"仅题录，不是全文指纹。"}},{id:"run"},"alpha");
+  assert.match(html,/0909.4061v2/);assert.match(html,/待核对草稿/);assert.match(html,/不是全文指纹/);
+  assert.doesNotMatch(html,/已确认阅读|<untrusted>/);
+  app.store.set("yanzheng.referenceDraft.alpha",'" autofocus onfocus="bad');
+  const form=app.renderReferenceImport({id:"alpha"});
+  assert.match(form,/&quot; autofocus onfocus=&quot;bad/);
+  assert.match(form,/不下载全文或调用模型/);
+});
+
+
+test("project search and stage filters preserve research drafts and escape card labels",()=>{
+  const app=appHarness();
+  app.state.project={id:"current"};
+  app.state.readingDrafts={current:{content:"keep my unfinished reading"}};
+  app.state.projects=[
+    {id:"current",title:"<img src=x> SVD",initial_idea:"randomized low rank",stage:"directions_ready",topic_count:3},
+    {id:"next",title:"论文阅读",initial_idea:"citation accuracy",stage:"clarifying"},
+    {id:"done",title:"SVD plan",stage:"topic_selected",selected_topic_title:"幂迭代"}];
+  const before=JSON.stringify(app.state.readingDrafts);
+  app.projectFilters.query="sVd";
+  assert.deepEqual(Array.from(app.filteredProjects(),p=>p.id),["current","done"]);
+  app.projectFilters.stage="directions_ready";
+  assert.equal(app.filteredProjects().length,1);
+  const html=app.renderProjectCards(app.filteredProjects());
+  assert.match(html,/is-active-project/);assert.match(html,/&lt;img src=x&gt; SVD/);
+  assert.doesNotMatch(html,/<img src=x>/);
+  app.projectFilters.query="no matching research";
+  assert.match(app.renderProjectCards(app.filteredProjects()),/清除筛选/);
+  assert.equal(JSON.stringify(app.state.readingDrafts),before);
+  assert.equal(app.state.project.id,"current");assert.equal(app.requests.length,0);
+});
+
+test("project filtering updates only result and count nodes",()=>{
+  const app=appHarness();app.state.projects=[{id:"a",title:"Alpha",stage:"clarifying"},{id:"b",title:"Beta",stage:"topic_selected"}];
+  const input={value:"Alpha",selectionStart:3,focused:true},results={innerHTML:""},count={textContent:""};
+  app.targets.set("#project-search",input);app.targets.set("#project-results",results);app.targets.set("#project-filter-count",count);
+  app.projectFilters.query="Alpha";app.renderProjectResults();
+  assert.equal(count.textContent,"显示 1 / 2 个研究");assert.match(results.innerHTML,/Alpha/);assert.doesNotMatch(results.innerHTML,/Beta/);
+  assert.equal(app.targets.get("#project-search"),input);assert.equal(input.selectionStart,3);assert.equal(input.focused,true);
+});
+
+test("research journey has one primary next action and honest reading progress",()=>{
+  const app=appHarness();
+  const project={id:"a",stage:"directions_ready",direction_map:{topics:[]},literature_searches:[{id:"r",sources:[{id:"s"}]}],reading_notes:[{origin:"curated_example",confirmed:true,run_id:"r",source_id:"s",content:"fixture",locator:"Abstract",level:"abstract_checked",checked_at:"2026-10-23T00:00:00Z"}]};
+  const html=app.renderResearchJourney(project);
+  assert.equal((html.match(/button button-primary/g)||[]).length,1);
+  assert.match(html,/data-action="journey-read"/);assert.match(html,/0 条已确认笔记/);
+  const overview=app.renderLiteratureOverview(project);
+  assert.match(overview,/1 条公开案例预置笔记/);assert.match(overview,/<strong>0<\/strong><span>已确认阅读笔记/);
+});
+
+test("workspace restore rejects oversized and malformed files without sending or switching projects",async()=>{
+  const app=appHarness();app.state.project={id:"kept"};
+  const feedback={textContent:"",hidden:true,classList:{toggle(){}}};app.targets.set("#backup-feedback",feedback);
+  const input={value:"chosen.json"};
+  await app.restoreBackup({size:20*1024*1024+1,text:async()=>{throw Error("must not read");}},input);
+  assert.match(feedback.textContent,/超过 20 MiB/);assert.equal(input.value,"");
+  await app.restoreBackup({size:5,text:async()=>"{bad}"},input);
+  assert.match(feedback.textContent,/不是可读取的 JSON/);assert.equal(app.requests.length,0);assert.equal(app.state.project.id,"kept");
+  assert.equal(app.state.mutating,false);
+});
+
+test("workspace restore refreshes summaries without replacing the current project or drafts",async()=>{
+  const app=appHarness();
+  const current={id:"current",direction_map:{sources:[]}};app.state.project=current;
+  app.state.readingDrafts={current:{content:"keep"}};app.state.answerDrafts={current:{q:"unfinished"}};
+  const feedback={textContent:"",hidden:true,classList:{toggle(){}}};app.targets.set("#backup-feedback",feedback);
+  for(const id of ["nav-project-count","top-project-count","stat-projects","stat-selected","stat-sources"])app.targets.set("#"+id,{textContent:""});
+  app.setFetchResponse((url)=>({ok:true,json:async()=>url.endsWith("/restore")?{status:"restored",imported_count:1,skipped_count:2,warnings:["原行动计划已暂停"]}:{projects:[{id:"restored",title:"imported",stage:"clarifying"}]}}));
+  const input={value:"backup.json"};await app.restoreBackup({size:42,text:async()=>'{"format":"qa","projects":[]}'},input);
+  assert.equal(app.requests.length,2);assert.equal(app.requests[0].url,"/api/backups/restore");assert.equal(app.requests[1].url,"/api/projects");
+  assert.match(feedback.textContent,/已恢复 1 个研究，跳过 2 个已有研究/);assert.match(feedback.textContent,/原行动计划已暂停/);
+  assert.equal(app.state.project,current);assert.equal(app.state.readingDrafts.current.content,"keep");assert.equal(app.state.answerDrafts.current.q,"unfinished");
+  assert.equal(input.value,"");assert.equal(app.state.mutating,false);
+  const html=app.renderBackupControls();assert.match(html,/包含研究内容，请妥善保管/);assert.match(html,/不含应用配置中的模型密钥、原件文件/);assert.match(html,/同 ID 的现有记录保留/);
+});
+
+test("workspace restore sends original JSON so duplicate fields remain rejectable by the server",async()=>{
+  const app=appHarness();app.state.project={id:"current"};
+  const feedback={textContent:"",hidden:true,classList:{toggle(){}}};app.targets.set("#backup-feedback",feedback);
+  const raw='{\n  "format": "first", "format": "second", "projects": []\n}\n';
+  app.setFetchResponse({ok:false,status:400,json:async()=>({detail:"备份含重复字段，未写入任何研究。"})});
+  await app.restoreBackup({size:raw.length,text:async()=>raw},{value:"duplicate.json"});
+  assert.equal(app.requests.length,1);assert.equal(app.requests[0].url,"/api/backups/restore");
+  assert.equal(app.requests[0].options.body,raw);
+  assert.match(feedback.textContent,/重复字段/);assert.doesNotMatch(feedback.textContent,/已恢复/);
+  assert.equal(app.state.project.id,"current");assert.equal(app.state.mutating,false);
+});
+
+
+function paperFixture(app) {
+  const page={number:1,text:"A😀证据 <script>bad()</script>\n第二段",text_sha256:"b".repeat(64)};
+  const doc={id:"doc-1",run_id:"run",source_id:"S001",filename:"论文 <img>.txt",media_type:"text/plain",byte_count:60,file_sha256:"a".repeat(64),text_sha256:"c".repeat(64),pages:[page],extraction:{kind:"utf8_text",version:1},original_available:true};
+  const anchor={document_id:doc.id,page:1,start:1,end:3,quote:"😀证",file_sha256:doc.file_sha256,page_sha256:page.text_sha256};
+  const project={id:"alpha",stage:"directions_ready",paper_documents:[doc],reading_notes:[],literature_searches:[{id:"run",sources:[{id:"S001",title:"Title"}]}],direction_map:{topics:[]}};
+  app.state.project=project;app.state.projects=[{id:"alpha",title:"Title",stage:"directions_ready"}];
+  return {page,doc,anchor,project};
+}
+
+test("document locators use Unicode codepoints and refuse wrong page hashes bindings and quote text",()=>{
+  const app=appHarness(),{anchor,project}=paperFixture(app);
+  assert.equal(app.inspectDocumentAnchor(anchor,project,{run_id:"run",source_id:"S001"}).available,true);
+  for(const change of [{start:2},{end:99},{quote:"wrong"},{file_sha256:"d".repeat(64)},{page_sha256:""},{page:2},{document_id:"foreign"}])assert.equal(app.inspectDocumentAnchor({...anchor,...change},project).available,false);
+  assert.equal(app.inspectDocumentAnchor(anchor,project,{run_id:"wrong",source_id:"S001"}).available,false);
+  assert.equal(app.sameDocumentAnchor(anchor,Object.fromEntries(Object.entries(anchor).reverse())),true);
+  const html=app.renderDocumentText("A😀证<script>",{start:1,end:3,quote:"😀证"});
+  assert.match(html,/A<mark class="document-exact-highlight">😀证<\/mark>&lt;script&gt;/);
+  assert.doesNotMatch(html,/<script>/);
+});
+
+test("document reader keeps uploads distinct from reading and restored text distinct from local original",()=>{
+  const app=appHarness(),{doc,project}=paperFixture(app);
+  let html=app.renderPaperDocuments({id:"S001"},{id:"run"},project);
+  assert.match(html,/name="binding_confirmed"[^>]*required/);assert.match(html,/上传不算已读，不调用模型/);
+  assert.match(html,/name="document_file"/);assert.match(html,/论文 &lt;img&gt;.txt/);assert.match(html,/documents\/doc-1\/original/);
+  doc.original_available=false;
+  html=app.renderPaperDocuments({id:"S001"},{id:"run"},project);
+  assert.match(html,/文字快照/);assert.doesNotMatch(html,/href="[^"]*documents\/doc-1\/original/);
+  delete doc.original_available;doc.backup_restore={restored_at:"now"};
+  html=app.renderPaperDocuments({id:"S001"},{id:"run"},project);
+  assert.match(html,/刷新研究确认原件/);assert.doesNotMatch(html,/href="[^"]*documents\/doc-1\/original/);
+  assert.equal(app.requests.length,0);
+});
+
+test("editing a reading explanation preserves the exact unconfirmed excerpt independently",()=>{
+  const app=appHarness(),{anchor}=paperFixture(app),key="alpha:run:S001";
+  app.state.readingDrafts[key]={document_anchor:anchor,content:"previous",confirmed:false};
+  const form={dataset:{draftKey:key},fields:{content:"my interpretation",locator:"page one",level:"fulltext_checked"},closest(){return this;}};
+  app.captureReadingDraft(form);
+  assert.equal(app.state.readingDrafts[key].content,"my interpretation");assert.equal(app.state.readingDrafts[key].document_anchor.quote,"😀证");
+  assert.equal(app.state.readingDrafts[key].confirmed,false);
+  const html=app.renderReadingNotes({id:"S001"},{id:"run"},"alpha");
+  assert.match(html,/待确认的原文摘录/);assert.match(html,/my interpretation/);assert.match(html,/修改下面的解释不会改变原文摘录/);
+  assert.doesNotMatch(html,/name="confirmed"[^>]*checked/);
+});
+
+function selectionFixture(app) {
+  const fixture=paperFixture(app),node={textContent:fixture.page.text};
+  const element={textContent:fixture.page.text,contains:value=>value===node};app.targets.set(".document-page-text",element);
+  const reader={dataset:{projectId:"alpha",runId:"run",sourceId:"S001",documentId:"doc-1",page:"1"},querySelector:selector=>selector===".document-page-text"?element:null};
+  app.document.createRange=()=>({selectNodeContents(){},setEnd(n,offset){this.prefix=n.textContent.slice(0,offset);},toString(){return this.prefix;}});
+  const range={startContainer:node,endContainer:node,startOffset:1,endOffset:4,toString:()=>node.textContent.slice(1,4)};
+  const selection={rangeCount:1,isCollapsed:false,getRangeAt:()=>range};
+  return {...fixture,node,reader,range,selection,element};
+}
+
+test("actual-range excerpt conversion counts emoji once and rejects cross-region selections",()=>{
+  const app=appHarness(),{reader,range,selection,element}=selectionFixture(app);
+  const anchor=app.selectedDocumentAnchor(reader,selection);
+  assert.equal(anchor.start,1);assert.equal(anchor.end,3);assert.equal(anchor.quote,"😀证");
+  range.endContainer={};assert.throws(()=>app.selectedDocumentAnchor(reader,selection),/同一页/);
+  assert.throws(()=>app.selectedDocumentAnchor(reader,{...selection,isCollapsed:true}),/非空文字/);
+  range.endContainer=range.startContainer;element.textContent="tampered";
+  assert.throws(()=>app.selectedDocumentAnchor(reader,selection),/文字与保存页不一致/);
+});
+
+test("placing an excerpt preserves prior explanation and leaves confirmation to the user",()=>{
+  const app=appHarness(),{reader,selection}=selectionFixture(app),key="alpha:run:S001";
+  const previous={document_id:"doc-1",page:1,start:0,end:1,quote:"A",file_sha256:"a".repeat(64),page_sha256:"b".repeat(64)};
+  app.state.readingDrafts[key]={content:"keep existing interpretation",document_anchor:previous,level:"fulltext_checked",confirmed:true};
+  app.targets.set("#literature-content",{innerHTML:""});
+  app.putDocumentExcerpt(reader,selection);
+  assert.equal(app.state.readingDrafts[key].content,"keep existing interpretation");assert.equal(app.state.readingDrafts[key].document_anchor.quote,"😀证");
+  assert.equal(app.state.readingDrafts[key].confirmed,false);assert.equal(app.documentDraftBackups[key].document_anchor.quote,"A");
+  assert.equal(app.requests.length,0);
+});
+
+test("saved notes expose exact quotes and reverse candidate links without relabeling explanation as quote",()=>{
+  const app=appHarness(),{anchor,project}=paperFixture(app);
+  const note={id:"n",run_id:"run",source_id:"S001",document_anchor:anchor,content:"my inference",level:"fulltext_checked",locator:"p1",confirmed:true,checked_at:"2026-10-23T10:00:00Z"};
+  project.reading_notes=[note];project.direction_map={sources:[{id:"s",title:"paper"}],topics:[{id:"t",title:"候选甲",evidence:[{source_id:"s",note_id:"n",relation:"limits",claim:"scope only",note_snapshot:{note_id:"n",level:"fulltext_checked",document_anchor:anchor,content:"historical explanation"}}]}]};
+  const html=app.renderReadingNotes({id:"S001"},{id:"run"},"alpha");
+  assert.match(html,/原文摘录 · 与你的解释分别保存/);assert.match(html,/<blockquote>😀证<\/blockquote>/);assert.match(html,/my inference/);
+  assert.match(html,/关联的候选判断/);assert.match(html,/限制/);assert.match(html,/候选甲/);assert.match(html,/旧上下文快照/);
+  const evidence=app.renderEvidence(project.direction_map.topics[0],project.direction_map);
+  assert.match(evidence,/historical explanation/);assert.match(evidence,/data-action="document-anchor-open"/);assert.match(evidence,/旧上下文快照/);
+  assert.doesNotMatch(app.declaredFingerprintText(note),/未读取/);assert.match(app.declaredFingerprintText(note),/不能认证出版物或研究结论/);
+});
+
+test("saving a located note sends the exact quote separately from user interpretation",async()=>{
+  const app=appHarness(),{anchor}=paperFixture(app),key="alpha:run:S001";
+  app.state.readingDrafts[key]={document_anchor:anchor,content:"interpretation",confirmed:true};
+  const button={innerHTML:"save",disabled:false,isConnected:false};
+  const form={id:"",classList:{contains:value=>value==="reading-note-form"},dataset:{draftKey:key,runId:"run",sourceId:"S001"},fields:{content:"interpretation",locator:"client preview",level:"fulltext_checked",confirmed:"on"},reportValidity:()=>true,querySelector:()=>button};
+  app.setFetchResponse({ok:false,status:400,json:async()=>({detail:"QA stop after payload inspection"})});
+  await app.events.submit({target:form,preventDefault(){}});
+  assert.equal(app.requests.length,1);
+  const body=JSON.parse(app.requests[0].options.body);
+  assert.equal(body.document_anchor.quote,"😀证");assert.equal(body.content,"interpretation");assert.equal(body.confirmed,true);assert.equal(body.document_anchor.start,1);assert.equal(body.document_anchor.end,3);
+});
+
+test("document uploads reject oversized or unconfirmed bindings before any request",async()=>{
+  const app=appHarness();paperFixture(app);
+  const feedback={textContent:"",hidden:true,classList:{toggle(){}}};
+  const file={size:8*1024*1024+1,name:"paper.txt",type:"text/plain"},check={checked:true};
+  const form={dataset:{projectId:"alpha",runId:"run",sourceId:"S001"},querySelector:selector=>selector.includes("document_file")?{files:[file]}:selector.includes("binding_confirmed")?check:feedback};
+  await app.uploadPaperDocument(form);assert.match(feedback.textContent,/超过 8 MiB/);assert.equal(app.requests.length,0);
+  file.size=5;check.checked=false;await app.uploadPaperDocument(form);assert.match(feedback.textContent,/确认它对应当前题录/);assert.equal(app.requests.length,0);
+});
+
+
+test("duplicate document uploads select matching uploaded bytes rather than the last unrelated document",async()=>{
+  const app=appHarness(),bytes=Buffer.from("earlier uploaded original"),hash=require("node:crypto").createHash("sha256").update(bytes).digest("hex");
+  const earlier={id:"earlier",file_sha256:hash},later={id:"later",file_sha256:"f".repeat(64)},added={id:"added",file_sha256:"a".repeat(64)};
+  const file={arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
+  assert.equal((await app.uploadedDocumentSelection([earlier,later],[earlier,later],file)).id,"earlier");
+  assert.equal((await app.uploadedDocumentSelection([earlier,later],[earlier,later,added],{arrayBuffer:()=>{throw Error("new ID should not need fingerprint");}})).id,"added");
+  assert.equal(await app.uploadedDocumentSelection([],[],file),null);
 });

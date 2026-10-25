@@ -234,11 +234,17 @@ def attach_result(project, record):
 def export_csv(record):
     buffer = io.StringIO(newline="")
     fields = ["experiment_id", "dataset_id", "rows", "cols", "target_rank", "p", "q", "sampling_seed", "relative_error", "baseline_error", "baseline_error_ratio", "time_ms", "matrix_passes", "sample_width", "matrix_sha256"]
+    restored = record.get("backup_restore")
+    if restored:
+        fields.extend(["record_origin", "restored_at", "revalidated_on_this_machine"])
     writer = csv.DictWriter(buffer, fieldnames=fields, lineterminator="\n")
     writer.writeheader()
     config = record.get("config", {})
     for row in record.get("rows", []):
         item = {key: row.get(key, "") for key in fields}
         item.update({"experiment_id": record["id"], "rows": config.get("rows", ""), "cols": config.get("cols", ""), "target_rank": config.get("rank", "")})
+        if restored:
+            item.update(record_origin="external_backup_snapshot", restored_at=restored.get("restored_at", ""),
+                        revalidated_on_this_machine=False)
         writer.writerow(item)
     return buffer.getvalue()

@@ -15,8 +15,8 @@ import theory_review
 
 
 class CheckingTest(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
+    def setUp(self, *, temp_dir=None):
+        self.tmp = tempfile.TemporaryDirectory(dir=temp_dir)
         self.db = Path(self.tmp.name) / "checking.db"
         self.model = ModelService(env_file=Path(self.tmp.name)/"absent", environ={"YANZHENG_MODEL_PROVIDER":"demo"})
         self.model.complete_for_theory = lambda *_: self.fail("No model calls")

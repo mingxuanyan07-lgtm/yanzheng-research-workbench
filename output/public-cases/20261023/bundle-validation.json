@@ -1,0 +1,11 @@
+{
+  "file": "研证-真实案例与演示.zip",
+  "bytes": 21499597,
+  "sha256": "de4ec613ca7e5456161afa8505a0c35d0bbdc9f0641a499ab776676518a2c2c4",
+  "files": 52,
+  "zip_crc_passed": true,
+  "manifest_hashes_passed": true,
+  "report_links_packaged": true,
+  "human_memo_hash_passed": true,
+  "model_calls": 9
+}

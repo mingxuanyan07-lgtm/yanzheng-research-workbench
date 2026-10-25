@@ -1,0 +1,26 @@
+{
+  "validated_at": "2026-10-23T15:21:31+00:00",
+  "fixture": false,
+  "human_confirmation_present": true,
+  "checks": [
+    {
+      "case": "A",
+      "project_id": "864bfd6b74de468882d7a155c329eaee",
+      "source_anchor_valid": true,
+      "official_pdf_hash_matches_import": true,
+      "reading_scope": "仅确认所展示相关摘录与解释；未声称通读论文",
+      "selected_topic_id": "q_variation",
+      "stage": "topic_selected"
+    },
+    {
+      "case": "B",
+      "project_id": "82ec2d6f868247ee960ee06d9acb1c56",
+      "source_anchor_valid": true,
+      "official_pdf_hash_matches_import": true,
+      "reading_scope": "仅确认所展示相关摘录与解释；未声称通读论文",
+      "selected_topic_id": null,
+      "stage": "directions_ready"
+    }
+  ],
+  "scientific_scope": "公开论文驱动的实际操作案例；未完成正式实验、用户效果研究或创新性证明"
+}

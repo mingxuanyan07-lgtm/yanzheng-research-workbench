@@ -1,0 +1,28 @@
+Use case: ads-marketing.
+Create ONE finished premium cinematic competition cover poster for the original Chinese AI research product “研证”. Requested final canvas 1080 × 1920 pixels, exact portrait 9:16 composition, fully opaque, full bleed, no mockup or frame, no grid of variants.
+
+PROJECT BACKGROUND FOR VISUAL UNDERSTANDING, NOT BODY COPY:
+研证 is an AI research workbench for university students, early researchers and mathematical/AI researchers. It turns vague ideas and resource constraints into candidate research topics, links suggestions to actual literature notes and reading locations, lets the researcher select and accept revisions, runs a fixed randomized-SVD numerical comparison locally, and manages mathematical propositions, assumptions, proof routes and open obligations. Core values: evidence influences research decisions, human judgment, traceable versions and honest distinction between experiment and proof. Implementation: FastAPI website, SQLite, Qwen planner constrained by two Skills, public academic literature services, restricted computation. Do not put this architecture text in the poster; show its meaning through the visual. Do not imply autonomous discovery of new theorems, universal automatic proof, or fabricated success metrics.
+
+ART DIRECTION:
+High-end feature-film key art combined with a meticulous premium science-product launch campaign. Deep graphite black and midnight-blue atmosphere, silver-white optical glass and brushed precision-metal accents, restrained icy cyan/teal light. Rich blacks, luminous but not neon, immense spatial depth, sophisticated visual hierarchy and beautiful material realism.
+
+Central monumental object: one large floating transparent optical prism / sculptural research lens, precise and architectonic, visually memorable, occupying the central lower 55% of the poster. It refracts a fine beam of light. Sparse small fragments of research sketches and paper-like evidence cards on the lower left drift toward it; beyond the lens, the fragments resolve into a clean ordered luminous research path toward the upper right. Only a handful of carefully spaced translucent research cards, a readable abstract numerical curve, minimal geometric mathematical construction, tiny annotation marks: enough to evoke literature, experiment and revision, never an overloaded dashboard. Evidence should feel inspected and organised. Add a tiny distant human silhouette at the bottom for monumental scale. Low-angle dramatic perspective, fine volumetric rays, restrained atmospheric haze, sharp glass refractions and carefully controlled bloom. Film-poster level crafted composition; elegant and credible, not generic glowing-AI-brain artwork.
+
+COMPOSITION:
+Reserve the upper 28–32% for superbly set typography in clean negative space. Center the visual below it; it must remain distinct at phone-thumbnail scale. Lower 15% is a quiet dark footer for the slogan and short capability line. Keep generous outer safe margins, clean baseline alignment. Avoid placing bright highlights behind lettering.
+
+EXACT TEXT ONLY, render Chinese accurately and beautifully:
+Main title, very large:
+“研证”
+Subtitle directly below, one or two balanced lines:
+“从灵感到课题的 AI 科研工作台”
+Slogan in the footer:
+“让研究有方向，让想法有依据”
+Small final line:
+“想法澄清 · 文献对照 · 实验核查 · 修订追溯”
+
+TYPOGRAPHY:
+Main title is extremely prominent, deliberate modern Chinese sans-serif, architectural strong strokes, premium matte silver-white, subtly illuminated, clean correct glyphs, sophisticated spacing, absolutely legible at reduced size. Supporting copy is smaller, fine but high contrast, optically balanced and crisp. The title should feel like a meticulously art-directed film title rather than a random font overlay. No extra English headings, no invented logos, no sponsored marks, no extra promotional paragraphs.
+
+Quality constraints: polished final promotional artwork, coherent lighting, restrained detail, no giant robot head, no brain, no random code walls, no meaningless equations as dominant texture, no cluttered holographic tech cliché, no fake screenshot, no comic/cartoon aesthetic. Keep research symbolism specific and subordinate to a single stunning cinematic hero. Aim for epic but intelligent, refined and trustworthy. Produce the requested 1080×1920 finished poster.

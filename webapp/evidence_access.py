@@ -44,6 +44,25 @@ def _public(result):
     return result
 
 
+def _verified_bytes_match(result, public):
+    """Recheck the returned payload before it can be shown as verified text.
+
+    The pinned registry is still responsible for authorizing and locking the
+    filesystem objects. This boundary check only rejects inconsistent results;
+    it cannot grant access or turn a failed registry read into a success.
+    """
+    payload = result.bytes
+    if (not isinstance(payload, bytes) or public.get("byte_match") is not True or
+            public.get("bytes_returned") is not True):
+        return False
+    expected, actual = public.get("expected"), public.get("actual")
+    if not isinstance(expected, dict) or not isinstance(actual, dict):
+        return False
+    digest = hashlib.sha256(payload).hexdigest()
+    return all(type(facts.get("bytes")) is int and facts["bytes"] == len(payload) and
+               facts.get("byte_sha256") == digest for facts in (expected, actual))
+
+
 class EvidenceAccess:
     def __init__(self, registry=None, *, registry_factory=None):
         # Injection is a trusted in-process test seam, never an HTTP configuration.
@@ -108,7 +127,7 @@ class EvidenceAccess:
             public = _public(result.as_dict())
             if (public.get("status") not in READ_STATUSES or public.get("artifact_id") != artifact_id or
                     public.get("status") != result.status or
-                    (result.status == "verified" and (public.get("byte_match") is not True or not isinstance(result.bytes, bytes)))):
+                    (result.status == "verified" and not _verified_bytes_match(result, public))):
                 public = self._failure(artifact_id, "unreadable", "inconsistent_registry_result")
         except RegistryError:
             public = self._failure(artifact_id, "path_rejected", "registry_read_policy_error")

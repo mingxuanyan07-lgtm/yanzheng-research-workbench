@@ -1,0 +1,11 @@
+{
+  "kind": "diagnostic_example_inspired_by_paper_not_original_experiment",
+  "matrix": "diag(sqrt(10), sqrt(10), 1)",
+  "k": 1,
+  "Z": "e3",
+  "residual_spectral_squared": 10.000000000000002,
+  "optimal_rank1_residual_spectral_squared": 10,
+  "captured_variance": 1.0,
+  "best_rank1_captured_variance": 10,
+  "interpretation": "谱范数残差最优仍可只捕获1而非10的方差；不能只据此验收PCA。这个构造并不证明特定随机SVD算法会输出Z=e3。重复奇异值下最优方向不唯一。"
+}

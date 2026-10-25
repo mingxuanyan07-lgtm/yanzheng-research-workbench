@@ -180,6 +180,24 @@ class WorkflowTest(unittest.TestCase):
         self.assertIn("note1", item["direction_map"]["topics"][0]["evidence"][0]["claim"])
         self.assert_map(item)
 
+    def test_duplicate_local_source_ids_expose_unambiguous_note_reference(self):
+        item = project()
+        refs = [add_search(item, run) for run in ("run1", "run2")]
+        item["reading_notes"] = [{"id": "note" + str(i), "run_id": run, "source_id": "S001",
+            "level": "fulltext_checked", "content": "只核对本来源的相关正文。", "locator": "section 2",
+            "checked_at": "2026-10-23T14:00:00+00:00", "confirmed": True}
+            for i, run in enumerate(("run1", "run2"))]
+        context = json.loads(workflow.build_messages(item)[1]["content"].split("\n", 1)[1])
+        self.assertEqual([n["evidence_source_id"] for n in context["reading_notes"]], refs)
+        proposal = directions()
+        proposal["topics"][0]["evidence"] = [{"source_id": refs[1], "note_id": "note0",
+            "relation": "supports", "claim": "不能借用另一轮同编号来源的笔记。"}]
+        with self.assertRaises(ValueError):
+            workflow.validate_payload(proposal, item)
+        proposal["topics"][0]["evidence"][0]["note_id"] = "note1"
+        normalized = workflow.validate_payload(proposal, item)
+        self.assertEqual(normalized["topics"][0]["evidence"][0]["note_snapshot"]["run_id"], "run2")
+
     def test_metadata_background_claim_is_limited_and_missing_authors_not_invented(self):
         item = project()
         source_id = add_search(item)

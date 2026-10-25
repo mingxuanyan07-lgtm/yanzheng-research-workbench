@@ -1,0 +1,21 @@
+Edit/adapt the provided approved vertical “研证” poster into ONE fully redesigned HORIZONTAL 16:9 promotional cover, requested final canvas 1920 × 1080 pixels. Use the supplied image as the visual identity and artwork reference. Keep its dark premium cinematic appearance, glass prism, icy cyan research path, silver Chinese title, mountain/cloud landscape and small human silhouette. Reflow the layout intelligently for landscape; do not crop the vertical poster, stretch it sideways, put it on a background as a small inset, or add side bars.
+
+Landscape design:
+Left 43% is a sophisticated dark quiet typography zone, right 57% is the cinematic prism and research visual. Let the mountain horizon, stars, mist and subtle glass reflections extend seamlessly across a broad widescreen world.
+Place “研证” extremely large in the upper-left quadrant, same striking matte silver/metal Chinese title treatment as the original, both correct glyphs crisp and fully visible. Under it, a balanced smaller two-line descriptor. In the lower-left, place the slogan and the capability line with generous spacing and margins. Keep the typography in clean dark space, legible at thumbnail size, never covered by intense light.
+On the right, a monumental upright transparent optical prism, slightly above the mountain/cloud horizon. A tiny person below gives scale. Sparse fragmented research notes approach from the middle-left behind the typography, passing into the prism and resolving into orderly translucent literature cards, a modest numerical curve and a clear cyan research path receding toward the far upper-right horizon. Carry over the metaphor: scattered ideas become evidence-grounded research questions and verification plans. Keep research cards abstract and subordinate; no newly fabricated citations or claims.
+
+Exact displayed copy, and no other promotional text:
+Main title:
+“研证”
+Descriptor, break across two lines if needed:
+“从灵感到课题的”
+“AI 科研工作台”
+Slogan:
+“让研究有方向，让想法有依据”
+Capability line:
+“想法澄清 · 文献对照 · 实验核查 · 修订追溯”
+
+Preserve exact Chinese spelling and punctuation. Prioritize correct glyphs, confident hierarchy, ample negative space and clear alignment. The title is the most visually dominant element; the prism is the hero artwork. Deep graphite, midnight blue, restrained icy cyan and silver-white. Cinematic volumetric lighting and delicate atmosphere, not overexposed neon. Polished film-key-art quality with premium restrained product identity.
+
+Project context only: 研证 is an AI research workbench where Qwen proposes topics and revisions, literature notes provide evidence, researchers select and approve changes, numerical experiments and theory obligations retain traceable records. Do not imply automatic new-theorem discovery or universal automatic proof. No architecture paragraphs or extra logos. Output ONE full-bleed finished LANDSCAPE 16:9 poster, requested 1920×1080, opaque PNG appearance, no mockup frames.

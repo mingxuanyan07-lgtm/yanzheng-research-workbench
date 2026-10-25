@@ -1,0 +1,12 @@
+{
+  "product": "研证",
+  "purpose": "Competition cover and comparison with Bailian output",
+  "generation_mode": "built-in image_gen",
+  "specific_model": "Not exposed by the built-in tool; no named API model was selected",
+  "generated_original_size": [941, 1672],
+  "delivery_size": [1080, 1920],
+  "export": "High-quality resampling of the generated original to requested submission dimensions; no content retouching",
+  "original_file": "yanzheng-openai-original.png",
+  "delivery_file": "yanzheng-openai-cover-1080x1920.png",
+  "prompt_file": "prompt.txt"
+}

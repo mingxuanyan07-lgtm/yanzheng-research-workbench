@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "record_type": "research_literature_search",
+  "created_at": "2026-10-23T14:30:53+00:00",
+  "request": {
+    "idea": "公开案例 A：一周内在普通笔记本 CPU 上复现随机 SVD，比较 q=0/1/2 时的误差、耗时与矩阵访问代价，形成可执行计划。",
+    "queries": [
+      "arxiv:0909.4061v2"
+    ],
+    "providers": [
+      "arxiv"
+    ],
+    "year_from": null,
+    "year_to": null,
+    "max_results_per_query": 1
+  },
+  "provenance": {
+    "generator": "workbench/literature_service.py",
+    "live_search_performed": true,
+    "external_model_api_called": false,
+    "new_experiments_executed": false
+  },
+  "search_log": [
+    {
+      "id": "Q001",
+      "provider": "arxiv",
+      "query": "arxiv:0909.4061v2",
+      "status": "success",
+      "searched_at": "2026-10-23T14:30:53+00:00",
+      "attempts": 1,
+      "result_count": 1,
+      "error": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "S001",
+      "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+      "authors": [
+        "Nathan Halko",
+        "Per-Gunnar Martinsson",
+        "Joel A. Tropp"
+      ],
+      "year_or_version": 2009,
+      "url": "https://arxiv.org/abs/0909.4061v2",
+      "origin": "this_run",
+      "verification": "metadata_checked",
+      "locator": "API metadata",
+      "checked_at": "2026-10-23T14:30:53+00:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "0909.4061",
+        "openalex_id": null
+      },
+      "abstract": "Low-rank matrix approximations, such as the truncated singular value decomposition and the rank-revealing QR decomposition, play a central role in data analysis and scientific computing. This work surveys and extends recent research which demonstrates that randomization offers a powerful tool for performing low-rank matrix approximation. These techniques exploit modern computational architectures more fully than classical methods and open the possibility of dealing with truly massive data sets. This paper presents a modular framework for constructing randomized algorithms that compute partial matrix decompositions. These methods use random sampling to identify a subspace that captures most of the action of a matrix. The input matrix is then compressed---either explicitly or implicitly---to this subspace, and the reduced matrix is manipulated deterministically to obtain the desired low-rank factorization. In many cases, this approach beats its classical competitors in terms of accuracy, speed, and robustness. These claims are supported by extensive numerical experiments and a detailed error analysis.",
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://arxiv.org/abs/0909.4061v2",
+        "pdf_url": "https://arxiv.org/pdf/0909.4061v2",
+        "license": null
+      },
+      "retrievals": [
+        {
+          "search_id": "Q001",
+          "provider": "arxiv",
+          "url": "https://export.arxiv.org/api/query?id_list=0909.4061v2&max_results=1",
+          "retrieved_at": "2026-10-23T14:30:53+00:00"
+        }
+      ],
+      "versions": [
+        "0909.4061v2"
+      ],
+      "import_metadata": {
+        "requested_reference": "arxiv:0909.4061v2",
+        "response_sha256": "b566bd3baee83701b4d53952c9fd8aab2f9921a4420b77ba0fec53375f7b142f",
+        "retrieved_at": "2026-10-23T14:30:53+00:00",
+        "scope": "official_metadata_response_only",
+        "versions": [
+          "0909.4061v2"
+        ],
+        "caveat": "仅核对官方题录；此哈希不是论文全文指纹，不表示已经阅读或认证原文。"
+      }
+    }
+  ],
+  "evidence": [],
+  "limitations": [
+    "精确导入仅获取官方元数据；摘要不会自动成为已读证据。"
+  ],
+  "next_action": "打开原文核对版本，记录实际读到的位置与摘录，再用于修订方向。",
+  "id": "6ccd9c098b654a3095b05e146533e2ac",
+  "import_reference": {
+    "provider": "arxiv",
+    "identifier": "0909.4061v2",
+    "key": "arxiv:0909.4061v2"
+  }
+}

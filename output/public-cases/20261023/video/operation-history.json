@@ -1,0 +1,58 @@
+{
+  "scope": "真实操作历史；首次录制未通过画面校验，不作为最终成片",
+  "attempt_1": {
+    "message": "locator.fill: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-direction-review-reason]')\u001b[22m\n",
+    "stack": "locator.fill: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-direction-review-reason]')\u001b[22m\n\n    at D:\\天猫AI\\scripts\\record_public_cases.cjs:88:134\n    at async run (D:\\天猫AI\\scripts\\record_public_cases.cjs:88:5)",
+    "actions": [
+      {
+        "action": "record_start",
+        "at": "2026-10-23T14:53:01.864Z",
+        "scope": "Saved real-call replay; actual delegated acceptance/selection where pending; no new model calls in recording"
+      },
+      {
+        "case": "A",
+        "action": "accept_via_UI",
+        "at": "2026-10-23T14:53:26.020Z",
+        "proposal_id": "3f20437ee4db42afbc4a04790a895186",
+        "operator": "Codex under recorded human authorization"
+      },
+      {
+        "case": "A",
+        "action": "select_via_UI",
+        "topic_id": "q_variation",
+        "reason": "依据本对话人工确认，Codex代录：选择一周CPU随机SVD误差—代价复现。论文仅支撑正交化实现，参数网格是自定协议；正式90组尚未执行，其他候选阈值未采用；详见A/EXECUTION-PLAN.md与human-confirmation.json。",
+        "at": "2026-10-23T14:54:18.960Z",
+        "operator": "Codex delegated data entry"
+      }
+    ],
+    "errors": []
+  },
+  "attempt_2": {
+    "raw": "D:\\天猫AI\\output\\public-cases\\20261023\\video\\raw\\page@9c2159d539f5670079518a39af37e3b4.webm",
+    "actions": [
+      {
+        "action": "record_start",
+        "at": "2026-10-23T14:57:44.303Z",
+        "scope": "Saved real-call replay; actual delegated acceptance/selection where pending; no new model calls in recording"
+      },
+      {
+        "case": "B",
+        "action": "reject_via_UI",
+        "reason": "Codex依据作者已确认边界代审：停止单指标PCA验收目标。此草案仍把必须触发算法质量告警、并与原文图1一致设为成功条件；我们未复现图1真实数据实验，不能预设算法必然失败。暂不接受整份模型修订。收窄后的人工协议见B/NARROWING-DECISION.md；新模型候选未获选择，不伪称科研结论已验证。",
+        "proposal_id": "985276aa08db4516a75d5843fe336158",
+        "at": "2026-10-23T14:59:54.864Z",
+        "operator": "Codex delegated review"
+      },
+      {
+        "action": "record_end",
+        "at": "2026-10-23T15:00:46.305Z"
+      }
+    ],
+    "errors": [],
+    "fixture": false,
+    "model_network_calls_during_recording": 0,
+    "captioned": true,
+    "audio": false,
+    "elapsed_ms": 185428
+  }
+}

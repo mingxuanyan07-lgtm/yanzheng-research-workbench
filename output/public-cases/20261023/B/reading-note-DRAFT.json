@@ -1,0 +1,15 @@
+{
+  "run_id": "3ba9402ea7b244e3a6f0d5fd25e045c0",
+  "source_id": "S001",
+  "level": "fulltext_checked",
+  "content": "只核对 §2.2（PDF 第3页及第4页图1）：谱范数低秩近似误差不能单独保证每个主成分捕获的方差。原文给出谱平台情形与真实数据示例，并另定义 per-vector error。因此放弃“仅凭谱范数残差通过就验收 PCA”的推断，收窄为检查逐分量方差/重构/谱间隙的指标协议；不宣称随机 SVD 不可用，也不把重复特征值下方向不唯一判为算法错误。",
+  "document_anchor": {
+    "document_id": "4176035090c342de83979d044d84765a",
+    "page": 3,
+    "start": 1709,
+    "end": 1798,
+    "quote": "norm low-rank approximation error does not guarantee a ny accuracy in Z for many matrices",
+    "file_sha256": "3a18b5d13eaf2286f4a6d8e4862ba62dc90c686459703869c2e9bab25aa27792",
+    "page_sha256": "98ee6042b31b99dcf58805eed210c25338fb24034b803bb0f6cb10fc96606f9d"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "file": "研证-两份真实公开案例-三分钟.mp4",
+  "duration_seconds": 180.0,
+  "resolution": "1920x1080",
+  "video_codec": "H264",
+  "fps": 25,
+  "audio": false,
+  "captioned": true,
+  "sha256": "b54c6c8d056b0c5171c43ae677d92fdbac4efe86a5b8df48bdf1b76dc2291987",
+  "bytes": 17804808,
+  "source": "actual Chrome recording of isolated real cases; no mock provider or route interception",
+  "editing": "trim to 180 seconds; proportional scale and side padding; no generated UI state",
+  "model_calls_in_recording": 0,
+  "model_calls_before_recording": 9,
+  "human_decision": "actual conversation reply retained; Codex delegated entry and recording",
+  "review_frames": [
+    "video/frame-008.png",
+    "video/frame-044.png",
+    "video/frame-080.png",
+    "video/frame-110.png",
+    "video/frame-145.png",
+    "video/frame-160.png",
+    "video/frame-174.png"
+  ]
+}

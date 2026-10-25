@@ -1,0 +1,19 @@
+{
+  "product": "研证",
+  "layout": "Landscape 16:9, adapted from approved first cinematic cover",
+  "generation_mode": "built-in image_gen edit",
+  "specific_model": "Not exposed by the built-in tool",
+  "generated_original_size": [
+    1672,
+    941
+  ],
+  "delivery_size": [
+    1920,
+    1080
+  ],
+  "format": "PNG",
+  "export": "High-quality resampling to exact requested landscape dimensions; no content retouching",
+  "bytes": 4809523,
+  "delivery_file": "D:\\天猫AI\\output\\competition-cover\\研证-比赛封面-16比9-1920x1080.png",
+  "prompt_file": "prompt.txt"
+}

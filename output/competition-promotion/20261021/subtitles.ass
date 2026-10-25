@@ -1,0 +1,21 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Noto Sans SC,38,&H00FFFFFF,&H00FFFFFF,&H00121B22,&H8C07111A,-1,0,0,0,100,100,0,0,3,1,0,2,70,70,40,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.18,0:00:07.96,Default,,0,0,0,,[01] 灵感很多，依据很少。科研起步最难的，往往不是想出题目，而是判断它为什么值得做。\N
+Dialogue: 0,0:00:07.94,0:00:13.71,Default,,0,0,0,,[02] 研证，一款从灵感到课题的 AI 科研工作台，让研究判断有据可循。
+Dialogue: 0,0:00:13.87,0:00:20.63,Default,,0,0,0,,[03] 从问题澄清、文献对照，到候选修订与验证回流，形成一个不断积累证据的闭环。\N
+Dialogue: 0,0:00:20.79,0:00:28.74,Default,,0,0,0,,[04] 千问帮助澄清、生成与修订；\N两个公开的 ModelScope Skill，把方向探索和文献证据的职责说清楚。
+Dialogue: 0,0:00:28.90,0:00:36.62,Default,,0,0,0,,[05] 文献命中不等于真正读过。系统分别记录来源、版本、阅读位置、精确摘录和人工判断。\N
+Dialogue: 0,0:00:36.78,0:00:44.18,Default,,0,0,0,,[06] 模型提出建议，但不会自动替你做决定。只有人工确认后，修订才会进入当前研究。\N
+Dialogue: 0,0:00:44.34,0:00:50.51,Default,,0,0,0,,[07] 每个候选都有出处，每次修订都有理由，让研究过程可以回看、可以复核。
+Dialogue: 0,0:00:50.67,0:00:55.53,Default,,0,0,0,,[08] 现在在线体验研证，让想法有依据，让下一步能验证。

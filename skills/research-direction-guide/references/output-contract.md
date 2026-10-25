@@ -27,7 +27,25 @@
 
 课题格式：`id`、`title`、`question`、`known_work`、`potential_difference`、`novelty_status`（固定 `needs_review`）、`evidence`、`first_validation`、`resources`、`stop_conditions`、`risks`、`open_questions`、`readiness`（`provisional` / `ready_to_plan`）。前三项与 `potential_difference` 为非空字符串；`known_work` 为非空字符串或非空字符串列表；`resources`、`stop_conditions`、`risks`、`open_questions` 为字符串列表。
 
-`evidence` 每项为 `source_id`、`relation`（`supports` / `limits` / `background` / `unverified_lead`）、`claim`，可选 `note_id` 与 `note_snapshot`。未核实来源只可作为 `unverified_lead`；只核过元数据的来源不能标记 `supports` / `limits`，用作 `background` 时仅描述书目信息，不推断科研内容。`supports` / `limits` 必须绑定同一轮次、同一来源、用户确认且有 locator 的阅读笔记 `note_id`，并提供结构完整的 `note_snapshot`：`note_id` 与 evidence.note_id 一致；`note_sha256`、`content_sha256` 为 64 位小写十六进制；另有 `run_id`、`source_id`、`level`、`locator`、`checked_at`、`origin=user_attested`、`confirmed=true`、`caveat`；`background` / `unverified_lead` 不得绑定阅读笔记。若阅读笔记带有用户声明的原文版本/文件哈希/范围三元组，`note_snapshot` 可附带 `source_version`、`source_sha256`、`source_sha256_scope`、`source_fingerprint_caveat`，但这只是用户声明，程序不读取/认证原文，不证明内容真实性、版本正确性或科学结论。已读内容的实际支持范围仍须人工审阅。
+`evidence` 每项为 `source_id`、`relation`（`supports` / `limits` / `background` / `unverified_lead`）、`claim`，可选 `note_id` 与 `note_snapshot`。未核实来源只可作为 `unverified_lead`；只核过元数据的来源不能标记 `supports` / `limits`，用作 `background` 时仅描述书目信息，不推断科研内容。`supports` / `limits` 必须绑定同一轮次、同一来源、用户确认且有 locator 的阅读笔记 `note_id`，并提供结构完整的 `note_snapshot`：`note_id` 与 evidence.note_id 一致；`note_sha256`、`content_sha256` 为 64 位小写十六进制；另有 `run_id`、`source_id`、`level`、`locator`、`checked_at`、`origin=user_attested`、`confirmed=true`、`caveat`；`background` / `unverified_lead` 不得绑定阅读笔记。网页模型只输出 `note_id`，程序从真实确认笔记生成 `note_snapshot`，拒绝模型自行提供快照或正文锚点。旧笔记可继续通过手填 locator 绑定，不强制附正文文档。
+
+若笔记从用户导入的正文选取摘录，快照可附 `document_anchor`，且仅含以下七字段：
+
+| 字段 | 约束 |
+|---|---|
+| document_id | 本研究 `paper_documents` 中的文档 ID，文档必须属于笔记的同一 `run_id`、`source_id` |
+| page | 从 1 开始的整数页码；布尔值无效 |
+| start | 页文本中从 0 开始的 Unicode codepoint 偏移，非负整数；布尔值无效 |
+| end | 右端不含的整数偏移，`start < end <= len(page.text)`；布尔值无效 |
+| quote | 非空白且不超过 4000 个 Unicode codepoint，必须逐字等于 `page.text[start:end]` |
+| file_sha256 | 与所属文档相同的原始上传文件字节 SHA256，64 位小写十六进制 |
+| page_sha256 | 与所属页相同的提取页文本 UTF-8 SHA256，64 位小写十六进制 |
+
+TXT、Markdown 和 PDF 提取文本的 CRLF、CR 先统一为 LF，再计算页哈希和字符偏移；原始文件字节及 `file_sha256` 保持原样。页文本中的 emoji 等补充平面字符按一个 Unicode codepoint 计数，不按 JavaScript UTF-16 代码单元计数。文档 `text_sha256` 是按页序组成的页文本数组经 `json.dumps(..., ensure_ascii=False, separators=(',', ':'))` 编码为 UTF-8 后的 SHA256，保留页边界。
+
+程序核对上传字节完整性、提取页文本和锚点的精确关联；上传或提取本身不将题录升级为“已读”。`fulltext_checked` 仍要求用户确认阅读及解释，哈希相同不认证出版社来源、作者、论文版本或科学结论。若笔记另外带有用户声明的版本/哈希/范围三元组，快照可附 `source_version`、`source_sha256`、`source_sha256_scope`、`source_fingerprint_caveat`；这些字段仍是用户声明，程序不因其存在而核对相应文件，也不将它们与 `document_anchor.file_sha256` 自动视为同一身份。已读摘录与模型 claim 的实际支持关系仍须人工审阅。
+
+方向模型上下文只包含已确认笔记、选中的摘录与相关题录，不携带 `paper_documents` 整篇页文本；超过 50000 字符的研究上下文明示拒绝，不静默截断。备份保留文档提取文字和锚点，校验其哈希、归属及预算；原始文件保存在独立 SQLite BLOB 中，不随项目 JSON 或备份携带。恢复的每份文档带 `backup_restore` 来源标记；后续模型上下文和新证据快照须说明锚点核对的是恢复的文字快照，本次未重新提取或核对原件。原件可用性 `original_available` 仅由当前本机派生，不入备份。
 
 `first_validation` 为 `steps`（列表）、`baseline`（字符串）、`metrics`（列表）、`success_signal`（字符串）。理论课题的 baseline 可说明对照命题或已知定理，metrics 可为证明目标与未闭合依赖，不强行套用数值指标。`resources` 是字符串列表；时间与成本可写估计，注明依赖。`ready_to_plan` 的步骤、指标、资源与停止条件列表均不能留空。
 

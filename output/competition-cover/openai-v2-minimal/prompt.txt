@@ -1,0 +1,36 @@
+Use case: ads-marketing.
+Generate ONE finished premium Chinese product-launch competition cover for “研证”, the AI research workbench. Target delivery 1080×1920 pixels, portrait 9:16. Opaque full-bleed poster. This is a SECOND design option alongside a dark cinematic prism poster: now use a radically cleaner, brighter, typography-led premium consumer-technology launch aesthetic, confident and restrained. No Apple logos or imitation of any existing advertisement.
+
+Product context, for understanding only:
+研证 serves students and early researchers in mathematics and AI. It turns ideas and resource constraints into candidate topics, associates suggestions with literature notes and reading locations, lets the researcher select and accept revisions, compares fixed randomized-SVD numerical experiments, and tracks propositions, assumptions, proof routes and open obligations. Its identity is evidence-grounded research with traceable human decisions. Do not put implementation architecture in the artwork; do not imply autonomous new-theorem discovery or guaranteed proof.
+
+ART DIRECTION:
+Warm porcelain-white / very pale neutral gray background, deep charcoal typography, just one restrained cool blue accent with a slight teal inflection. Luminous soft studio light, elegant realistic shadows, extremely refined edge highlights, beautiful satin glass and anodized silver materials. Broad calm negative space. As polished as a major premium technology launch keynote cover. No mountains, outer space, prism crystal monument, dramatic rays, particle storms, lens flares, robot heads or generic circuit texture.
+
+COMPOSITION:
+Top 12%: quiet whitespace with small, widely tracked category label.
+Top-to-upper-middle: huge exquisitely typeset title “研证”, the unmistakable dominant identity. Under it, a clear concise descriptor and a small benefit line. Avoid heavy metallic 3D text; use near-black clean modern Chinese sans-serif with precise optical spacing, editorial confidence.
+Middle-lower hero area: a single sophisticated floating research-workbench object, presented at an elegant shallow three-quarter angle. It consists of three thin porcelain / frosted-glass research panels assembled into one sculptural coherent product, with generous spacing. The front central panel represents a selected research topic with neat typographic strokes and an understated blue selected marker. A partly visible supporting panel contains a short source quotation / literature note with a tiny citation bookmark. Another supporting panel contains a spare accurate-looking numerical comparison line chart and tiny formula marks. Fine elegant connective lines and one tiny blue accent node show idea → evidence → verification, with a small circular revision arrow. This is an abstract editorial visualization, not a fabricated screenshot of an actual website. No dense dashboards, browser chrome, excessive labels or unreadable paragraphs.
+Keep these research-card details delicate, legible as categories and visually subordinate to the title. The hero needs to feel tangible, meticulously engineered and quietly intelligent. One short authentic mathematical expression such as “A ≈ UΣVᵀ” is acceptable as a subtle research cue.
+Bottom: clear centered capability line, and a very fine short accent rule or subtle blue dot. All text stays inside ample safety margins.
+
+EXACT CHINESE TEXT ONLY (render these verbatim, do not invent extra copy):
+Small category label:
+“AI 科研工作台”
+Huge main title:
+“研证”
+Descriptor:
+“从灵感到课题”
+Small benefit line:
+“让研究有方向，让想法有依据”
+Bottom capability line:
+“想法澄清 · 文献对照 · 实验核查 · 修订追溯”
+
+Optional three tiny research-card labels if needed (only these exact words):
+“研究问题”
+“文献证据”
+“验证计划”
+
+TYPE AND FINISH:
+“研证” must be fully correct Chinese glyphs, extremely crisp and prominent, architectural but human, with a restrained contemporary sans-serif aesthetic. It should read clearly as a thumbnail. Supporting text is much smaller with excellent contrast. Use a disciplined grid, coherent alignment, refined scale hierarchy, careful whitespace. Soft white-on-white depth with natural gray contact shadows. Minimal use of color, no gradients covering the whole canvas, no decorative clutter.
+Aim for a finished, highly desirable product poster: simple enough to understand in one glance, rich enough to reveal careful details on closer inspection. Show research workbench and evidence connection rather than generic sci-fi. Output exactly one complete cover poster, not a mockup, presentation slide with border, or multiple versions. Requested final size 1080×1920.

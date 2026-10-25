@@ -1,6 +1,7 @@
 """Local draft rules and plan rendering. This module makes no network calls."""
 
 import copy
+import hashlib
 import importlib.util
 import json
 import re
@@ -32,6 +33,20 @@ QUESTIONS = [
 
 def now():
     return datetime.now(timezone.utc).isoformat(timespec="microseconds")
+
+
+def runtime_build_identity(base=None):
+    """Identify public runtime sources; never read credentials or research data."""
+    base = Path(base) if base is not None else Path(__file__).resolve().parent
+    paths = list(base.glob("*.py"))
+    static = base / "static"
+    paths.extend(path for path in static.rglob("*")
+                 if path.is_file() and path.suffix in (".js", ".css", ".html"))
+    digest = hashlib.sha256()
+    for path in sorted(paths, key=lambda item: item.relative_to(base).as_posix()):
+        digest.update(path.relative_to(base).as_posix().encode("utf-8") + b"\0")
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return {"id": digest.hexdigest()[:20], "scheme": "public-runtime-sha256-v1"}
 
 
 def add_event(project, action, summary):
@@ -240,7 +255,36 @@ def _declared_fingerprint_text(item):
                  "user_declared_metadata": "用户声明为元数据"}[scope]
         return ("；用户声明原文版本：" + _markdown_text(version.strip()) + "；声明文件 SHA256（" + label + "）："
                 + _markdown_text(sha256) + "；" + _markdown_text(caveat or "程序没有读取/认证原文，不证明内容真实性或科学结论。"))
+    if isinstance(item.get("document_anchor"), dict):
+        return ""
     return "；未登记原文版本/指纹（程序未读取/认证原文）"
+
+
+def _document_anchor_text(project, item):
+    """Portable excerpt provenance, without exporting the imported whole paper."""
+    anchor = item.get("document_anchor")
+    if not isinstance(anchor, dict):
+        return ""
+    document = next((entry for entry in project.get("paper_documents", [])
+                     if entry.get("id") == anchor.get("document_id")), None)
+    page, start, end = (anchor.get(key) for key in ("page", "start", "end"))
+    valid_numbers = all(type(value) is int for value in (page, start, end))
+    pages = document.get("pages", []) if document else []
+    if not (document and valid_numbers and 1 <= page <= len(pages)
+            and document.get("run_id") == item.get("run_id")
+            and document.get("source_id") == item.get("source_id")
+            and document.get("file_sha256") == anchor.get("file_sha256")
+            and pages[page - 1].get("text_sha256") == anchor.get("page_sha256")
+            and 0 <= start < end <= len(pages[page - 1].get("text", ""))
+            and pages[page - 1]["text"][start:end] == anchor.get("quote")):
+        return "；原文定位记录不完整或与当前文字不一致，请回工作台核对。"
+    return ("；原文定位：" + _markdown_text(document.get("filename") or "导入文档")
+            + "，第 " + str(page) + " 页，字符 " + str(start) + "–" + str(end)
+            + "（Unicode 字符，起点为 0、右端不含）；原文摘录："
+            + _markdown_text(anchor["quote"]) + "；导入文件 SHA256："
+            + _markdown_text(anchor["file_sha256"]) + "；页文字 SHA256："
+            + _markdown_text(anchor["page_sha256"])
+            + "；位置与导入文字一致，文件与题录对应关系由用户确认，不证明科学结论成立。")
 
 
 def add_literature_search(project, record):
@@ -266,6 +310,131 @@ def literature_status(project):
     return f"本项目保存 {len(searches)} 轮检索记录，{execution}；成功查询 {counts['success']}、未命中 {counts['empty']}、失败 {counts['failed']}。检索题录独立保存，尚未自动成为课题科学论断的证据。"
 
 
+def render_decision_package(project):
+    """Render the complete, auditable research decision package as Markdown."""
+    record = project["direction_map"]
+    assert_saved_direction_map(record)
+    topic = next((item for item in record["topics"] if item["id"] == record["selected_topic_id"]), None)
+    if topic is None:
+        raise ValueError("请先选择课题，再导出研究决策包。")
+    known = record.get("intake", {}).get("known", {})
+    provenance = record.get("provenance", {})
+    recommendation = record.get("recommendation") or {}
+    lines = [
+        "# 研证研究决策包", "",
+        "> 研究记录不证明科学结论成立。", "",
+        "## 研究起点", "",
+        "- 原始想法：" + _markdown_text(record.get("initial_idea") or ""),
+        "- 研究问题：" + _markdown_text(topic.get("question") or ""),
+        "- 最终选择：" + _markdown_text(topic.get("title") or ""),
+        "- 选择理由：" + _markdown_text(known.get("selection_reason") or "未填写额外选择理由。"),
+        "- 选择依据：" + _markdown_text(known.get("selection_basis") or "未记录。"), "",
+        "## 全部候选与推荐", "",
+    ]
+    if project.get("backup_restore"):
+        lines[2:2] = ["> 来源：从外部备份恢复。历史阅读、模型、实验和核验记录为导入快照，未在本机重新核验；不代表本次新执行。", ""]
+    for index, candidate in enumerate(record.get("topics", []), 1):
+        labels = []
+        if candidate.get("id") == recommendation.get("topic_id"):
+            labels.append("推荐候选")
+        if candidate.get("id") == topic.get("id"):
+            labels.append("最终选择")
+        suffix = "（" + "；".join(labels) + "）" if labels else ""
+        lines.append(f"- 候选 {index}：{_markdown_text(candidate.get('title') or '未命名')}{suffix}")
+        lines.append("  研究问题：" + _markdown_text(candidate.get("question") or "未记录"))
+    lines.extend(["", "## 推荐理由", ""])
+    lines.append("- " + _markdown_text(recommendation.get("reason") or recommendation.get("rationale") or "未记录推荐理由。"))
+    for entry in recommendation.get("would_change_if", []) or []:
+        lines.append("- 何时改变推荐：" + _markdown_text(entry))
+
+    lines.extend(["", "## 来源、阅读等级与论断关系", ""])
+    evidence_by_source = {}
+    for evidence in topic.get("evidence", []):
+        evidence_by_source.setdefault(evidence.get("source_id"), []).append(evidence)
+    all_notes = list(project.get("reading_notes", []))
+    seen_sources = set()
+    sources = []
+    for source in record.get("sources", []):
+        sources.append((source, source.get("run_id")))
+    for search in project.get("literature_searches", []):
+        for source in search.get("sources", []):
+            sources.append((source, search.get("id")))
+    for source, run_id in sources:
+        identity = (run_id, source.get("id"), source.get("url"), source.get("title"))
+        if identity in seen_sources:
+            continue
+        seen_sources.add(identity)
+        relations = evidence_by_source.get(source.get("id"), [])
+        lines.append("- 来源：" + _markdown_text(source.get("title") or "未命名来源"))
+        lines.append("  URL/位置：" + _markdown_text(source.get("url") or source.get("locator") or "尚未记录"))
+        lines.append("  核验状态：" + _markdown_text(source.get("verification") or "未记录") + "；题录信息不等同全文证据。")
+        metadata = source.get("import_metadata")
+        if metadata:
+            lines.append("  题录版本：" + _markdown_text("；".join(source.get("versions", [])) or metadata.get("requested_reference", "未记录")))
+            lines.append("  题录响应 SHA256：" + _markdown_text(metadata.get("response_sha256", "未记录")) + "（仅元数据，不是全文指纹）")
+        if relations:
+            for relation in relations:
+                lines.append("  论断关系：" + _markdown_text(relation.get("relation") or "待审查") + "；论断：" + _markdown_text(relation.get("claim") or "未记录"))
+                snapshot = relation.get("note_snapshot")
+                if isinstance(snapshot, dict):
+                    lines.append("  绑定笔记：" + _markdown_text(snapshot.get("note_id") or "未记录")
+                                 + "；阅读位置：" + _markdown_text(snapshot.get("locator") or "未记录")
+                                 + _document_anchor_text(project, snapshot))
+        else:
+            lines.append("  论断关系：未绑定论断关系")
+        matched_notes = [note for note in all_notes if note.get("source_id") == source.get("id") and (run_id is None or note.get("run_id") == run_id)]
+        if not matched_notes:
+            lines.append("  阅读摘录：尚无已记录阅读摘录。")
+        for note in matched_notes:
+            origin = "公开样例材料（不是用户阅读确认）" if note.get("origin") == "curated_example" else "用户确认阅读"
+            lines.append("  阅读等级：" + _markdown_text(note.get("level") or "未记录") + "；" + origin)
+            lines.append("  阅读位置：" + _markdown_text(note.get("locator") or "未记录"))
+            lines.append("  阅读笔记：" + _markdown_text(note.get("content") or "未记录")
+                         + _declared_fingerprint_text(note) + _document_anchor_text(project, note))
+    if not sources:
+        lines.append("- 尚未登记来源。")
+
+    first = topic.get("first_validation") or {}
+    lines.extend(["", "## 风险、假设与下一步有效验证", ""])
+    lines.append("- 假设：" + (_markdown_text("；".join(str(x) for x in record.get("intake", {}).get("assumptions", []))) if record.get("intake", {}).get("assumptions") else "未记录额外科研假设。"))
+    lines.append("- 风险：" + (_markdown_text("；".join(str(x) for x in topic.get("risks", []))) if topic.get("risks") else "未记录明确风险。"))
+    lines.append("- 下一步：" + _markdown_text(topic.get("next_action") or project.get("next_action") or "先完成来源核查与有效验证。"))
+    for step in first.get("steps", []):
+        lines.append("  - " + _markdown_text(step))
+    for condition in topic.get("stop_conditions", []):
+        lines.append("  - 停止条件：" + _markdown_text(condition))
+
+    lines.extend(["", "## 模型、文献与实验限制", ""])
+    if provenance.get("generator") == "qwen":
+        lines.append("- 模型：课题候选由千问模型生成（" + _markdown_text(provenance.get("model") or "模型标识未记录") + "）；生成不证明候选或科学结论成立。")
+    else:
+        lines.append("- 模型：候选记录未表明由千问生成；外部模型接口调用=" + ("是" if provenance.get("external_model_api_called") else "否") + "。")
+    lines.append("- 文献：" + _markdown_text(literature_status(project)))
+    lines.append("- 文献限制：题录、摘要与用户笔记不自动等于全文证据；未绑定阅读笔记的 supports/limits 关联不构成已核验证据。")
+    ran_experiments = any(run.get("provenance", {}).get("new_experiments_executed") for run in project.get("experiments", []))
+    lines.append("- 实验：" + ("已有独立运行记录；结果只对应运行时选题快照。" if ran_experiments else "尚无本项目新实验运行记录。"))
+    for run in project.get("experiments", []):
+        for limitation in run.get("limitations", []):
+            lines.append("  - " + _markdown_text(limitation))
+    if project.get("research_plan"):
+        plan = project["research_plan"]
+        lines.extend(["", "## 本轮行动与人工确认", ""])
+        lines.append("- 计划 ID：" + _markdown_text(plan["id"]) + "；状态：" + _markdown_text(plan["status"]))
+        lines.append("- 公开检索操作：" + str(plan["used"]["search_operations"]) + "/" + str(plan["limits"]["search_operations"]))
+        lines.append("- 模型推进操作：" + str(plan["used"]["model_operations"]) + "/" + str(plan["limits"]["model_operations"]))
+        for action in plan["actions"]:
+            lines.append("- " + _markdown_text(action["title"]) + "：" + _markdown_text(action["status"]))
+            if action.get("query"):
+                lines.append("  查询：" + _markdown_text(action["provider"] + " · " + action["query"]))
+            if action.get("run_id"):
+                lines.append("  独立检索记录：" + _markdown_text(action["run_id"]))
+            if action.get("proposal_id"):
+                lines.append("  待审修订记录：" + _markdown_text(action["proposal_id"]))
+        lines.append("- 行动状态记录实际执行范围；阅读与接受修订须由研究者明确确认。")
+    lines.extend(["", "研究记录不证明科学结论成立。", ""])
+    return "\n".join(lines)
+
+
 def render_plan(project):
     record = project["direction_map"]
     assert_saved_direction_map(record)
@@ -280,6 +449,8 @@ def render_plan(project):
     ran_experiments = any(run.get("provenance", {}).get("new_experiments_executed") for run in project.get("experiments", []))
     experiment_status = "项目已有独立实验运行记录，结果对应运行时的选题快照，并不验证所有候选；" if ran_experiments else "未执行新实验；"
     lines = ["# 研证首轮研究计划草案", "", "## " + _markdown_text(topic["title"]), "", model_status + experiment_status + "潜在贡献、适用条件与资料内容仍待研究者核查。", "", literature_status(project), "", "原始想法：" + _markdown_text(record["initial_idea"]), "", "研究问题：" + _markdown_text(topic["question"]), "", "选择依据：" + _markdown_text(record["intake"]["known"]["selection_basis"]), ""]
+    if project.get("backup_restore"):
+        lines[2:2] = ["> 来源：从外部备份恢复。历史阅读、模型、实验和核验记录为导入快照，未在本机重新核验；不代表本次新执行。", ""]
     first = topic["first_validation"]
     for heading, entries in [
         ("已有工作", [topic["known_work"]]), ("潜在切口", [topic["potential_difference"]]),
@@ -308,7 +479,7 @@ def render_plan(project):
                      + _markdown_text(snapshot.get("note_sha256") or "未记录") + "；内容 SHA256："
                      + _markdown_text(snapshot.get("content_sha256") or "未记录") + "）。"
                      + _markdown_text(snapshot.get("caveat") or "快照不是程序核验。")
-                     + _declared_fingerprint_text(snapshot))
+                     + _declared_fingerprint_text(snapshot) + _document_anchor_text(project, snapshot))
         elif evidence.get("relation") in ("supports", "limits"):
             line += "；历史关联：未绑定阅读笔记。原始声明予以保留，不等于已核验证据；重新生成时必须绑定已确认阅读笔记。"
         lines.append(line)
@@ -337,7 +508,7 @@ def render_plan(project):
         lines.extend(["", "## 阅读记录与公开案例材料", ""])
         for note in project["reading_notes"]:
             origin_label = "公开案例整理（非用户阅读确认）" if note.get("origin") == "curated_example" else "用户确认"
-            lines.append("- " + origin_label + "；来源 " + _markdown_text(note["run_id"] + "/" + note["source_id"]) + "；等级：" + _markdown_text(note["level"]) + "；位置：" + _markdown_text(note["locator"]) + "；摘录/笔记：" + _markdown_text(note["content"]) + _declared_fingerprint_text(note))
+            lines.append("- " + origin_label + "；来源 " + _markdown_text(note["run_id"] + "/" + note["source_id"]) + "；等级：" + _markdown_text(note["level"]) + "；位置：" + _markdown_text(note["locator"]) + "；摘录/笔记：" + _markdown_text(note["content"]) + _declared_fingerprint_text(note) + _document_anchor_text(project, note))
     if project.get("experiments"):
         lines.extend(["", "## 独立实验运行记录", "", "固定执行器的局部数值结果，不是数学证明；参数与选题以每轮快照为准。", ""])
         for run in project["experiments"]:

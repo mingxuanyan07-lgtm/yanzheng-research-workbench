@@ -1,0 +1,15 @@
+{
+  "run_id": "6ccd9c098b654a3095b05e146533e2ac",
+  "source_id": "S001",
+  "level": "fulltext_checked",
+  "content": "只核对相关正文：§4.5 Remark 4.3 指出，在交替乘 A 和转置时进行正交化有助于避免舍入误差；Algorithm 4.4（PDF 第27页）提供可复现步骤。这支撑实现与稳定性检查，不证明在我的硬件上更快，也不证明课题创新。",
+  "document_anchor": {
+    "document_id": "f941b4432396407f8e6455054a94ee1a",
+    "page": 26,
+    "start": 541,
+    "end": 593,
+    "quote": "recommended implementation appears as Algorithm 4.4.",
+    "file_sha256": "d5d99d95b3d9657de6413f4c26d635238103ef9cf1a28ff1b7fde531cf11f6be",
+    "page_sha256": "9dd9b42bdfa10ed7bf2f1e47c03c5952589f3c7e8dc6907bc06006626f4bc992"
+  }
+}

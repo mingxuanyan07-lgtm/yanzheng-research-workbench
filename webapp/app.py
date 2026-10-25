@@ -10,11 +10,13 @@ import threading
 import uuid
 from pathlib import Path
 from typing import Literal
+from urllib.parse import quote
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 import engine
@@ -31,6 +33,7 @@ import lean_service
 import lean_api
 from model_service import ModelService, ModelServiceError
 from storage import ProjectNotFound, Store
+import storage as backup_service
 
 BASE = Path(__file__).resolve().parent
 
@@ -88,6 +91,22 @@ class LiteratureSearch(BaseModel):
         return value.strip() if isinstance(value, str) else value
 
 
+class ReferenceImport(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    reference: str = Field(min_length=1, max_length=300)
+
+
+class ResearchPlanCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    provider: Literal["crossref", "arxiv"] = "crossref"
+
+
+class ResearchActionRun(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    plan_id: str = Field(min_length=1, max_length=80)
+    request_id: str = Field(min_length=8, max_length=80, pattern=r"^[a-zA-Z0-9_-]+$")
+
+
 class Advance(BaseModel):
     model_config = ConfigDict(extra="forbid")
     answers: dict[str, str] = Field(default_factory=dict, max_length=3)
@@ -100,8 +119,9 @@ class ReadingNote(BaseModel):
     source_id: str = Field(min_length=1, max_length=100)
     level: Literal["abstract_checked", "fulltext_checked"]
     content: str = Field(min_length=1, max_length=6000)
-    locator: str = Field(min_length=1, max_length=300)
+    locator: str = Field(default="", max_length=300)
     confirmed: Literal[True]
+    document_anchor: dict | None = None
     source_version: str | None = Field(default=None, max_length=300)
     source_sha256: str | None = Field(default=None, max_length=64)
     source_sha256_scope: Literal["user_declared_fulltext_file", "user_declared_metadata"] | None = None
@@ -118,6 +138,8 @@ class ReadingNote(BaseModel):
 
     @model_validator(mode="after")
     def coherent_source_fingerprint(self):
+        if self.document_anchor is None and not self.locator:
+            raise ValueError("请填写实际阅读位置，或从已导入的正文中选择准确摘录。")
         values = (self.source_version, self.source_sha256, self.source_sha256_scope)
         if all(value is None for value in values):
             return self
@@ -243,6 +265,8 @@ def project_summary(project):
 
 def create_app(db_path=None, model_client=None, lean_client=None, evidence_client=None):
     application = FastAPI(title="研证本地工作台", version="0.5.0", docs_url="/api/docs", redoc_url=None, openapi_url="/api/openapi.json")
+    # Capture once: an old running process must not report a new on-disk build.
+    application.state.build = engine.runtime_build_identity()
     store = Store(db_path or os.environ.get("YANZHENG_DB_PATH", BASE / "data/research.db"))
     application.state.store = store
     evidence = evidence_client if evidence_client is not None else evidence_access.EvidenceAccess()
@@ -287,9 +311,9 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
             call.update({"input_revision": revision, "input_sha256": input_hash, "prompt_version": workflow.PROMPT_VERSION})
             try:
                 workflow.validate_payload(payload, project)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as error:
                 call.update({"status": "failed", "application_status": "rejected", "error_code": "invalid_workflow",
-                             "summary": "模型输出未通过科研流程校验；已有方向和本次输入已保留，可重试。"})
+                             "summary": workflow.validation_failure_summary(error)})
                 model.record_result(call)
                 store.update(project_id, lambda current: workflow.apply_failure(current, call))
                 return JSONResponse({"detail": call["summary"]}, status_code=502)
@@ -321,7 +345,8 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
             if request.headers.get("sec-fetch-site") == "cross-site" or (origin is not None and origin != str(request.base_url).rstrip("/")):
                 return JSONResponse({"detail": "请从本地工作台页面发起操作。"}, status_code=403)
             content_type = request.headers.get("content-type", "").lower()
-            if request.url.path.startswith("/api/") and request.url.path.rsplit("/", 1)[-1] != "reopen" and not content_type.startswith("application/json"):
+            document_upload = request.method == "POST" and re.fullmatch(r"/api/projects/[^/]+/documents", request.url.path) is not None
+            if request.url.path.startswith("/api/") and request.url.path.rsplit("/", 1)[-1] != "reopen" and not document_upload and not content_type.startswith("application/json"):
                 return JSONResponse({"detail": "请求需使用 JSON 格式。"}, status_code=415)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -350,16 +375,55 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
         model_status = model.status()
         configured = model_status["configured"]
         return {"mode": "qwen" if configured else "demo", "model_connected": model_status["state"] == "verified",
-                "model": model_status, "storage": "sqlite", "version": "0.5.0",
+                "model": model_status, "storage": "sqlite", "version": "0.5.0", "build": application.state.build,
                 "capabilities": {"direction_generation": "qwen_available" if configured else "demo", "literature_search": "available",
                                  "model": model_status["state"], "experiments": "randomized_svd",
                                  "skill_workflow": True, "reading_notes": True,
+                                 "literature_reference_import": True, "research_action_plan": True,
+                                 "paper_documents": True, "document_quote_anchors": True,
+                                 "local_backup": True,
                                  "theory_workspace": True, "theory_revision_review": True, "formal_verification": False,
                                  "lean_fixed_cases": True, "lean_run_storage": True}}
 
     @application.get("/api/lean/status")
     def lean_status():
         return {"environment": lean_service.environment()}
+
+    @application.get("/api/backups/export")
+    def export_backup():
+        content = backup_service.create_backup(store.snapshot())
+        return Response(content, media_type="application/json",
+                        headers={"Content-Disposition": 'attachment; filename="yanzheng-backup-v1.json"'})
+
+    @application.post("/api/backups/restore")
+    async def restore_backup(request: Request):
+        # Read with a bound before JSON parsing; no multipart parser or local
+        # file paths, and no external work is triggered by importing a record.
+        length = request.headers.get("content-length")
+        if length is not None:
+            try:
+                if int(length) > backup_service.MAX_BYTES:
+                    return JSONResponse({"detail": "备份文件超过 20 MiB，请选择较小的备份。"}, status_code=413)
+            except ValueError:
+                return JSONResponse({"detail": "备份请求大小无效。"}, status_code=400)
+        content = bytearray()
+        async for chunk in request.stream():
+            content.extend(chunk)
+            if len(content) > backup_service.MAX_BYTES:
+                return JSONResponse({"detail": "备份文件超过 20 MiB，请选择较小的备份。"}, status_code=413)
+        def restore_validated():
+            document = backup_service.parse_backup(content)
+            restored = backup_service.restored_projects(document)
+            try:
+                imported, skipped = store.restore_missing(restored)
+            except sqlite3.Error:
+                return JSONResponse({"detail": "本地数据库暂时无法保存备份；本次没有恢复任何研究，请稍后重试。"}, status_code=503)
+            imported_set = set(imported)
+            return {"status": "restored", "imported_count": len(imported), "skipped_count": len(skipped),
+                    "total_count": len(restored), "imported_ids": imported, "skipped_ids": skipped,
+                    "warnings": backup_service.WARNINGS,
+                    "projects": [project_summary(item) for item in restored if item["id"] in imported_set]}
+        return await run_in_threadpool(restore_validated)
 
     @application.get("/api/lean/cases")
     def lean_cases():
@@ -417,6 +481,12 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
         value = lean_api.project_view(project)
         if isinstance(value.get("workflow"), dict):
             value["workflow"]["pending_proposal_stale"] = workflow.pending_proposal_is_stale(project)
+        if isinstance(value.get("research_plan"), dict):
+            value["research_plan"]["context_stale"] = workflow.research_plan_stale(project)
+        if value.get("paper_documents"):
+            available = store.paper_document_original_ids(project["id"])
+            for document in value["paper_documents"]:
+                document["original_available"] = document["id"] in available
         return value
 
     @application.get("/api/projects/{project_id}")
@@ -436,14 +506,14 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
     @application.post("/api/projects/{project_id}/direction/proposals/{proposal_id}/accept")
     def accept_direction_proposal(project_id: str, proposal_id: str, body: TheoryRequest):
         try:
-            return store.update(project_id, lambda current: workflow.accept_proposal(current, proposal_id))
+            return project_with_pending_status(store.update(project_id, lambda current: workflow.accept_proposal(current, proposal_id)))
         except workflow.ProposalConflict as error:
             return JSONResponse({"detail": str(error), "status": "stale_proposal"}, status_code=409)
 
     @application.post("/api/projects/{project_id}/direction/proposals/{proposal_id}/reject")
     def reject_direction_proposal(project_id: str, proposal_id: str, body: DirectionProposalDecision):
         try:
-            return store.update(project_id, lambda current: workflow.reject_proposal(current, proposal_id, body.reason))
+            return project_with_pending_status(store.update(project_id, lambda current: workflow.reject_proposal(current, proposal_id, body.reason)))
         except workflow.ProposalConflict as error:
             return JSONResponse({"detail": str(error), "status": "stale_proposal"}, status_code=409)
 
@@ -514,6 +584,152 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
         record = literature_service.search(project["direction_map"]["initial_idea"], body.query, body.provider, body.limit)
         return store.update(project_id, lambda current: engine.add_literature_search(current, record))
 
+    @application.post("/api/projects/{project_id}/literature-import")
+    def import_project_reference(project_id: str, body: ReferenceImport):
+        parsed = literature_service.parse_reference(body.reference)
+        gate = operation_lock(project_id, "research_tools")
+        if not gate.acquire(blocking=False):
+            return JSONResponse({"detail": "此项目已有研究工具正在运行，请等待结果保存。"}, status_code=409)
+        try:
+            project = store.get(project_id)
+            existing = next((run for run in project.get("literature_searches", [])
+                             if run.get("import_reference", {}).get("key") == parsed["key"] and run.get("sources")), None)
+            if existing:
+                return {"project": project_with_pending_status(project), "import_status": "success",
+                        "run_id": existing["id"], "duplicate": True}
+            record = literature_service.import_reference(project["direction_map"]["initial_idea"], body.reference)
+            result = store.update(project_id, lambda current: engine.add_literature_search(current, record))
+            return {"project": project_with_pending_status(result), "import_status": record["search_log"][0]["status"],
+                    "run_id": record["id"], "duplicate": False}
+        finally:
+            gate.release()
+
+    @application.post("/api/projects/{project_id}/research-plan")
+    def create_project_research_plan(project_id: str, body: ResearchPlanCreate):
+        gate = operation_lock(project_id, "research_tools")
+        if not gate.acquire(blocking=False):
+            return JSONResponse({"detail": "已有行动正在运行，请等待完成后再创建计划。"}, status_code=409)
+        try:
+            result = store.update(project_id, lambda current: workflow.create_research_plan(current, body.provider))
+            return project_with_pending_status(result)
+        finally:
+            gate.release()
+
+    @application.post("/api/projects/{project_id}/documents")
+    async def import_paper_document(project_id: str, request: Request,
+                                    run_id: str = Query(min_length=1, max_length=100),
+                                    source_id: str = Query(min_length=1, max_length=100),
+                                    filename: str = Query(min_length=1, max_length=180),
+                                    binding_confirmed: str = ""):
+        if binding_confirmed != "true":
+            return JSONResponse({"detail": "请先确认此文件对应当前题录；程序不会自动认证论文作者、版本或发布来源。"}, status_code=400)
+        literature_service.paper_filename(filename)
+        project = await run_in_threadpool(store.get, project_id)
+        literature_service.document_source(project, run_id, source_id)
+        gate = operation_lock(project_id, "paper_documents")
+        if not gate.acquire(blocking=False):
+            return JSONResponse({"detail": "此研究已有正文正在导入，请等待完成后再试。"}, status_code=409)
+        try:
+            length = request.headers.get("content-length")
+            if length is not None:
+                try:
+                    if int(length) < 0:
+                        raise ValueError()
+                    if int(length) > literature_service.PAPER_MAX_BYTES:
+                        return JSONResponse({"detail": "正文文件超过 8 MiB，未保存；请选择较小文件。"}, status_code=413)
+                except ValueError:
+                    return JSONResponse({"detail": "正文请求大小无效。"}, status_code=400)
+            content = bytearray()
+            async for chunk in request.stream():
+                if len(content) + len(chunk) > literature_service.PAPER_MAX_BYTES:
+                    return JSONResponse({"detail": "正文文件超过 8 MiB，未保存；请选择较小文件。"}, status_code=413)
+                content.extend(chunk)
+            try:
+                document = await run_in_threadpool(literature_service.extract_paper_document,
+                                                  bytes(content), filename, run_id, source_id)
+                result = await run_in_threadpool(store.attach_paper_document, project_id, document, bytes(content))
+            except literature_service.PaperExtractionTimeout as error:
+                return JSONResponse({"detail": str(error)}, status_code=504)
+            except literature_service.PaperExtractionUnavailable as error:
+                return JSONResponse({"detail": str(error)}, status_code=503)
+            except sqlite3.Error:
+                return JSONResponse({"detail": "本地正文保存失败，本次文件与提取记录均未写入，请稍后重试。"}, status_code=503)
+            return await run_in_threadpool(project_with_pending_status, result)
+        finally:
+            gate.release()
+
+    @application.get("/api/projects/{project_id}/documents/{document_id}/original")
+    def download_paper_original(project_id: str, document_id: str):
+        result = store.get_paper_document_original(project_id, document_id)
+        if result is None:
+            return JSONResponse({"detail": "本机没有这份正文原件；备份只携带提取文字，可重新导入相同文件恢复原件下载。"}, status_code=404)
+        document, payload = result
+        filename = literature_service.paper_filename(document["filename"])
+        media_type = {".pdf": "application/pdf", ".txt": "text/plain", ".md": "text/markdown"}[Path(filename).suffix.lower()]
+        disposition = "attachment; filename=\"paper-original" + Path(filename).suffix.lower() + "\"; filename*=UTF-8''" + quote(filename, safe="")
+        return Response(payload, media_type=media_type,
+                        headers={"Content-Disposition": disposition, "X-Content-Type-Options": "nosniff"})
+
+    @application.post("/api/projects/{project_id}/research-plan/pause")
+    def pause_project_research_plan(project_id: str, body: TheoryRequest):
+        def pause(current):
+            if not current.get("research_plan"):
+                raise ValueError("还没有保存行动计划。")
+            current["research_plan"]["status"] = "paused"
+            engine.add_event(current, "research_plan_paused", "暂停后续行动；已开始的请求仍单独保留结果。")
+        return project_with_pending_status(store.update(project_id, pause))
+
+    @application.post("/api/projects/{project_id}/research-plan/actions/{action_id}/run")
+    def run_project_research_action(project_id: str, action_id: str, body: ResearchActionRun):
+        gate = operation_lock(project_id, "research_tools")
+        if not gate.acquire(blocking=False):
+            return JSONResponse({"detail": "此项目已有研究工具正在运行，请等待结果保存。"}, status_code=409)
+        try:
+            project = store.get(project_id)
+            plan = project.get("research_plan") or {}
+            action = next((a for a in plan.get("actions", []) if a["id"] == action_id), None)
+            if (action and action["status"] == "planned" and action["kind"] == "direction_revision"
+                    and not model.status().get("configured")):
+                raise ValueError("请先配置模型；本次没有调用模型，也没有消耗计划操作预算。")
+            reserved = []
+            try:
+                project = store.update(project_id, lambda current: reserved.append(
+                    workflow.reserve_research_action(current, body.plan_id, action_id, body.request_id)))
+            except workflow.ProposalConflict as error:
+                return JSONResponse({"detail": str(error)}, status_code=409)
+            if not reserved[0]:
+                return project_with_pending_status(project)
+            action = next(a for a in project["research_plan"]["actions"] if a["id"] == action_id)
+            try:
+                if action["kind"] == "literature_search":
+                    record = literature_service.search(project["direction_map"]["initial_idea"],
+                                                       action["query"], action["provider"], action["limit"])
+                    def save_result(current):
+                        engine.add_literature_search(current, record)
+                        status = record["search_log"][0]["status"]
+                        workflow.finish_research_action(current, body.plan_id, action_id,
+                            "succeeded" if status == "success" else status,
+                            "公开检索已记录：" + {"success": "返回题录", "empty": "未返回题录", "failed": "请求未完成"}.get(status, status),
+                            run_id=record["id"], result_count=len(record["sources"]))
+                    result = store.update(project_id, save_result)
+                else:
+                    advance_skill(project_id)
+                    def save_revision(current):
+                        pending = current.get("workflow", {}).get("pending_proposal")
+                        workflow.finish_research_action(current, body.plan_id, action_id,
+                            "awaiting_review" if pending else "failed",
+                            "已保存证据驱动的修订提议，等待你审阅接受或放弃。" if pending else "模型推进未生成可接受提议，请查看调用记录；不会自动重试。",
+                            proposal_id=pending.get("id") if pending else None)
+                    result = store.update(project_id, save_revision)
+            except Exception:
+                store.update(project_id, lambda current: workflow.finish_research_action(
+                    current, body.plan_id, action_id, "interrupted_result_unknown",
+                    "本次结果未能完整确认；请查看独立工具记录，系统不会自动重试。"))
+                return JSONResponse({"detail": "行动结果未能完整确认，请刷新查看工具记录。"}, status_code=503)
+            return project_with_pending_status(result)
+        finally:
+            gate.release()
+
     @application.post("/api/projects/{project_id}/reading-notes")
     def save_reading_note(project_id: str, body: ReadingNote):
         def save(current):
@@ -522,10 +738,19 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
             if source is None:
                 raise ValueError("来源不属于该项目的这轮检索，请刷新后重试。")
             note_payload = body.model_dump()
+            if body.document_anchor is not None:
+                anchor = literature_service.validate_document_anchor(current, body.run_id, body.source_id, body.document_anchor)
+                document = next(item for item in current["paper_documents"] if item["id"] == anchor["document_id"])
+                note_payload.update(document_anchor=anchor, locator=literature_service.document_anchor_locator(anchor, document["filename"]))
+            else:
+                note_payload.pop("document_anchor", None)
             if body.source_version is None:
                 for key in ("source_version", "source_sha256", "source_sha256_scope"):
                     note_payload.pop(key, None)
             note = note_payload | {"id": uuid.uuid4().hex, "checked_at": engine.now(), "origin": "user_attested"}
+            if source.get("import_metadata"):
+                note["bibliographic_snapshot"] = {key: copy.deepcopy(source.get(key)) for key in
+                    ("title", "url", "identifiers", "versions", "import_metadata")}
             if body.source_version is not None:
                 # Declared only: the application never opens or authenticates the original file.
                 note["source_fingerprint"] = {
@@ -537,11 +762,11 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
                     "caveat": workflow.SOURCE_FINGERPRINT_CAVEAT,
                 }
             current.setdefault("reading_notes", []).append(note)
-            note_summary = "用户确认阅读并保存摘录：" + source["title"] + "；位置：" + body.locator
+            note_summary = "用户确认阅读并保存摘录：" + source["title"] + "；位置：" + note["locator"]
             if body.source_version is not None:
                 note_summary += "；另保存用户声明的原文版本/文件哈希（未认证）"
             engine.add_event(current, "reading_note_added", note_summary)
-        return store.update(project_id, save)
+        return project_with_pending_status(store.update(project_id, save))
 
     @application.post("/api/theory/examples", status_code=201)
     def create_theory_example(body: TheoryExample):
@@ -805,6 +1030,15 @@ def create_app(db_path=None, model_client=None, lean_client=None, evidence_clien
     def export_plan(project_id: str):
         project = store.get(project_id)
         return Response(engine.render_plan(project), media_type="text/markdown; charset=utf-8", headers={"Content-Disposition": f'attachment; filename="yanzheng-plan-{project["id"]}.md"'})
+
+    @application.get("/api/projects/{project_id}/decision-package")
+    def export_decision_package(project_id: str):
+        project = store.get(project_id)
+        try:
+            content = engine.render_decision_package(project)
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
+        return Response(content, media_type="text/markdown; charset=utf-8", headers={"Content-Disposition": f'attachment; filename="yanzheng-decision-package-{project["id"]}.md"'})
 
     @application.get("/")
     def home():

@@ -242,7 +242,7 @@ def validate(record, *, allow_saved_unbound_evidence=False):
                     snapshot_fields = {"note_id", "note_sha256", "content_sha256", "run_id", "source_id",
                                        "level", "locator", "checked_at", "origin", "confirmed", "caveat",
                                        "source_version", "source_sha256", "source_sha256_scope",
-                                       "source_fingerprint_caveat"}
+                                       "source_fingerprint_caveat", "bibliographic_snapshot", "document_anchor"}
                     if isinstance(snapshot, dict):
                         unknown = set(snapshot) - snapshot_fields
                         if unknown:
@@ -261,6 +261,48 @@ def validate(record, *, allow_saved_unbound_evidence=False):
                     if snapshot.get("confirmed") is not True:
                         fail(ep + ".note_snapshot.confirmed", "must be true for a bound reading note")
                     choice(snapshot.get("origin"), ep + ".note_snapshot.origin", ("user_attested",))
+                    if "document_anchor" in snapshot:
+                        ap = ep + ".note_snapshot.document_anchor"
+                        anchor_fields = {"document_id", "page", "start", "end", "quote", "file_sha256", "page_sha256"}
+                        anchor = obj(snapshot["document_anchor"], ap, " ".join(sorted(anchor_fields)))
+                        if set(anchor) - anchor_fields:
+                            fail(ap, "unexpected document anchor fields")
+                        identifier = anchor.get("document_id")
+                        if (not isinstance(identifier, str) or identifier in (".", "..") or
+                                not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}", identifier)):
+                            fail(ap + ".document_id", "expected a saved document identifier")
+                        if type(anchor.get("page")) is not int or anchor["page"] < 1:
+                            fail(ap + ".page", "expected a positive 1-based page number")
+                        start, end, quote = anchor.get("start"), anchor.get("end"), anchor.get("quote")
+                        if type(start) is not int or type(end) is not int or start < 0 or end <= start:
+                            fail(ap, "expected non-empty Unicode codepoint interval [start, end)")
+                        if not isinstance(quote, str) or not quote.strip() or len(quote) > 4000:
+                            fail(ap + ".quote", "expected selected text of at most 4000 Unicode codepoints")
+                        elif type(start) is int and type(end) is int and end - start != len(quote):
+                            fail(ap + ".quote", "quote length must equal end - start in Unicode codepoints")
+                        for key in ("file_sha256", "page_sha256"):
+                            hex64(anchor.get(key), ap + "." + key)
+                    if "bibliographic_snapshot" in snapshot:
+                        bp = ep + ".note_snapshot.bibliographic_snapshot"
+                        bibliography = obj(snapshot["bibliographic_snapshot"], bp,
+                                           "title url identifiers versions import_metadata")
+                        if set(bibliography) - {"title", "url", "identifiers", "versions", "import_metadata"}:
+                            fail(bp, "unexpected bibliographic snapshot fields")
+                        string(bibliography.get("title"), bp + ".title")
+                        url(bibliography.get("url"), bp + ".url")
+                        identifiers = obj(bibliography.get("identifiers"), bp + ".identifiers", "")
+                        for key, value in identifiers.items():
+                            if value is not None:
+                                string(value, bp + ".identifiers." + key)
+                        strings(bibliography.get("versions"), bp + ".versions")
+                        metadata = obj(bibliography.get("import_metadata"), bp + ".import_metadata",
+                                       "requested_reference response_sha256 retrieved_at scope caveat")
+                        for key in ("requested_reference", "caveat"):
+                            string(metadata.get(key), bp + ".import_metadata." + key)
+                        hex64(metadata.get("response_sha256"), bp + ".import_metadata.response_sha256")
+                        iso(metadata.get("retrieved_at"), bp + ".import_metadata.retrieved_at")
+                        choice(metadata.get("scope"), bp + ".import_metadata.scope",
+                               ("official_metadata_response_only",))
                     declared = [snapshot.get("source_version"), snapshot.get("source_sha256"),
                                 snapshot.get("source_sha256_scope")]
                     declared_present = [value is not None for value in declared]

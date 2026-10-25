@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-25",
+  "repository": "mingxuanyan07-lgtm/yanzheng-research-workbench",
+  "scope": "Synchronize existing local changes and explicitly approved delivery artifacts to the existing private repository. No ModelScope deployment, production-database mutation, or new model request.",
+  "checks": {
+    "python_all": {
+      "command": "python -X utf8 -B scripts/run_tests.py --suite all",
+      "tests_run": 417,
+      "failures_reported": 4,
+      "errors_reported": 0,
+      "skipped": 4,
+      "status": "failed",
+      "failure_scope": "Existing optional Lean integration: direct_sorry, indirect_sorry, direct_axiom and nat_add_zero; includes wall_timeout. No failing test was removed or weakened.",
+      "skip_scope": "Windows symbolic-link creation privilege unavailable",
+      "local_log": "tmp/github-sync-python.log"
+    },
+    "lean_separate_recheck": {
+      "command": "python -X utf8 -B scripts/run_tests.py --suite web --pattern test_lean_integration.py",
+      "tests_run": 6,
+      "status": "passed",
+      "limitation": "A separate passing run does not resolve intermittent Lean reliability or replace the first full-suite failure.",
+      "local_log": "tmp/github-sync-lean-recheck.log"
+    },
+    "frontend_and_cloud_ui": {
+      "command": "node --test webapp/tests/frontend/*.cjs deploy/modelscope/test_cloud_demo.cjs",
+      "tests_run": 132,
+      "status": "passed",
+      "local_log": "tmp/github-sync-frontend.log"
+    },
+    "cloud_backend": {
+      "command": "python -X utf8 -B -m unittest discover -s deploy/modelscope/tests -p test_*.py",
+      "tests_run": 36,
+      "status": "passed",
+      "local_log": "tmp/github-sync-cloud.log"
+    },
+    "runtime_completeness": {
+      "command": "python -X utf8 -B scripts/check_workbench.py --json",
+      "ready": true,
+      "service_state": "not_running",
+      "scope": "Read-only dependency and required-file checks; no research database or model request.",
+      "local_log": "tmp/github-sync-runtime.json"
+    },
+    "delivery_integrity": {
+      "approved_artifacts": 153,
+      "public_case_manifest_hashes_match_git_index": true,
+      "demo_database_projects": 2,
+      "demo_database_original_public_pdfs": 2,
+      "archive_entries_scanned": 277,
+      "unpublished_history_objects_scanned": 112,
+      "credential_findings": 0,
+      "local_log": "tmp/github-sync-audit.json"
+    }
+  },
+  "excluded_local_material": [
+    "Model API keys, environment secrets and platform credential screenshots",
+    "Production research databases and private user projects",
+    "Virtual environments, caches, temporary services and raw recording attempts",
+    "Unrelated downloaded third-party registration-form bundle"
+  ],
+  "scientific_scope": "The public cases retain actual source positions, nine real Qwen calls and the recorded human decision. Only six smoke configurations and an auxiliary diagnostic were executed; the formal 90-configuration protocol is still a plan. Structural tests and file hashes do not certify scientific conclusions."
+}

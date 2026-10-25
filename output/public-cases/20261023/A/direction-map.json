@@ -1,0 +1,300 @@
+{
+  "schema_version": "1.0",
+  "record_type": "research_direction_map",
+  "created_at": "2026-10-23T14:30:53.238457+00:00",
+  "stage": "topic_selected",
+  "initial_idea": "公开案例 A：一周内在普通笔记本 CPU 上复现随机 SVD，比较 q=0/1/2 时的误差、耗时与矩阵访问代价，形成可执行计划。",
+  "intake": {
+    "known": {
+      "goal": "方法比较",
+      "resources": "普通笔记本",
+      "time_horizon": "一周起步",
+      "provided_context": "这是基于真实公开论文的教学复现案例，不宣称方法创新。预算：普通 Windows 笔记本，无 GPU，无外部私有数据，一周；使用 Python/NumPy；矩阵由固定随机种子生成。先用 256x192 冒烟，再用 512x384，目标秩 k=10/20，过采样 p=10，q=0/1/2，指数、缓慢衰减、平台尾部三类谱，每组种子0-4。以 float64 精确 SVD 截断为误差参考，计时含 QR 和压缩 SVD，矩阵生成和参考 SVD 单独报告。按相同误差阈值比较耗时，并另外报告相同矩阵访问预算的结果，不能把不同 q 说成同预算。首日先检查 Q 正交性和残差计算；对重复奇异值只比较子空间/重构，不逐向量对齐。输出应是可执行计划，不能声称已跑完正式实验。请给2个边界清楚的候选，推荐首先完成的复现基线；计划须含指标、成功与失败条件。",
+      "selection_basis": "用户通过网页点击选择：q=0/1/2 的误差-代价权衡测绘；记录时间 2026-10-23T14:54:18.895720+00:00。选择理由：依据本对话人工确认，Codex代录：选择一周CPU随机SVD误差—代价复现。论文仅支撑正交化实现，参数网格是自定协议；正式90组尚未执行，其他候选阈值未采用；详见A/EXECUTION-PLAN.md与human-confirmation.json。",
+      "selection_reason": "依据本对话人工确认，Codex代录：选择一周CPU随机SVD误差—代价复现。论文仅支撑正交化实现，参数网格是自定协议；正式90组尚未执行，其他候选阈值未采用；详见A/EXECUTION-PLAN.md与human-confirmation.json。"
+    },
+    "assumptions": [],
+    "unknowns": []
+  },
+  "questions": [],
+  "provenance": {
+    "generator": "qwen_skill_workflow",
+    "live_search_performed": true,
+    "external_model_api_called": true,
+    "new_experiments_executed": false,
+    "generated_at": "2026-10-23T14:53:25.993864+00:00",
+    "generation_id": "506b448be3f947cba7683348247f75d2",
+    "model_call_id": "b0dd5692a594407cae7c44ab46fcfff1",
+    "model": "qwen-plus",
+    "provider": "qwen",
+    "prompt_version": "skill-workflow-v1.4",
+    "skills": [
+      {
+        "name": "research-direction-guide",
+        "version": "sha256:fcedac806fe2fd46",
+        "sha256": "fcedac806fe2fd4667c6fdb5a9c7d4d84e5162936ba4cb890edf8aefd3ad7806",
+        "path": "skills/research-direction-guide/SKILL.md"
+      },
+      {
+        "name": "literature-search",
+        "version": "sha256:60e6a316c5afaa48",
+        "sha256": "60e6a316c5afaa482b29735ea3143f7916369ff044f2e4c3ba3d5da851415cfe",
+        "path": "skills/literature-search/SKILL.md"
+      }
+    ]
+  },
+  "search_log": [
+    {
+      "query": "arxiv:0909.4061v2",
+      "searched_at": "2026-10-23T14:30:53+00:00",
+      "outcome": "executed",
+      "provider": "arxiv",
+      "status": "success",
+      "attempts": 1,
+      "error": null,
+      "execution_state_unknown": false,
+      "run_id": "6ccd9c098b654a3095b05e146533e2ac",
+      "search_id": "Q001"
+    },
+    {
+      "query": "randomized SVD q=0 implementation numpy",
+      "searched_at": null,
+      "outcome": "planned"
+    },
+    {
+      "query": "Halko Martinsson Tropp Algorithm 4.4 verification",
+      "searched_at": null,
+      "outcome": "planned"
+    },
+    {
+      "query": "numerical stability randomized SVD CPU",
+      "searched_at": null,
+      "outcome": "planned"
+    }
+  ],
+  "sources": [
+    {
+      "id": "lit_6ccd9c098b654a3095b05e146533e2ac_S001",
+      "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+      "authors": [
+        "Nathan Halko",
+        "Per-Gunnar Martinsson",
+        "Joel A. Tropp"
+      ],
+      "year_or_version": 2009,
+      "url": "https://arxiv.org/abs/0909.4061v2",
+      "origin": "this_run",
+      "verification": "fulltext_checked",
+      "locator": "导入正文《0909.4061v2.pdf》 · 第 26 页 · 字符 541—593（从0计，右端不含）",
+      "checked_at": "2026-10-23T14:39:35.070558+00:00",
+      "run_id": "6ccd9c098b654a3095b05e146533e2ac",
+      "source_id": "S001",
+      "retrieval_verification": "metadata_checked",
+      "retrieval_checked_at": "2026-10-23T14:30:53+00:00",
+      "metadata_missing": [],
+      "user_confirmed_reading": true,
+      "api_abstract": "Low-rank matrix approximations, such as the truncated singular value decomposition and the rank-revealing QR decomposition, play a central role in data analysis and scientific computing. This work surveys and extends recent research which demonstrates that randomization offers a powerful tool for performing low-rank matrix approximation. These techniques exploit modern computational architectures more fully than classical methods and open the possibility of dealing with truly massive data sets. This paper presents a modular framework for constructing randomized algorithms that compute partial matrix decompositions. These methods use random sampling to identify a subspace that captures most of the action of a matrix. The input matrix is then compressed---either explicitly or implicitly---to this subspace, and the reduced matrix is manipulated deterministically to obtain the desired low-rank factorization. In many cases, this approach beats its classical competitors in terms of accuracy, speed, and robustness. These claims are supported by extensive numerical experiments and a detailed error analysis.",
+      "api_abstract_scope": "接口返回的摘要文本；未因字段存在而确认已读或建立科学支撑。",
+      "import_metadata": {
+        "requested_reference": "arxiv:0909.4061v2",
+        "response_sha256": "b566bd3baee83701b4d53952c9fd8aab2f9921a4420b77ba0fec53375f7b142f",
+        "retrieved_at": "2026-10-23T14:30:53+00:00",
+        "scope": "official_metadata_response_only",
+        "versions": [
+          "0909.4061v2"
+        ],
+        "caveat": "仅核对官方题录；此哈希不是论文全文指纹，不表示已经阅读或认证原文。"
+      },
+      "versions": [
+        "0909.4061v2"
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "id": "q0_baseline",
+      "title": "q=0 随机 SVD 正确性基线复现",
+      "question": "在普通笔记本 CPU 上，能否完整复现 q=0 的随机 SVD 算法，并通过 Q 正交性、重构残差与精确截断 SVD 的归一化误差比验证其数值稳定性？",
+      "known_work": "Halko et al. (2009) Algorithm 4.4 提供 q=0/1/2 统一框架；§4.5 Remark 4.3 明确指出交替正交化对舍入误差的缓解作用。",
+      "potential_difference": "不追求性能优势，而建立可复现、可审计的本地基线：固定种子、显式块乘计数、分离矩阵生成/参考SVD/核心算法计时，为后续 q=1/2 对比提供可信锚点。",
+      "novelty_status": "needs_review",
+      "readiness": "provisional",
+      "evidence": [
+        {
+          "source_id": "lit_6ccd9c098b654a3095b05e146533e2ac_S001",
+          "relation": "supports",
+          "claim": "Algorithm 4.4 给出可复现的 q=0/1/2 实现步骤；Remark 4.3 支持在交替乘法中插入正交化以控制舍入误差。（模型依据用户确认阅读的笔记 92af2814e62d4afcafecb0e7c0d827d8 提出；支撑范围限于该笔记 locator，仍须复核。）",
+          "note_id": "92af2814e62d4afcafecb0e7c0d827d8",
+          "note_snapshot": {
+            "note_id": "92af2814e62d4afcafecb0e7c0d827d8",
+            "note_sha256": "4fea189626e18d73ff786dc5afcc9d41cb407c79ee96938b965e7ffdcd99e394",
+            "content_sha256": "216b9bf8ce3e4e3845473e56708e775a85836a2f2b2ae0ce087d42f572afb4b5",
+            "run_id": "6ccd9c098b654a3095b05e146533e2ac",
+            "source_id": "S001",
+            "level": "fulltext_checked",
+            "locator": "导入正文《0909.4061v2.pdf》 · 第 26 页 · 字符 541—593（从0计，右端不含）",
+            "checked_at": "2026-10-23T14:39:35.070558+00:00",
+            "origin": "user_attested",
+            "confirmed": true,
+            "caveat": "程序已核对选中摘录与用户上传文件的提取页文本、哈希及字符偏移一致；阅读解释仍由用户确认，不代表出版社认证、论文真实性核验或科学结论验证。",
+            "bibliographic_snapshot": {
+              "title": "Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions",
+              "url": "https://arxiv.org/abs/0909.4061v2",
+              "identifiers": {
+                "doi": null,
+                "arxiv_id": "0909.4061",
+                "openalex_id": null
+              },
+              "versions": [
+                "0909.4061v2"
+              ],
+              "import_metadata": {
+                "requested_reference": "arxiv:0909.4061v2",
+                "response_sha256": "b566bd3baee83701b4d53952c9fd8aab2f9921a4420b77ba0fec53375f7b142f",
+                "retrieved_at": "2026-10-23T14:30:53+00:00",
+                "scope": "official_metadata_response_only",
+                "versions": [
+                  "0909.4061v2"
+                ],
+                "caveat": "仅核对官方题录；此哈希不是论文全文指纹，不表示已经阅读或认证原文。"
+              }
+            },
+            "document_anchor": {
+              "document_id": "f941b4432396407f8e6455054a94ee1a",
+              "page": 26,
+              "start": 541,
+              "end": 593,
+              "quote": "recommended implementation appears as Algorithm 4.4.",
+              "file_sha256": "d5d99d95b3d9657de6413f4c26d635238103ef9cf1a28ff1b7fde531cf11f6be",
+              "page_sha256": "9dd9b42bdfa10ed7bf2f1e47c03c5952589f3c7e8dc6907bc06006626f4bc992"
+            }
+          }
+        }
+      ],
+      "first_validation": {
+        "steps": [
+          "用固定种子生成 256×192 指数衰减谱矩阵；实现 Algorithm 4.4（q=0）并强制每步后 QR 正交化。",
+          "计算 Q^T Q 的 Frobenius 范数误差（目标 <1e-10）；计算 A−Q(Q^T A)_k 的 Frobenius 范数，并与精确截断 SVD 的 ||A−A_k||_F 归一化比较（允许比值 ≤1.05）。",
+          "记录矩阵生成、Q 构造、压缩 SVD 三阶段耗时；重复 5 次取中位数。",
+          "输出完整日志：种子、谱类型、k/p、Q 正交性、归一化残差比、各阶段耗时。"
+        ],
+        "baseline": "float64 精确截断 SVD（scipy.linalg.svd + truncation）",
+        "metrics": [
+          "Q^T Q − I 的 Frobenius 范数",
+          "归一化重构残差比",
+          "核心算法耗时（不含生成与参考）"
+        ],
+        "success_signal": "Q 正交性 <1e-10 且归一化残差比 ≤1.05，在全部 5 次运行中稳定达成。"
+      },
+      "resources": [
+        "Python 3.9+、NumPy、SciPy；普通 Windows 笔记本；无 GPU 依赖。"
+      ],
+      "stop_conditions": [
+        "若 Q 正交性持续 >1e-8，暂停并检查 QR 实现与重正交频率；若残差比 >1.1，检查截断逻辑与范数归一化方式。"
+      ],
+      "risks": [
+        "未启用重正交导致 Q 失控；浮点累积误差使残差比虚高；计时混入矩阵生成开销。"
+      ],
+      "open_questions": [
+        "q=0 在平台尾部谱上是否仍满足残差比阈值？该基线能否扩展至 512×384 规模？"
+      ]
+    },
+    {
+      "id": "q_variation",
+      "title": "q=0/1/2 的误差-代价权衡测绘",
+      "question": "在相同目标秩 k 与过采样 p 下，q=0/1/2 如何系统性影响重构误差、总耗时与矩阵访问次数？是否观察到误差显著下降但耗时非线性增长的拐点？",
+      "known_work": "Halko et al. (2009) 指出 q≥1 可改善奇异值分布估计，但未量化 CPU 上的实测代价增益比。",
+      "potential_difference": "不假设‘q 越大越好’，而是测绘三类谱形态下误差-耗时-访问次数的联合轨迹；明确报告 2q+2 次矩阵乘的访问预算差异，拒绝‘同预算’误述。",
+      "novelty_status": "needs_review",
+      "readiness": "provisional",
+      "evidence": [
+        {
+          "source_id": "lit_6ccd9c098b654a3095b05e146533e2ac_S001",
+          "relation": "background",
+          "claim": "题录线索：《Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions》；本关联仅表示待核查的书目信息，不构成科研结论的支持。"
+        }
+      ],
+      "first_validation": {
+        "steps": [
+          "复用 q=0 基线代码，仅修改幂迭代轮次；保持相同 k=10/20、p=10、三类谱、5 种种子。",
+          "对每个 (q, 谱, 种子)，记录：归一化 Frobenius 误差、总耗时（含所有 QR 与压缩 SVD）、矩阵访问次数（2q+2）。",
+          "绘制误差 vs 耗时散点图，标注 q 值与谱类型；识别是否存在 q=1 相对 q=0 的误差下降 >10% 且耗时增加 <50% 的区域。",
+          "输出表格：每组参数下误差中位数、耗时中位数、访问次数理论值。"
+        ],
+        "baseline": "同一矩阵与 k 下的精确截断 SVD 误差与耗时",
+        "metrics": [
+          "归一化 Frobenius 误差",
+          "总耗时（秒）",
+          "矩阵访问次数"
+        ],
+        "success_signal": "获得完整三参数网格数据（q∈{0,1,2} × 谱∈{指数,缓慢,平台} × 种子∈{0..4}），且每组误差与耗时均有效收敛。"
+      },
+      "resources": [
+        "同 q0_baseline；需额外存储 3×3×5=45 组结果。"
+      ],
+      "stop_conditions": [
+        "若 q=2 在任意谱上耗时超 q=0 的 3 倍但误差改善 <5%，标记该谱下 q=2 不具性价比。"
+      ],
+      "risks": [
+        "未控制 QR 实现差异导致耗时不可比；不同 q 的内存分配模式干扰计时；平台尾部谱对 q 敏感度被低估。"
+      ],
+      "open_questions": [
+        "是否存在某类谱，q=1 即达误差饱和？该测绘能否指导后续自适应 q 选择？"
+      ]
+    },
+    {
+      "id": "error_budget",
+      "title": "按误差目标反向筛选最优 q/p 配置",
+      "question": "给定目标归一化误差阈值 ε=0.05，如何从 p∈{4,8,16}、q∈{0,1,2} 中选出最短耗时配置？该配置在不同谱形态下的鲁棒性如何？",
+      "known_work": "Halko et al. (2009) 提供误差界依赖 p 和 q，但界偏保守；实际 ε 达标行为需实证。",
+      "potential_difference": "从用户定义的误差目标出发，而非固定参数扫描；将‘达标率’作为核心指标，暴露参数对谱形态的敏感性，为部署级选参提供依据。",
+      "novelty_status": "needs_review",
+      "readiness": "provisional",
+      "evidence": [
+        {
+          "source_id": "lit_6ccd9c098b654a3095b05e146533e2ac_S001",
+          "relation": "unverified_lead",
+          "claim": "题录线索：《Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions》；本关联仅表示待核查的书目信息，不构成科研结论的支持。"
+        }
+      ],
+      "first_validation": {
+        "steps": [
+          "对每组 (p,q)，在三类谱、5 种种子下运行，记录是否满足归一化误差 ≤0.05 及对应耗时。",
+          "对每个谱类型，统计各 (p,q) 的达标率（5/5？4/5？）及达标样本的平均耗时。",
+          "选出每类谱下达标率 ≥80% 且平均耗时最短的 (p,q)；对比三类谱的最优配置异同。",
+          "输出：达标率热力图、最优配置表、失败案例的残差分布。"
+        ],
+        "baseline": "ε=0.05 是否被任意 (p,q) 在全部 5 种子下 100% 达标",
+        "metrics": [
+          "达标率",
+          "达标样本平均耗时",
+          "未达标最大残差"
+        ],
+        "success_signal": "获得三类谱各自的最优 (p,q) 推荐，且至少一类谱存在唯一最优解（达标率≥80%，耗时严格最小）。"
+      },
+      "resources": [
+        "同前；需扩展 p 网格，增加 3×3×5=45 组实验。"
+      ],
+      "stop_conditions": [
+        "若所有 (p,q) 在平台尾部谱上达标率 <60%，终止并报告该谱下当前参数空间不足。"
+      ],
+      "risks": [
+        "ε=0.05 过严导致全盘不达标；p/q 组合未覆盖更优区域；达标判定未考虑统计波动。"
+      ],
+      "open_questions": [
+        "能否基于首日 q=0 基线快速预测某 (p,q) 的达标概率？该策略在真实数据上是否迁移？"
+      ]
+    }
+  ],
+  "recommendation": {
+    "topic_id": "q0_baseline",
+    "reason": "这是整个复现计划的可信锚点：只有 q=0 基线稳定通过正交性与残差验证，后续 q=1/2 对比、误差目标筛选才有意义；它成本最低（零额外幂迭代）、风险最可控，且直接支撑已确认笔记中的 Algorithm 4.4 与 Remark 4.3。",
+    "would_change_if": [
+      "若 q=0 在首日无法达成 Q 正交性 <1e-10，则需优先排查 QR 实现或重正交频率，推迟其余候选。",
+      "若归一化残差比持续 >1.05，说明本地浮点环境或截断逻辑存在系统偏差，必须修正基线再推进。",
+      "若用户明确要求跳过基线、直奔 q 变异分析，则需重新评估 q=0/1/2 的并行验证可行性与风险隔离设计。"
+    ]
+  },
+  "selected_topic_id": "q_variation",
+  "next_action": "查看并导出研究计划草案；资料核查与实验执行仍需后续完成。"
+}

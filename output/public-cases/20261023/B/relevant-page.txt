@@ -1,0 +1,62 @@
+in just ˜O(1/√ǫ) iterations. This not only gives the fastest known theoretic al runtime for achieving
+(2), but also yields substantially better performance in practice (see Section 8).
+Even though the algorithm has been discussed and tested for p otential improvement over Simulta-
+neous Iteration [1, 20, 21], theoretical bounds for Krylov s ubspace and Lanczos methods are much
+more limited. As highlighted in [12],
+“Despite decades of research on Lanczos methods, the theory for [randomized
+power iteration] is more complete and provides strong guara ntees of excellent
+accuracy, whether or not there exist any gaps between the singular values.”
+Our work addresses this issue, giving the ﬁrst gap independent bound for a Krylov subspace method.
+Algorithm 1 SIMULTANEOUS ITERATION
+input: A ∈ Rn×d, error ǫ ∈ (0, 1), rank k ≤ n, d
+output: Z ∈ Rn×k
+1: q := Θ( log dǫ ), Π ∼ N (0, 1)d×k
+2: K :=
+(
+AAT )q AΠ
+3: Orthonormalize the columns of K to obtain
+Q ∈ Rn×k.
+4: Compute M := QT AAT Q ∈ Rk×k.
+5: Set ¯Uk to the top k singular vectors of M.
+6: return Z = Q ¯Uk.
+Algorithm 2 BLOCK KRYLOV ITERATION
+input: A ∈ Rn×d, error ǫ ∈ (0, 1), rank k ≤ n, d
+output: Z ∈ Rn×k
+1: q := Θ( log d√ǫ ), Π ∼ N (0, 1)d×k
+2: K :=
+[
+AΠ, (AAT )AΠ, ..., (AAT )qAΠ]
+3: Orthonormalize the columns of K to obtain
+Q ∈ Rn×qk.
+4: Compute M := QT AAT Q ∈ Rqk×qk.
+5: Set ¯Uk to the top k singular vectors of M.
+6: return Z = Q ¯Uk.
+2.2 Stronger Guarantees
+In addition to runtime improvements, we target a much stronger notion of approximate SVD that is
+needed for many applications, but for which no gap-independent analysis was known.
+Speciﬁcally, as noted in [22], while intuitively stronger t han Frobenius norm error, (1 + ǫ) spec-
+tral norm low-rank approximation error does not guarantee a ny accuracy in Z for many matrices4.
+Consider A with its top k + 1 squared singular values all equal to 10 followed by a tail of smaller
+singular values (e.g. 1000k at 1). ‖A − Ak‖22 = 10 but in fact ‖A − ZZT A‖22 = 10 for any rank
+k Z, leaving the spectral norm bound useless. At the same time, ‖A − Ak‖2F is large, so Frobenius
+error is meaningless as well. For example, any Z obtains ‖A − ZZT A‖2F ≤ (1.01)‖A − Ak‖2F .
+With this scenario in mind, it is unsurprising that low-rank approximation guarantees fail as an
+accuracy measure in practice. We ran a standard sketch-and- solve approximate SVD algorithm
+(see Section 3.1) on SNAP/ AMAZON 0302, an Amazon product co-purchasing dataset [23, 24], and
+achieved very good low-rank approximation error in both norms for k = 30:
+‖A − ZZT A‖F < 1.001‖A − Ak‖F and ‖A − ZZT A‖2 < 1.038‖A − Ak‖2.
+However, the approximate principal components given by Z are of signiﬁcantly lower quality than
+A’s true singular vectors (see Figure 1). We saw a similar phen omenon for the popular 20 N EWS -
+GROUPS dataset [25] and several others. Additionally, the potenti al failure of low rank approxima-
+tion measures was recently raised in [22].
+We address this issue by introducing a per vector guarantee that requires each approximate singular
+vector z1, . . . ,zk to capture nearly as much variance as the corresponding true singular vector:
+Per Vector Error: ∀i,
+⏐⏐uTi AAT ui − zTi AAT zi⏐⏐ ≤ ǫσ2k+1. (3)
+The error bound (3) is very strong in that it depends on ǫσ2k+1, meaning that it is better then relative
+error, i.e.
+⏐⏐uTi AAT ui − zTi AAT zi⏐⏐ ≤ ǫσ2i , for A’s large singular vectors. While it is reminiscent
+of the bounds sought in classical numerical analysis [26], we stress that it does not require eachzi to
+converge to ui in the presence of small singular value gaps. In fact, we show that both randomized
+4In fact, it does not even imply (1 + ǫ) Frobenius norm error.
+3

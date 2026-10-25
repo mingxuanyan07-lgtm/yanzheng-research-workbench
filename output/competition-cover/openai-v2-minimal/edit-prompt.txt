@@ -1,0 +1,5 @@
+Edit the provided “研证” white premium research-workbench cover. Make ONE narrowly targeted correction only: on the LEFT rear panel headed “文献证据”, replace the small English paper title, author names and year with these exact concise Chinese lines:
+“阅读笔记”
+“来源定位”
+“支持与限制”
+Use clean small modern Chinese typography with comfortable line spacing; retain the quote-mark icon and soft placeholder lines underneath. This is a conceptual literature evidence card, not a real bibliographic citation. Remove all invented paper titles, authors and year in that left panel. Preserve absolutely everything else: title “研证”, all main Chinese copy, the center research question and formula, right chart card, camera angle, porcelain-white background, lighting, blue glass edges, card arrangement, bottom capability line and the exact existing poster composition. Do not redesign the poster. Portrait 9:16, requested delivery 1080×1920 pixels, opaque background.

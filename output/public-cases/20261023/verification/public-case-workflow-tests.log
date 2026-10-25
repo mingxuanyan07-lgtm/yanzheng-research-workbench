@@ -1,0 +1,17 @@
+test_answered_dynamic_question_cannot_reappear_by_id_or_text (test_workflow.WorkflowTest.test_answered_dynamic_question_cannot_reappear_by_id_or_text) ... ok
+test_build_messages_loads_actual_two_skills_schema_and_untrusted_sources (test_workflow.WorkflowTest.test_build_messages_loads_actual_two_skills_schema_and_untrusted_sources) ... ok
+test_duplicate_local_source_ids_expose_unambiguous_note_reference (test_workflow.WorkflowTest.test_duplicate_local_source_ids_expose_unambiguous_note_reference) ... ok
+test_dynamic_answers_saved_before_request_and_committed_only_after_success (test_workflow.WorkflowTest.test_dynamic_answers_saved_before_request_and_committed_only_after_success) ... ok
+test_existing_fixed_answers_are_also_known_after_skill_migration (test_workflow.WorkflowTest.test_existing_fixed_answers_are_also_known_after_skill_migration) ... ok
+test_initialize_does_not_run_heuristic_even_for_specific_low_rank_idea (test_workflow.WorkflowTest.test_initialize_does_not_run_heuristic_even_for_specific_low_rank_idea) ... ok
+test_metadata_background_claim_is_limited_and_missing_authors_not_invented (test_workflow.WorkflowTest.test_metadata_background_claim_is_limited_and_missing_authors_not_invented) ... ok
+test_model_can_route_wide_input_to_clarification_and_specific_input_directly (test_workflow.WorkflowTest.test_model_can_route_wide_input_to_clarification_and_specific_input_directly) ... ok
+test_only_confirmed_reading_with_locator_supports_scientific_claims (test_workflow.WorkflowTest.test_only_confirmed_reading_with_locator_supports_scientific_claims) ... ok
+test_revision_keeps_old_versions_and_experiments_without_auto_selection (test_workflow.WorkflowTest.test_revision_keeps_old_versions_and_experiments_without_auto_selection) ... ok
+test_sources_with_same_local_id_are_run_scoped_and_queries_keep_real_status (test_workflow.WorkflowTest.test_sources_with_same_local_id_are_run_scoped_and_queries_keep_real_status) ... ok
+test_unknown_answer_fields_and_output_choice_or_execution_pollution_rejected (test_workflow.WorkflowTest.test_unknown_answer_fields_and_output_choice_or_execution_pollution_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.026s
+
+OK

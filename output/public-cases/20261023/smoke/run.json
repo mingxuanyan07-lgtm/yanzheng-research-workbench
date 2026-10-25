@@ -1,0 +1,14 @@
+{
+  "run_at": "2026-10-23T14:39:11+00:00",
+  "suite": "smoke",
+  "rows": 6,
+  "numpy": "2.5.4",
+  "python": "3.12.14",
+  "platform": "Windows",
+  "machine": "AMD64",
+  "blas_threads": 1,
+  "runner_sha256": "3953bd10d1eb772480a999aebbdce89850ce513ebd94ef88f8822a06ae6f3b64",
+  "status": "implementation_checks_passed",
+  "scope": "仅冒烟与诊断；正式实验未执行，不能据此宣称加速或普遍性质。",
+  "timing_scope": "矩阵生成、参考SVD、残差测量与算法分别计算；算法计时含随机采样、QR、小SVD和重构。访问代价另列，不把不同q称作同预算。"
+}

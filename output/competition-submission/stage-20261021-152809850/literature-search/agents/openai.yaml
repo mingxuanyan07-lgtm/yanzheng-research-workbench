@@ -1,0 +1,4 @@
+interface:
+  display_name: "科研文献检索"
+  short_description: "检索学术文献，核对来源与阅读范围，保存可交接的证据记录"
+  default_prompt: "使用 $literature-search，查找与我的研究问题相关的文献，核对出处并说明已读范围。"

@@ -109,6 +109,27 @@ class BackendTest(unittest.TestCase):
         self.assertEqual(self.client.get(f"/api/projects/{project_id}").json(), project)
         self.assertEqual(self.client.post(f"/api/projects/{project_id}/select", json={"topic_id": "budget"}, headers={"Origin": "https://untrusted.invalid"}).status_code, 403)
 
+    def test_decision_package_requires_selection_and_exports_markdown(self):
+        project = self.create("我想研究随机低秩逼近")
+        project_id = project["id"]
+        endpoint = f"/api/projects/{project_id}/decision-package"
+        self.assertEqual(self.client.get(endpoint).status_code, 400)
+        topic_id = project["direction_map"]["topics"][0]["id"]
+        selected = self.client.post(
+            f"/api/projects/{project_id}/select",
+            json={"topic_id": topic_id, "reason": "先复现基线 <script>bad</script>"},
+        )
+        self.assertEqual(selected.status_code, 200, selected.text)
+        response = self.client.get(endpoint)
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertIn("text/markdown", response.headers["content-type"])
+        self.assertIn("attachment", response.headers["content-disposition"])
+        self.assertIn("cache-control", response.headers)
+        for heading in ("全部候选与推荐", "选择理由", "来源、阅读等级与论断关系", "风险、假设与下一步有效验证", "模型、文献与实验限制"):
+            self.assertIn(heading, response.text)
+        self.assertIn("先复现基线", response.text)
+        self.assertIn("研究记录不证明科学结论成立", response.text)
+
     def test_concurrent_updates_keep_all_history(self):
         project = self.create("随机低秩逼近")
         project_id = project["id"]

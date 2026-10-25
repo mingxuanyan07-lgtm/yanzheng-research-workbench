@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0",
+  "record_type": "research_literature_search",
+  "created_at": "2026-10-23T14:37:57+00:00",
+  "request": {
+    "idea": "公开案例 B：能否只凭随机 SVD 的谱范数重构误差接近最优，就确认 PCA 特征提取质量可靠？若证据不够，应收窄或放弃原判断。",
+    "queries": [
+      "arxiv:1504.05477v4"
+    ],
+    "providers": [
+      "arxiv"
+    ],
+    "year_from": null,
+    "year_to": null,
+    "max_results_per_query": 1
+  },
+  "provenance": {
+    "generator": "workbench/literature_service.py",
+    "live_search_performed": true,
+    "external_model_api_called": false,
+    "new_experiments_executed": false
+  },
+  "search_log": [
+    {
+      "id": "Q001",
+      "provider": "arxiv",
+      "query": "arxiv:1504.05477v4",
+      "status": "success",
+      "searched_at": "2026-10-23T14:37:57+00:00",
+      "attempts": 1,
+      "result_count": 1,
+      "error": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "S001",
+      "title": "Randomized Block Krylov Methods for Stronger and Faster Approximate Singular Value Decomposition",
+      "authors": [
+        "Cameron Musco",
+        "Christopher Musco"
+      ],
+      "year_or_version": 2015,
+      "url": "https://arxiv.org/abs/1504.05477v4",
+      "origin": "this_run",
+      "verification": "metadata_checked",
+      "locator": "API metadata",
+      "checked_at": "2026-10-23T14:37:57+00:00",
+      "identifiers": {
+        "doi": null,
+        "arxiv_id": "1504.05477",
+        "openalex_id": null
+      },
+      "abstract": "Since being analyzed by Rokhlin, Szlam, and Tygert and popularized by Halko, Martinsson, and Tropp, randomized Simultaneous Power Iteration has become the method of choice for approximate singular value decomposition. It is more accurate than simpler sketching algorithms, yet still converges quickly for any matrix, independently of singular value gaps. After $\\tilde{O}(1/ε)$ iterations, it gives a low-rank approximation within $(1+ε)$ of optimal for spectral norm error. We give the first provable runtime improvement on Simultaneous Iteration: a simple randomized block Krylov method, closely related to the classic Block Lanczos algorithm, gives the same guarantees in just $\\tilde{O}(1/\\sqrtε)$ iterations and performs substantially better experimentally. Despite their long history, our analysis is the first of a Krylov subspace method that does not depend on singular value gaps, which are unreliable in practice. Furthermore, while it is a simple accuracy benchmark, even $(1+ε)$ error for spectral norm low-rank approximation does not imply that an algorithm returns high quality principal components, a major issue for data applications. We address this problem for the first time by showing that both Block Krylov Iteration and a minor modification of Simultaneous Iteration give nearly optimal PCA for any matrix. This result further justifies their strength over non-iterative sketching methods. Finally, we give insight beyond the worst case, justifying why both algorithms can run much faster in practice than predicted. We clarify how simple techniques can take advantage of common matrix properties to significantly improve runtime.",
+      "access": {
+        "is_open_access": true,
+        "landing_page_url": "https://arxiv.org/abs/1504.05477v4",
+        "pdf_url": "https://arxiv.org/pdf/1504.05477v4",
+        "license": null
+      },
+      "retrievals": [
+        {
+          "search_id": "Q001",
+          "provider": "arxiv",
+          "url": "https://export.arxiv.org/api/query?id_list=1504.05477v4&max_results=1",
+          "retrieved_at": "2026-10-23T14:37:57+00:00"
+        }
+      ],
+      "versions": [
+        "1504.05477v4"
+      ],
+      "import_metadata": {
+        "requested_reference": "arxiv:1504.05477v4",
+        "response_sha256": "808b61e6b70114f2f85dd52d6a4da23e4a6df99d7977f9218d3f43e0e4e91f3e",
+        "retrieved_at": "2026-10-23T14:37:57+00:00",
+        "scope": "official_metadata_response_only",
+        "versions": [
+          "1504.05477v4"
+        ],
+        "caveat": "仅核对官方题录；此哈希不是论文全文指纹，不表示已经阅读或认证原文。"
+      }
+    }
+  ],
+  "evidence": [],
+  "limitations": [
+    "精确导入仅获取官方元数据；摘要不会自动成为已读证据。"
+  ],
+  "next_action": "打开原文核对版本，记录实际读到的位置与摘录，再用于修订方向。",
+  "id": "3ba9402ea7b244e3a6f0d5fd25e045c0",
+  "import_reference": {
+    "provider": "arxiv",
+    "identifier": "1504.05477v4",
+    "key": "arxiv:1504.05477v4"
+  }
+}
