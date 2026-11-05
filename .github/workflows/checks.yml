@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # Chinese diagnostics must also work on English Windows runner locales.
+  PYTHONUTF8: '1'
+
 jobs:
   tests:
     runs-on: windows-latest
@@ -25,11 +29,13 @@ jobs:
         run: python -m pip install -r webapp/requirements.txt
       - name: Run isolated offline tests
         run: python -B scripts/run_tests.py
+      - name: Check cloud demo boundaries
+        run: python -B -m unittest discover -s deploy/modelscope/tests -p 'test_*.py'
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
           package-manager-cache: false
       - name: Check browser logic
-        run: node --test webapp/tests/frontend/*.cjs
+        run: node --test webapp/tests/frontend/*.cjs deploy/modelscope/test_cloud_demo.cjs
       - name: Check local runtime completeness
         run: python -B scripts/check_workbench.py --json

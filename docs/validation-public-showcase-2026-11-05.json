@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-05",
+  "scope": "Prepare the existing repository for public portfolio access: reader-facing README, screenshots, quick start, resume wording, history navigation and CI encoding repair. No production research database, ModelScope deployment or model request was used.",
+  "local_checks": {
+    "frontend_and_cloud_ui": {"tests_run": 132, "status": "passed", "local_log": "tmp/portfolio-frontend.log"},
+    "cloud_backend": {"tests_run": 36, "status": "passed", "local_log": "tmp/portfolio-cloud.log"},
+    "python_all": {
+      "tests_run": 417,
+      "status": "failed",
+      "failures_reported": 5,
+      "errors_reported": 0,
+      "skipped": 4,
+      "failure_scope": "Existing optional Lean integration: direct_sorry, indirect_sorry, direct_axiom, indirect_axiom and nat_add_zero; includes wall_timeout.",
+      "limitation": "Intermittent local Lean reliability remains unresolved. No tests, trust conditions or execution time limits were weakened.",
+      "local_log": "tmp/portfolio-python.log"
+    },
+    "runtime_completeness": {"ready": true, "encoding": "PYTHONUTF8=1", "local_log": "tmp/portfolio-runtime.json"},
+    "documentation": {"git_included_relative_links_checked": 74, "broken_links": 0},
+    "screenshots": {"source": "Existing isolated browser acceptance, synthetic fixtures; copied without image alteration", "new_user_study": false}
+  },
+  "ci_repair": {
+    "previous_run": "https://github.com/mingxuanyan07-lgtm/yanzheng-research-workbench/actions/runs/40187097085",
+    "previous_failure": "The Windows runner completed Python and frontend tests, then check_workbench.py failed when cp1252 stdout could not encode Chinese diagnostics.",
+    "change": "Set PYTHONUTF8=1 for CI; include the existing offline cloud boundary tests and cloud UI tests.",
+    "optional_lean": "The existing optional integration class is skipped when the pinned toolchain is missing. A passing clean-runner CI does not certify local Lean reliability."
+  },
+  "publication_review": {
+    "existing_reachable_commits_checked": 13,
+    "existing_reachable_git_objects_checked": 614,
+    "archive_entries_checked_in_current_tree_and_history": 554,
+    "configured_secret_matches": 0,
+    "reviewed_offline_test_placeholder_literals": 3,
+    "placeholder_scope": "Only exact fingerprints of fictional literals in webapp/tests/test_model_service.py MockTransport tests; other credential matches remain findings.",
+    "public_case_manifest_intact": true,
+    "public_case_database_projects": 2,
+    "production_database_or_env_file_tracked": false,
+    "scope_limit": "Credential-pattern and configured-value checks are bounded automated checks, not a guarantee that arbitrary research text is non-sensitive. The included cases use public papers and the recorded limited human authorization."
+  },
+  "scientific_scope": "Nine actual Qwen calls and human review records are retained. Six smoke configurations and an auxiliary diagnostic were run; the 90-configuration formal protocol remains unexecuted. No new theorem, user-effect study or general speedup is claimed."
+}
